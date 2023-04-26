@@ -1,0 +1,9 @@
+version: "3.2"
+services:
+  pwncrates:
+    build: ./webapp/
+    environment:
+      - FLASK_APP=main
+      - FLASK_ENV=development
+    ports:
+      - "5000:5000"

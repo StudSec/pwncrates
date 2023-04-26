@@ -1,2 +1,32 @@
 # pwncrates
-A CTF framework with a focus on educational benefit.
+A CTF framework with a focus on education.
+
+
+## Installation
+To install this application simply run
+```commandline
+docker-compose up
+```
+This will start pwncrates on `http://localhost:5000/`
+
+## Development
+For development, you likely want to rapidly redeploy the docker
+instance. For that you may use the following three commands.
+```commandline
+docker-compose down
+docker-compose build
+docker-compose up
+```
+
+You might also want to directly interact with the docker container for
+debugging purposes. For this you can use the following command to start a
+shell within the container
+```commandline
+sudo docker exec -it pwncrates-pwncrates-1 bash
+```
+
+## TODO
+- Create database
+- Create authentication
+- Create pages
+- Create API
