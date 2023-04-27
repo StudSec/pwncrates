@@ -1,0 +1,16 @@
+/* This prevents the top navigational bar and footer from overlapping with the main content. */
+body {
+    padding-top: 70px;
+    padding-bottom: 70px;
+}
+
+/* This fixes the footer to the bottom. */
+html {
+  position: relative;
+  min-height: 100%;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}

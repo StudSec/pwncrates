@@ -1,0 +1,11 @@
+<div class="col-md-2 col-lg-2 position-fixed">
+    <ul class="nav flex-column">
+        {% for name, url in routes.items() %}
+          <li class="nav-item">
+            <a class="nav-link active" href="{{url}}">
+              {{ name }}
+            </a>
+          </li>
+        {% endfor %}
+    </ul>
+</div>

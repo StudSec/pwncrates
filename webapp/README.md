@@ -22,6 +22,31 @@ from webapp import app
 
 Don't forget to add the file to the import statement in `__init__.py`
 
+#### Jinja2
+The webapp uses Jinja2 for templating, this allows us to easily extend a
+webpage. For example, we can have a `base.html` which we can then use to
+make `home.html`, `scoreboard.html`, etc. For more information see:
+
+- https://svn.python.org/projects/external/Jinja-1.1/docs/build/inheritance.html
+- https://jinja.palletsprojects.com/en/3.1.x/templates/
+- https://stackoverflow.com/questions/24847753/flask-jinja2-how-to-separate-header-base-and-footer
+
+The `base.html` and all files included in it may contain variables, if these
+variables differ per file they may be defined as follows within the extending file.
+```jinja2
+{% block title %}pwncrates - Home{% endblock %}
+```
+This example is from `home.html`, which defines the title as "pwncrates - Home"
+
+For more global variables you can add them to the dictonary in `inject_globals`
+in `template_preprocessor.py`
+```python
+@app.context_processor
+def inject_globals():
+    return dict(name="test_name")
+```
+
+
 #### Docker
 The webapp runs within docker, as part of this all files within this directory
 are added within the container. If you'd like to avoid that (for security
