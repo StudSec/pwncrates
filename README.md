@@ -25,8 +25,14 @@ shell within the container
 sudo docker exec -it pwncrates-pwncrates-1 bash
 ```
 
+You might also want to directly interact with the database, for this
+you can use the following command.
+```commandline
+mysql -u root -proot -h localhost -P3306
+```
+
 ## TODO
-- Create database
 - Create authentication
 - Create pages
 - Create API
+- Create persistence/backup mechanism.
