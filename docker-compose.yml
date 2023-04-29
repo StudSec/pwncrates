@@ -7,6 +7,9 @@ services:
       - FLASK_ENV=development
     ports:
       - "5000:5000"
+    volumes:
+      - ./data/pages:/webapp/pages:ro
+      - ./data/writeups:/webapp/writeups:ro
 
   db:
     image: mysql:5.7

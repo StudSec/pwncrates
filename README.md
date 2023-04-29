@@ -31,6 +31,10 @@ you can use the following command.
 mysql -u root -proot -h localhost -P3306
 ```
 
+As a general design principle, try to keep all data within the data folder.
+This means any configs, database data, user data, should reside in that. If 
+a user would like to backup the entire application it should be a simple as
+backing up the data folder.
 ## TODO
 - Create authentication
 - Create pages
