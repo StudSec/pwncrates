@@ -15,5 +15,6 @@ def inject_globals():
                     "Rules": url_for("rules"),
                     "Challenges": url_for("challenges"),
                     "Writeups": url_for("writeups"),
-                    "Contributing": url_for("contributing")
+                    "Contributing": url_for("contributing"),
+                    "Scoreboard": url_for("scoreboard")
                 })

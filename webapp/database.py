@@ -75,6 +75,10 @@ def submit_flag(challenge_id, flag, user_id):
         else:
             cursor.execute('INSERT INTO solves (challenge_id, solved_time, user_id) VALUES (%s, %s, %s);',
                            (challenge_id, int(time.time()), user_id))
+            cursor.execute('UPDATE challenges SET solves = solves + 1 WHERE id = %s', (challenge_id,))
+            cursor.execute('UPDATE users U SET U.points = U.points + '
+                           '(SELECT points FROM challenges WHERE id = %s) '
+                           'WHERE id = %s', (challenge_id, user_id))
             connection.commit()
             ret = "OK"
     else:
@@ -84,5 +88,16 @@ def submit_flag(challenge_id, flag, user_id):
     connection.close()
 
     return ret
+
+
+def get_scoreboard():
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    cursor.execute('SELECT name, points FROM users ORDER BY points DESC;')
+    results = [user for user in cursor]
+    cursor.close()
+    connection.close()
+
+    return results
 
 

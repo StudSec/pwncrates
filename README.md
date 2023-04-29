@@ -28,7 +28,7 @@ sudo docker exec -it pwncrates-pwncrates-1 bash
 You might also want to directly interact with the database, for this
 you can use the following command.
 ```commandline
-mysql -u root -proot -h localhost -P3306
+mysql -u root -proot -h localhost -P3306 pwncrates
 ```
 
 If your making changes to the database remember to rebuild it using

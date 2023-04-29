@@ -55,3 +55,8 @@ def challenges(category=None):
 @app.route('/writeups/<challenge>')
 def writeups(challenge=None):
     return ""
+
+
+@app.route('/scoreboard')
+def scoreboard():
+    return render_template("scoreboard.html", users=db.get_scoreboard())

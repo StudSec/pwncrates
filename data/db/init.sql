@@ -8,6 +8,7 @@ CREATE TABLE users (
     name VARCHAR(64),
     password VARCHAR(64),
     university_id INT,
+    points INT DEFAULT 0,
     PRIMARY KEY (ID)
 );
 
@@ -34,6 +35,7 @@ CREATE TABLE challenges (
     difficulty INT,
     subcategory VARCHAR(64),
     flag VARCHAR(128),
+    solves INT DEFAULT 0,
     PRIMARY KEY (ID)
 );
 
@@ -47,8 +49,8 @@ VALUES
 INSERT INTO users
     (name, password, university_id)
 VALUES
-    ('test_admin', 'blue', 1),
-    ('test_user', 'yellow', 1);
+    ('test_user_alpha', 'blue', 1),
+    ('test_user_bravo', 'yellow', 1);
 
 INSERT INTO challenges
     (name, description, points, category, difficulty, subcategory, flag)
