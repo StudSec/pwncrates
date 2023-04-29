@@ -3,6 +3,7 @@ This file handles all non-API and non-auth routes
 """
 from webapp import app
 from flask import render_template
+import markdown
 
 
 # Home page
@@ -14,13 +15,27 @@ def home():
 # Rule page
 @app.route('/rules')
 def rules():
-    return ""
+    try:
+        with open("./pages/rules.md", "r") as f:
+            content = markdown.markdown(f.read())
+    except FileNotFoundError:
+        # Maybe we should return a 404?
+        print("Rules page not found!")
+        return render_template("markdown_page.html", markdown_content="")
+    return render_template("markdown_page.html", markdown_content=content)
 
 
 # Contributing page
 @app.route('/contributing')
 def contributing():
-    return ""
+    try:
+        with open("./pages/contributing.md", "r") as f:
+            content = markdown.markdown(f.read())
+    except FileNotFoundError:
+        # Maybe we should return a 404?
+        print("Rules page not found!")
+        return render_template("markdown_page.html", markdown_content="")
+    return render_template("markdown_page.html", markdown_content=content)
 
 
 # General category page, contains an overview of the categories if no category is specified
