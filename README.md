@@ -48,3 +48,4 @@ backing up the data folder.
 - Add git integration (fetch challenges from url)
 - Add writeups
 - Add javascript to flag submissions to update page.
+- Add by-university scoreboard
