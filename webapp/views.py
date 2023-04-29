@@ -5,6 +5,7 @@ from webapp import app
 from flask import render_template
 import webapp.database as db
 import markdown
+import sys
 
 
 # Home page
@@ -21,8 +22,8 @@ def rules():
             content = markdown.markdown(f.read())
     except FileNotFoundError:
         # Maybe we should return a 404?
-        print("Rules page not found!")
-        return render_template("markdown_page.html", markdown_content="")
+        print("Rules page not found!", file=sys.stderr)
+        return render_template("404.html")
     return render_template("markdown_page.html", markdown_content=content)
 
 
@@ -33,9 +34,8 @@ def contributing():
         with open("./pages/contributing.md", "r") as f:
             content = markdown.markdown(f.read())
     except FileNotFoundError:
-        # Maybe we should return a 404?
-        print("Rules page not found!")
-        return render_template("markdown_page.html", markdown_content="")
+        print("Contributing page not found!", file=sys.stderr)
+        return render_template("404.html")
     return render_template("markdown_page.html", markdown_content=content)
 
 
@@ -46,8 +46,7 @@ def challenges(category=None):
     if not category:
         return render_template("challenges_overview.html", categories=db.get_categories())
     if category not in db.get_categories():
-        # TODO: 404 page
-        return ""
+        return render_template("404.html")
     return render_template("challenges_category.html", category=category, subcategories=db.get_challenges(category))
 
 
