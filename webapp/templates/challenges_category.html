@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}pwncrates - {{category}}{% endblock %}
+
+{% block content %}
+    {% for name, challenges  in subcategories.items() %}
+        <ul class="list-group">
+            <li class="list-group-item active">{{name}}</li>
+        {% for name, points in challenges %}
+              <li class="list-group-item">{{name}} - {{points}}</li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+{% endblock %}

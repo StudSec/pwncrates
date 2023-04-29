@@ -1,10 +1,10 @@
 ## Rules
-This is an example rules page. Change it with your own CTF rules.
+The rules boil to "be nice".
+#### Don't brute force.
+We are just university students so the servers aren't great. Brute forcing has the potential to bring down the challenges for everyone.
 
-Currently, the rules are as follows:
+#### Don't excessively ask for hints
+Don't excessively ask for hints, this does not mean you should shy away from asking for advice or where to start. But don't directly ask for the flag
 
-1) The cake is a lie
-2) The blue portal is superior 
-
-##### Violations
-All violations shall be reported to, and dealt with by, GlaDOS.
+#### Don't install malware
+Installing malware/crypto miners on a compromised challenge is the one bannable offence (for now). Doing so is likely to get us banned from our hosting provider, which is a great way to ruin our day.

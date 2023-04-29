@@ -23,3 +23,39 @@ def get_users():
     connection.close()
 
     return results
+
+
+def get_challenges(category, difficulty="hard"):
+    difficulties = {
+        "easy": 1,
+        "medium": 2,
+        "hard": 3
+    }
+    # Translate the difficulty to int
+    difficulty = difficulties[difficulty.lower()]
+
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    cursor.execute('SELECT name, points, subcategory FROM challenges WHERE category = %s AND difficulty <= %s',
+                   (category, difficulty))
+    results = {}
+    for (name, points, subcategory) in cursor:
+        if subcategory in results.keys():
+            results[subcategory].append((name, points))
+        else:
+            results[subcategory] = [(name, points)]
+    cursor.close()
+    connection.close()
+
+    return results
+
+
+def get_categories():
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    cursor.execute('SELECT DISTINCT category FROM challenges;')
+    results = [category[0] for category in cursor]
+    cursor.close()
+    connection.close()
+
+    return results

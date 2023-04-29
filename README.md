@@ -31,6 +31,12 @@ you can use the following command.
 mysql -u root -proot -h localhost -P3306
 ```
 
+If your making changes to the database remember to rebuild it using
+```commandline
+docker-compose down
+docker-compose up
+```
+
 As a general design principle, try to keep all data within the data folder.
 This means any configs, database data, user data, should reside in that. If 
 a user would like to backup the entire application it should be a simple as

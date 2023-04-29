@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}pwncrates - Challenges{% endblock %}
+
+{% block content %}
+    {% for category in categories %}
+    <div class="card" style="width: 18rem;">
+      <img src="https://picsum.photos/536/354" class="card-img-top">
+      <div class="card-body">
+        <h5 class="card-title">{{category}}</h5>
+        <p class="card-text">Example category description</p>
+        <a href="{{ url_for('challenges') + '/' + category }}" class="btn btn-primary">Go to category</a>
+      </div>
+    </div>
+    {% endfor %}
+{% endblock %}

@@ -3,6 +3,7 @@ This file handles all non-API and non-auth routes
 """
 from webapp import app
 from flask import render_template
+import webapp.database as db
 import markdown
 
 
@@ -42,7 +43,12 @@ def contributing():
 @app.route('/challenges')
 @app.route('/challenges/<category>')
 def challenges(category=None):
-    return ""
+    if not category:
+        return render_template("challenges_overview.html", categories=db.get_categories())
+    if category not in db.get_categories():
+        # TODO: 404 page
+        return ""
+    return render_template("challenges_category.html", category=category, subcategories=db.get_challenges(category))
 
 
 # Writeups page, contains an overview of all available writeups if no challenge is specified.
