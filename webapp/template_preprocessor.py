@@ -1,3 +1,8 @@
+"""
+This file handles the "global" variables for the Jinja2 templates.
+
+Global variables are variables used by the base template, or its includes.
+"""
 from webapp import app
 from flask import url_for
 

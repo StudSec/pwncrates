@@ -1,3 +1,8 @@
+"""
+This file serves as the primary interface between the database and the rest of the code.
+
+Sticking to this convention allows us to easily modify or switch the database without performing shotgun surgery.
+"""
 import mysql.connector
 
 config = {

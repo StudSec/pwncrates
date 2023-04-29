@@ -1,3 +1,6 @@
+"""
+This file handles all non-API and non-auth routes
+"""
 from webapp import app
 from flask import render_template
 
