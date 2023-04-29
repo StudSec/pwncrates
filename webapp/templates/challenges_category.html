@@ -5,8 +5,19 @@
     {% for name, challenges  in subcategories.items() %}
         <ul class="list-group">
             <li class="list-group-item active">{{name}}</li>
-        {% for name, points in challenges %}
-              <li class="list-group-item">{{name}} - {{points}}</li>
+        {% for id, name, description, points in challenges %}
+              <li class="list-group-item">
+                  <h4>{{name}} - {{points}}</h4>
+                  <p>
+                      {{description}}
+                  </p>
+                  <form method="POST" action="/api/challenges/submit/{{id}}">
+                      <div class="input-group mb-3">
+                        <input type="text" name="flag" class="form-control" placeholder="Submit flag">
+                        <button class="btn btn-primary" type="submit" id="button-addon2">Submit</button>
+                      </div>
+                </form>
+              </li>
         {% endfor %}
         </ul>
     {% endfor %}

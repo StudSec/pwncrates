@@ -4,6 +4,7 @@ This file serves as the primary interface between the database and the rest of t
 Sticking to this convention allows us to easily modify or switch the database without performing shotgun surgery.
 """
 import mysql.connector
+import time
 
 config = {
     'user': 'root',
@@ -36,14 +37,15 @@ def get_challenges(category, difficulty="hard"):
 
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor()
-    cursor.execute('SELECT name, points, subcategory FROM challenges WHERE category = %s AND difficulty <= %s',
+    cursor.execute('SELECT id, name, description, points, subcategory FROM challenges '
+                   'WHERE category = %s AND difficulty <= %s',
                    (category, difficulty))
     results = {}
-    for (name, points, subcategory) in cursor:
+    for (id, name, description, points, subcategory) in cursor:
         if subcategory in results.keys():
-            results[subcategory].append((name, points))
+            results[subcategory].append((id, name, description, points))
         else:
-            results[subcategory] = [(name, points)]
+            results[subcategory] = [(id, name, description, points)]
     cursor.close()
     connection.close()
 
@@ -59,3 +61,28 @@ def get_categories():
     connection.close()
 
     return results
+
+
+def submit_flag(challenge_id, flag, user_id):
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    cursor.execute('SELECT DISTINCT flag FROM challenges WHERE id = %s AND flag = %s;', (challenge_id, flag))
+
+    if cursor.fetchone():
+        cursor.execute('SELECT id FROM solves WHERE challenge_id = %s AND user_id = %s;', (challenge_id, user_id))
+        if cursor.fetchone():
+            ret = "Already solved"
+        else:
+            cursor.execute('INSERT INTO solves (challenge_id, solved_time, user_id) VALUES (%s, %s, %s);',
+                           (challenge_id, int(time.time()), user_id))
+            connection.commit()
+            ret = "OK"
+    else:
+        ret = "Incorrect flag"
+
+    cursor.close()
+    connection.close()
+
+    return ret
+
+

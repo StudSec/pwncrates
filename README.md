@@ -46,3 +46,5 @@ backing up the data folder.
 - Create persistence/backup mechanism.
 - Make markdown pages prettier (eg, code blocks)
 - Add git integration (fetch challenges from url)
+- Add writeups
+- Add javascript to flag submissions to update page.
