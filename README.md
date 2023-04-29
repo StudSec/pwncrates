@@ -43,6 +43,6 @@ a user would like to backup the entire application it should be a simple as
 backing up the data folder.
 ## TODO
 - Create authentication
-- Create API
 - Create persistence/backup mechanism.
 - Make markdown pages prettier (eg, code blocks)
+- Add git integration (fetch challenges from url)
