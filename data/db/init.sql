@@ -4,8 +4,19 @@ CREATE DATABASE pwncrates;
 USE pwncrates;
 
 CREATE TABLE users (
-    name VARCHAR(32),
-    password VARCHAR(16)
+    name VARCHAR(64),
+    password VARCHAR(64),
+    university_id INT
+);
+
+CREATE TABLE universities (
+    name VARCHAR(128)
+);
+
+CREATE TABLE solves (
+  challenge_id INT,
+  solved_time TIMESTAMP,
+  user_id INT
 );
 
 CREATE TABLE challenges (
@@ -17,11 +28,17 @@ CREATE TABLE challenges (
 );
 
 -- Populate test data --
-INSERT INTO users
-    (name, password)
+INSERT INTO universities
+    (name)
 VALUES
-    ('test_admin', 'blue'),
-    ('test_user', 'yellow');
+    ("Vrije Universiteit"),
+    ("Radboud");
+
+INSERT INTO users
+    (name, password, university_id)
+VALUES
+    ('test_admin', 'blue', 1),
+    ('test_user', 'yellow', 1);
 
 INSERT INTO challenges
     (name, points, category, difficulty, subcategory)
