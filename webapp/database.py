@@ -101,3 +101,14 @@ def get_scoreboard():
     return results
 
 
+# challenge_id
+def get_solves(user_id):
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    cursor.execute('SELECT challenge_id FROM solves WHERE user_id = %s;', (user_id,))
+    results = [challenge_id[0] for challenge_id in cursor]
+    cursor.close()
+    connection.close()
+
+    return results
+

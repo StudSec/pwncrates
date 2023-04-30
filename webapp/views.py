@@ -47,7 +47,9 @@ def challenges(category=None):
         return render_template("challenges_overview.html", categories=db.get_categories())
     if category not in db.get_categories():
         return render_template("404.html")
-    return render_template("challenges_category.html", category=category, subcategories=db.get_challenges(category))
+    # TODO: change 1 to userid
+    return render_template("challenges_category.html", category=category,
+                           subcategories=db.get_challenges(category), solves=db.get_solves(1))
 
 
 # Writeups page, contains an overview of all available writeups if no challenge is specified.

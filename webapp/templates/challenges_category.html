@@ -11,12 +11,18 @@
                   <p>
                       {{description}}
                   </p>
-                  <form method="POST" action="/api/challenges/submit/{{id}}">
-                      <div class="input-group mb-3">
-                        <input type="text" name="flag" class="form-control" placeholder="Submit flag">
-                        <button class="btn btn-primary" type="submit" id="button-addon2">Submit</button>
-                      </div>
-                </form>
+                  {% if id in solves %}
+                    <p>
+                        Solved!
+                    </p>
+                  {% else %}
+                      <form method="POST" action="/api/challenges/submit/{{id}}">
+                          <div class="input-group mb-3">
+                            <input type="text" name="flag" class="form-control" placeholder="Submit flag" id="{{id}}">
+                            <button class="btn btn-primary" type="submit" id="button-addon2">Submit</button>
+                          </div>
+                    </form>
+                  {% endif %}
               </li>
         {% endfor %}
         </ul>
