@@ -9,13 +9,13 @@ CREATE TABLE users (
     password VARCHAR(64),
     university_id INT,
     points INT DEFAULT 0,
-    PRIMARY KEY (ID)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE universities (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(128),
-    PRIMARY KEY (ID)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE solves (
@@ -23,7 +23,7 @@ CREATE TABLE solves (
     challenge_id INT,
     solved_time INT,  -- Using unix timestamp over builtin datetime because it feels easier to work with - Aidan
     user_id INT,
-    PRIMARY KEY (ID)
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE challenges (
@@ -36,7 +36,15 @@ CREATE TABLE challenges (
     subcategory VARCHAR(64),
     flag VARCHAR(128),
     solves INT DEFAULT 0,
-    PRIMARY KEY (ID)
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE writeups(
+    id INT NOT NULL AUTO_INCREMENT,
+    challenge_id INT,
+    user_id INT,
+    file_name VARCHAR(256),
+    PRIMARY KEY (id)
 );
 
 -- Populate test data --
@@ -59,3 +67,8 @@ VALUES
     ("test_challenge_medium", "A medium PWN challenge", 200, "pwn", 2, "KSLR", "CTF{Medium_Challenge_Pwn}"),
     ("test_challenge_easy", "An easy PWN challenge", 50, "pwn", 2, "BoF", "CTF{Easy_Challenge_Pwn"),
     ("test_challenge_easy_web", "An easy WEB challenge", 50, "web", 2, "sql", "CTF{Easy_Challenge_Web");
+
+INSERT INTO writeups
+    (challenge_id, user_id, file_name)
+VALUES
+    (1, 1, "exampleWriteup");

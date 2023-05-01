@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}pwncrates - Writeups{% endblock %}
+
+{% block content %}
+        <ul class="list-group">
+            <li class="list-group-item active">{{ challenge_name }}</li>
+        {% for author, writeup_id in writeups %}
+              <li class="list-group-item">
+                  <a href="{{ url_for('writeups', challenge_id=challenge_id, writeup_id=writeup_id) }}">{{ author }}</a>
+              </li>
+        {% endfor %}
+        </ul>
+{% endblock %}

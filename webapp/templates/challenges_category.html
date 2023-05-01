@@ -13,7 +13,7 @@
                   </p>
                   {% if id in solves %}
                     <p>
-                        Solved!
+                        Solved! <a href="{{ url_for('writeups', challenge_id=id ) }}">View writeups</a>
                     </p>
                   {% else %}
                       <form method="POST" action="/api/challenges/submit/{{id}}">

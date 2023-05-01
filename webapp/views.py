@@ -4,6 +4,7 @@ This file handles all non-API and non-auth routes
 from webapp import app
 from flask import render_template
 import webapp.database as db
+from webapp.helpers import render_markdown
 import markdown
 import sys
 
@@ -17,26 +18,13 @@ def home():
 # Rule page
 @app.route('/rules')
 def rules():
-    try:
-        with open("./pages/rules.md", "r") as f:
-            content = markdown.markdown(f.read())
-    except FileNotFoundError:
-        # Maybe we should return a 404?
-        print("Rules page not found!", file=sys.stderr)
-        return render_template("404.html")
-    return render_template("markdown_page.html", markdown_content=content)
+    return render_markdown("./pages/rules.md")
 
 
 # Contributing page
 @app.route('/contributing')
 def contributing():
-    try:
-        with open("./pages/contributing.md", "r") as f:
-            content = markdown.markdown(f.read())
-    except FileNotFoundError:
-        print("Contributing page not found!", file=sys.stderr)
-        return render_template("404.html")
-    return render_template("markdown_page.html", markdown_content=content)
+    return render_markdown("./pages/contributing.md")
 
 
 # General category page, contains an overview of the categories if no category is specified
@@ -52,11 +40,24 @@ def challenges(category=None):
                            subcategories=db.get_challenges(category), solves=db.get_solves(1))
 
 
-# Writeups page, contains an overview of all available writeups if no challenge is specified.
-@app.route('/writeups')
-@app.route('/writeups/<challenge>')
-def writeups(challenge=None):
-    return ""
+# Writeups page, contains an overview of all available writeups if no specific one is specified.
+@app.route('/writeups/<challenge_id>')
+@app.route('/writeups/<challenge_id>/<writeup_id>')
+def writeups(challenge_id, writeup_id=None):
+    # TODO: check if user has solved the challenge
+    # Check if challenge id exists
+    if not writeup_id:
+        # Return writeup overview
+        return render_template("writeups_overview.html",
+                               challenge_id=challenge_id,
+                               challenge_name=db.get_challenge_name(challenge_id)[0],
+                               writeups=db.get_writeups(challenge_id))
+    file_name = db.get_writeup_file(challenge_id, writeup_id)
+    if len(file_name) != 1:
+        return render_template("404.html")
+    assert(file_name[0].isalnum())
+    return render_markdown(f"./writeups/{challenge_id}/{file_name[0]}.md")
+
 
 
 @app.route('/scoreboard')

@@ -43,9 +43,10 @@ a user would like to backup the entire application it should be a simple as
 backing up the data folder.
 ## TODO
 - Create authentication
-- Create persistence/backup mechanism.
+- Create persistence/backup mechanism for database.
 - Make markdown pages prettier (eg, code blocks)
-- Add git integration (fetch challenges from url)
-- Add writeups
+- Add git integration (fetch challenges from repo)
 - Add javascript to flag submissions to update page.
 - Add by-university scoreboard
+- Add descriptions for (sub)categories
+- Add links to easy challenges -> make it easier to get started

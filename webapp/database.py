@@ -101,7 +101,6 @@ def get_scoreboard():
     return results
 
 
-# challenge_id
 def get_solves(user_id):
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor()
@@ -112,3 +111,38 @@ def get_solves(user_id):
 
     return results
 
+
+def get_writeups(challenge_id):
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    cursor.execute('SELECT U.name, W.id FROM writeups W, users U '
+                   'WHERE W.challenge_id = %s AND W.user_id = U.id;', (challenge_id,))
+    results = [(name, writeup_id) for name, writeup_id in cursor]
+    cursor.close()
+    connection.close()
+
+    return results
+
+
+def get_writeup_file(challenge_id, writeup_id):
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    cursor.execute('SELECT file_name FROM writeups '
+                   'WHERE challenge_id = %s AND id = %s;', (challenge_id, writeup_id))
+    results = [filename[0] for filename in cursor]
+    cursor.close()
+    connection.close()
+
+    return results
+
+
+def get_challenge_name(challenge_id):
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    cursor.execute('SELECT name FROM challenges '
+                   'WHERE id = %s;', (challenge_id,))
+    results = [filename[0] for filename in cursor]
+    cursor.close()
+    connection.close()
+
+    return results
