@@ -50,3 +50,4 @@ backing up the data folder.
 - Add by-university scoreboard
 - Add descriptions for (sub)categories
 - Add links to easy challenges -> make it easier to get started
+- Add challenge difficulty filter
