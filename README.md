@@ -42,7 +42,6 @@ This means any configs, database data, user data, should reside in that. If
 a user would like to backup the entire application it should be a simple as
 backing up the data folder.
 ## TODO
-- Create authentication
 - Create persistence/backup mechanism for database.
 - Make markdown pages prettier (eg, code blocks)
 - Add git integration (fetch challenges from repo)
@@ -53,3 +52,4 @@ backing up the data folder.
 - Add challenge difficulty filter
 - Add a way to add writeups
 - Add profile page + optional fields (universities, links, etc)
+- Add discord auth
