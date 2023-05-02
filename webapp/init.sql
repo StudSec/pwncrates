@@ -1,50 +1,42 @@
 -- Initialization file, gets called once on database creation. --
 
-CREATE DATABASE pwncrates;
-USE pwncrates;
-
 CREATE TABLE users (
-    id INT NOT NULL AUTO_INCREMENT,
+    id INTEGER PRIMARY KEY,
     name VARCHAR(64),
     password VARCHAR(64),
-    university_id INT,
-    points INT DEFAULT 0,
-    PRIMARY KEY (id)
+    university_id INTEGER,
+    points INTEGER DEFAULT 0
 );
 
 CREATE TABLE universities (
-    id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(128),
-    PRIMARY KEY (id)
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(128)
 );
 
 CREATE TABLE solves (
-    id INT NOT NULL AUTO_INCREMENT,
-    challenge_id INT,
-    solved_time INT,  -- Using unix timestamp over builtin datetime because it feels easier to work with - Aidan
-    user_id INT,
-    PRIMARY KEY (id)
+    id INTEGER PRIMARY KEY,
+    challenge_id INTEGER,
+    solved_time INTEGER,  -- Using unix timestamp over builtin datetime because it feels easier to work with - Aidan
+    user_id INTEGER
 );
 
 CREATE TABLE challenges (
-    id INT NOT NULL AUTO_INCREMENT,
+    id INTEGER PRIMARY KEY,
     name VARCHAR(128),
     description VARCHAR(2048),
-    points INT,
+    points INTEGER,
     category VARCHAR(64),
-    difficulty INT,
+    difficulty INTEGER,
     subcategory VARCHAR(64),
     flag VARCHAR(128),
-    solves INT DEFAULT 0,
-    PRIMARY KEY (id)
+    solves INTEGER DEFAULT 0
 );
 
 CREATE TABLE writeups(
-    id INT NOT NULL AUTO_INCREMENT,
-    challenge_id INT,
-    user_id INT,
-    file_name VARCHAR(256),
-    PRIMARY KEY (id)
+    id INTEGER PRIMARY KEY,
+    challenge_id INTEGER,
+    user_id INTEGER,
+    file_name VARCHAR(256)
 );
 
 -- Populate test data --

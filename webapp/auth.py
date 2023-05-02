@@ -30,7 +30,6 @@ def login():
 
         if not password:
             return render_template('login.html', error='Invalid credentials')
-
         if password == bcrypt.hashpw(request.form["password"].encode(), password.encode()).decode():
             user = User(db.get_id(request.form["username"]), request.form["username"])
             login_user(user)
@@ -50,7 +49,8 @@ def register():
         if db.get_id(request.form["username"]):
             return render_template('register.html', error='User already exists.')
 
-        db.register_user(request.form["username"], bcrypt.hashpw(request.form["password"].encode(), bcrypt.gensalt()))
+        db.register_user(request.form["username"], bcrypt.hashpw(request.form["password"].encode(),
+                                                                 bcrypt.gensalt()).decode('ascii'))
         user = User(db.get_id(request.form["username"]), request.form["username"])
         login_user(user)
         return redirect(url_for('challenges'))

@@ -10,12 +10,4 @@ services:
     volumes:
       - ./data/pages:/webapp/pages:ro
       - ./data/writeups:/webapp/writeups:ro
-
-  db:
-    image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-    volumes:
-      - ./data/db:/docker-entrypoint-initdb.d/:ro
-    ports:
-      - "127.0.0.1:3306:3306"
+      - ./data/db:/webapp/db
