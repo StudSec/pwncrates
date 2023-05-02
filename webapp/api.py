@@ -3,9 +3,10 @@ This file contains all API routes.
 
 An API route is used either by external applications (for example the StudBot), or client side javascript.
 """
+from flask_login import login_required, current_user
+import webapp.database as db
 from webapp import app
 from flask import request
-import webapp.database as db
 # General API file
 
 
@@ -25,5 +26,6 @@ def api_get_challenges(category):
 
 
 @app.route('/api/challenges/submit/<challenge_id>', methods=["POST"])
+@login_required
 def api_submit_challenge(challenge_id):
-    return db.submit_flag(challenge_id, request.form['flag'], 1)  # TODO: replace 1 with user id
+    return db.submit_flag(challenge_id, request.form['flag'], current_user.id)
