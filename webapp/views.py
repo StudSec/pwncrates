@@ -45,9 +45,7 @@ def challenges(category=None):
 @app.route('/writeups/<challenge_id>/<writeup_id>')
 def writeups(challenge_id, writeup_id=None):
     # TODO: check if user has solved the challenge
-    # Check if challenge id exists
     if not writeup_id:
-        # Return writeup overview
         return render_template("writeups_overview.html",
                                challenge_id=challenge_id,
                                challenge_name=db.get_challenge_name(challenge_id)[0],
@@ -59,7 +57,12 @@ def writeups(challenge_id, writeup_id=None):
     return render_markdown(f"./writeups/{challenge_id}/{file_name[0]}.md")
 
 
-
 @app.route('/scoreboard')
 def scoreboard():
     return render_template("scoreboard.html", users=db.get_scoreboard())
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    # note that we set the 404 status explicitly
+    return render_template('404.html'), 404

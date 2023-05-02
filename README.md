@@ -51,3 +51,5 @@ backing up the data folder.
 - Add descriptions for (sub)categories
 - Add links to easy challenges -> make it easier to get started
 - Add challenge difficulty filter
+- Add a way to add writeups
+- Add profile page + optional fields (universities, links, etc)

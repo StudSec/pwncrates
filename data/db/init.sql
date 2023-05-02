@@ -57,8 +57,8 @@ VALUES
 INSERT INTO users
     (name, password, university_id)
 VALUES
-    ('test_user_alpha', 'blue', 1),
-    ('test_user_bravo', 'yellow', 1);
+    ('test_user_alpha', '$2b$12$SGY380.14bqpOtclkPf42eyt2RfIuQsoIEYkK16Qj8w0lZuF2qcDy', 1), -- the word blue hashed --
+    ('test_user_bravo', '$2b$12$v/vd5XM/WLLpMGXeKfrg0u7zd2AcJwQX7NNwSpZs4MXCZ7kYUlvr6', 1); -- the word yellow hashed --
 
 INSERT INTO challenges
     (name, description, points, category, difficulty, subcategory, flag)

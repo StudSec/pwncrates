@@ -18,12 +18,64 @@ config = {
 def get_users():
     connection = mysql.connector.connect(**config)
     cursor = connection.cursor()
-    cursor.execute('SELECT * FROM users')
-    results = [{name: color} for (name, color) in cursor]
+    cursor.execute('SELECT name FROM users')
+    results = [name for name in cursor]
     cursor.close()
     connection.close()
 
     return results
+
+
+def get_username(user_id) -> str:
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    cursor.execute('SELECT name FROM users WHERE id = %s LIMIT 1', (user_id,))
+    results = [user_id[0] for user_id in cursor]
+    cursor.close()
+    connection.close()
+
+    if len(results) == 0:
+        return ""
+
+    return results[0]
+
+
+def get_password(user_name) -> str:
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    cursor.execute('SELECT password FROM users WHERE name = %s LIMIT 1', (user_name,))
+    results = [password_hash[0] for password_hash in cursor]
+    cursor.close()
+    connection.close()
+
+    if len(results) == 0:
+        return ""
+
+    return results[0]
+
+
+def get_id(user_name) -> str:
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    cursor.execute('SELECT id FROM users WHERE name = %s LIMIT 1', (user_name,))
+    results = [password_hash[0] for password_hash in cursor]
+    cursor.close()
+    connection.close()
+
+    if len(results) == 0:
+        return ""
+
+    return results[0]
+
+
+def register_user(user_name, password):
+    connection = mysql.connector.connect(**config)
+    cursor = connection.cursor()
+    cursor.execute('INSERT INTO users (name, password) VALUES (%s, %s)', (user_name, password))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return
 
 
 def get_challenges(category, difficulty="hard"):
