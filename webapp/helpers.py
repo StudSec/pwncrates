@@ -2,14 +2,14 @@
 Helper functions within the application
 """
 from flask import render_template
-import markdown
+import cmarkgfm
 import sys
 
 
 def render_markdown(file_name):
     try:
         with open(file_name, "r") as f:
-            content = markdown.markdown(f.read())
+            content = cmarkgfm.github_flavored_markdown_to_html(f.read())
     except FileNotFoundError:
         # Maybe we should return a 404?
         print(f"File {file_name} not found!", file=sys.stderr)

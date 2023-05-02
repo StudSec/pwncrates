@@ -30,7 +30,6 @@ This means any configs, database data, user data, should reside in that. If
 a user would like to backup the entire application it should be a simple as
 backing up the data folder.
 ## TODO
-- Make markdown pages prettier (eg, code blocks)
 - Add git integration (fetch challenges from repo)
 - Add javascript to flag submissions to update page.
 - Add by-university scoreboard

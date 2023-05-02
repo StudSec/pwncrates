@@ -6,8 +6,6 @@ from flask import render_template
 from flask_login import current_user, login_required
 import webapp.database as db
 from webapp.helpers import render_markdown
-import markdown
-import sys
 
 
 # Home page
