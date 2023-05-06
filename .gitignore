@@ -1,5 +1,8 @@
 # Project specific files
 *.db
+data/challenges/
+data/config.py
+data/.git-credentials
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
