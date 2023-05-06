@@ -22,14 +22,15 @@ CREATE TABLE solves (
 
 CREATE TABLE challenges (
     id INTEGER PRIMARY KEY,
-    name VARCHAR(128),
+    name VARCHAR(128) UNIQUE,    -- challenge names have to be unique, likely not an issue but if it is we need to update the git hook in databases.py
     description VARCHAR(2048),
     points INTEGER,
     category VARCHAR(64),
     difficulty INTEGER,
     subcategory VARCHAR(64),
     flag VARCHAR(128),
-    solves INTEGER DEFAULT 0
+    solves INTEGER DEFAULT 0,
+    url VARCHAR(128) DEFAULT NULL
 );
 
 CREATE TABLE writeups(
@@ -58,7 +59,7 @@ VALUES
     ("test_challenge_hard", "A hard PWN challenge", 600, "pwn", 3, "KSLR", "CTF{Hard_Challenge_Pwn}"),
     ("test_challenge_medium", "A medium PWN challenge", 200, "pwn", 2, "KSLR", "CTF{Medium_Challenge_Pwn}"),
     ("test_challenge_easy", "An easy PWN challenge", 50, "pwn", 2, "BoF", "CTF{Easy_Challenge_Pwn"),
-    ("test_challenge_easy_web", "An easy WEB challenge", 50, "web", 2, "sql", "CTF{Easy_Challenge_Web");
+    ("test_challenge_easy_web", "An easy WEB challenge", 50, "Web", 2, "sql", "CTF{Easy_Challenge_Web");
 
 INSERT INTO writeups
     (challenge_id, user_id, file_name)

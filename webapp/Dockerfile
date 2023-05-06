@@ -1,5 +1,7 @@
 FROM python:3.8-slim-buster
 
+RUN apt-get update && apt-get install git zip --assume-yes
+
 RUN mkdir -p webapp
 WORKDIR webapp
 

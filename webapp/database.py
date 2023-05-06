@@ -3,9 +3,12 @@ This file serves as the primary interface between the database and the rest of t
 
 Sticking to this convention allows us to easily modify or switch the database without performing shotgun surgery.
 """
+from webapp.helpers import *
 import sqlite3
 import time
 import os
+
+import sys
 
 
 def get_users():
@@ -162,7 +165,35 @@ def initialize_database():
     conn.commit()
 
 
+def update_or_create_challenge(path):
+    # Get information
+    category, name, _ = path.split("/", 2)
+
+    # Specify path to start in git directory
+    challenge_data = parse_markdown_challenge("challenges/Challenges/" + path)
+
+    if challenge_data == {}:
+        return
+
+    difficulties = {
+        "easy": 1,
+        "medium": 2,
+        "hard": 3
+    }
+
+    difficulty = difficulties[challenge_data["difficulty"].lower()]
+
+    cursor = conn.execute('INSERT OR REPLACE INTO challenges '
+                          '(name, description, points, category, difficulty, subcategory, flag, url) '
+                          'values (?, ?, ?, ?, ?, ?, ?, ?);'
+                          , (name, challenge_data["description"], challenge_data["points"], category,
+                             difficulty, challenge_data["subcategory"], challenge_data["flag"], challenge_data["url"]))
+    conn.commit()
+    cursor.close()
+
+
 # Is this unsafe with regards to multithreading?
 conn = sqlite3.connect('./db/pwncrates.db', check_same_thread=False)
 if os.path.getsize("./db/pwncrates.db") == 0:
     initialize_database()
+
