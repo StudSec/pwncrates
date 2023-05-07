@@ -75,10 +75,17 @@ def get_challenges(category, difficulty="hard"):
                           (category, difficulty))
     results = {}
     for (user_id, name, description, points, subcategory) in cursor.fetchall():
+        handout_file = get_handout_name(category, name)
         if subcategory in results.keys():
-            results[subcategory].append((user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points))
+            results[subcategory].append((
+                user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points,
+                handout_file if os.path.exists("static/handouts/" + handout_file) else ""
+            ))
         else:
-            results[subcategory] = [(user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points)]
+            results[subcategory] = [(
+                user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points,
+                handout_file if os.path.exists("static/handouts/" + handout_file) else ""
+            )]
     cursor.close()
 
     return results

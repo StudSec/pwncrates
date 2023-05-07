@@ -42,23 +42,14 @@ def parse_markdown_challenge(path):
         print(f"{path} doesn't contain all required challenge information, skipping")
         return {}
 
-    print(f"{path} imported!")
-
     return ret
-
-
-# Iterate through main README.md, return list of paths
-def parse_markdown_overview(path):
-    pass
 
 
 # Create challenge zip in the static folder sha1(challenge_name + category).zip
 def create_challenge_handouts(path):
     category, name, _ = path.split("/", 2)
-    zip_file = hashlib.sha1()
-    zip_file.update((category+name).encode())
     # Replaces existing zip
-    subprocess.run(['zip', '-FSr', f'static/handouts/{zip_file.hexdigest()}.zip',
+    subprocess.run(['zip', '-FSr', f'static/handouts/{get_handout_name(category, name)}',
                     f'challenges/Challenges/{category}/{name}/Handout'], stdout=subprocess.DEVNULL)
 
 
@@ -70,3 +61,8 @@ def isolate_markdown_category(lines, header):
             return lines[lines.index(header) + 1:index]
         index += 1
 
+
+def get_handout_name(category, name):
+    zip_file = hashlib.sha1()
+    zip_file.update((category + name).encode())
+    return f"{zip_file.hexdigest()}.zip"

@@ -1,6 +1,8 @@
 """"
 This file contains all functionality surrounding the git
 """
+import os.path
+
 from webapp.helpers import *
 import webapp.database as db
 import threading
@@ -29,13 +31,20 @@ def update_challenges_from_git():
 
     # We need to keep track of challenges we've already updated for handouts. A single change might update
     # multiple files, doing this allows us to batch them. Only handout changes are batched.
-    to_update_challenges = []
+    updated_challenges = []
     for file in changed_files:
         try:
             if "README.md" == file.split("/")[2]:
                 db.update_or_create_challenge(file)
-            if "Handout" == file.split("/")[2] and file not in to_update_challenges:
-                to_update_challenges.append(file)
+
+                # Could be the challenge wasn't yet imported, update handout if it doesn't already exist
+                if os.path.exists("./challenges/Challenges/" + file[:-9] + "Handouts") and \
+                        not os.path.exists(f"static/handouts/{get_handout_name(file.split('/')[0], file.split('/')[1])}"):
+                    updated_challenges.append(file)
+                    create_challenge_handouts(file)
+
+            if "Handout" == file.split("/")[2] and file not in updated_challenges:
+                updated_challenges.append(file)
                 create_challenge_handouts(file)
         except IndexError:
             pass
@@ -63,8 +72,12 @@ def init_git():
         matches = re.findall(r"]\((.*?)\)", f.read())
         for challenge in matches:
             if challenge.endswith("README.md"):
+                challenge = challenge.replace("%20", " ").replace("./", "")
                 # We have to account for url encoding, fortunately the only case for this is the space character
-                db.update_or_create_challenge(challenge.replace("%20", " ").replace("./", ""))
+                db.update_or_create_challenge(challenge)
+
+                if os.path.exists("./challenges/Challenges/" + challenge[:-9] + "Handout"):
+                    create_challenge_handouts(challenge)
             else:
                 print("Invalid challenge:", challenge)
 
@@ -76,6 +89,7 @@ def update_git_loop():
 
 
 init_git()
+update_challenges_from_git()
 thread = threading.Thread(target=update_git_loop)
 thread.daemon = True
 thread.start()
