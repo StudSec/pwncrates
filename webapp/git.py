@@ -31,11 +31,14 @@ def update_challenges_from_git():
     # multiple files, doing this allows us to batch them. Only handout changes are batched.
     to_update_challenges = []
     for file in changed_files:
-        if "README.md" == file.split("/")[2]:
-            db.update_or_create_challenge(file)
-        if "Handout" == file.split("/")[2] and file not in to_update_challenges:
-            to_update_challenges.append(file)
-            create_challenge_handouts(file)
+        try:
+            if "README.md" == file.split("/")[2]:
+                db.update_or_create_challenge(file)
+            if "Handout" == file.split("/")[2] and file not in to_update_challenges:
+                to_update_challenges.append(file)
+                create_challenge_handouts(file)
+        except IndexError:
+            pass
 
 
 def git_update():
