@@ -2,7 +2,9 @@
 {% block title %}pwncrates - Challenges{% endblock %}
 
 {% block content %}
+    <div class="row">
     {% for category in categories %}
+        <div class="col-sm-3 mb-3">
     <div class="card" style="width: 18rem;">
       <img src="https://picsum.photos/536/354" class="card-img-top">
       <div class="card-body">
@@ -11,5 +13,7 @@
         <a href="{{ url_for('challenges') + '/' + category }}" class="btn btn-primary">Go to category</a>
       </div>
     </div>
+        </div>
     {% endfor %}
+    </div>
 {% endblock %}
