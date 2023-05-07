@@ -9,7 +9,7 @@
               <li class="list-group-item">
                   <h4>{{name}} - {{points}}</h4>
                   <p>
-                      {{description}}
+                      {{description | safe}}
                   </p>
                   {% if id in solves %}
                     <p>

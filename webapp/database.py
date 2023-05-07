@@ -4,6 +4,7 @@ This file serves as the primary interface between the database and the rest of t
 Sticking to this convention allows us to easily modify or switch the database without performing shotgun surgery.
 """
 from webapp.helpers import *
+import cmarkgfm
 import sqlite3
 import time
 import os
@@ -75,9 +76,9 @@ def get_challenges(category, difficulty="hard"):
     results = {}
     for (user_id, name, description, points, subcategory) in cursor.fetchall():
         if subcategory in results.keys():
-            results[subcategory].append((user_id, name, description, points))
+            results[subcategory].append((user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points))
         else:
-            results[subcategory] = [(user_id, name, description, points)]
+            results[subcategory] = [(user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points)]
     cursor.close()
 
     return results

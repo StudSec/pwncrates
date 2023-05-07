@@ -58,6 +58,7 @@ def init_git():
     subprocess.run(['git', '--no-pager', 'config', 'credential.helper', 'store'], cwd="challenges/Challenges",
                    stdout=subprocess.DEVNULL)
 
+    print("Importing challenges...")
     with open("./challenges/Challenges/README.md") as f:
         matches = re.findall(r"]\((.*?)\)", f.read())
         for challenge in matches:
