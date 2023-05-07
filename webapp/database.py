@@ -70,20 +70,22 @@ def get_challenges(category, difficulty="hard"):
     # Translate the difficulty to int
     difficulty = difficulties[difficulty.lower()]
 
-    cursor = conn.execute('SELECT id, name, description, points, subcategory FROM challenges '
+    cursor = conn.execute('SELECT id, name, description, points, subcategory, url, solves FROM challenges '
                           'WHERE category = ? AND difficulty <= ?',
                           (category, difficulty))
     results = {}
-    for (user_id, name, description, points, subcategory) in cursor.fetchall():
+    for (user_id, name, description, points, subcategory, url, solves) in cursor.fetchall():
         handout_file = get_handout_name(category, name)
+        print("url", url)
+        print("solves", solves)
         if subcategory in results.keys():
             results[subcategory].append((
-                user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points,
+                user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves,
                 handout_file if os.path.exists("static/handouts/" + handout_file) else ""
             ))
         else:
             results[subcategory] = [(
-                user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points,
+                user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves,
                 handout_file if os.path.exists("static/handouts/" + handout_file) else ""
             )]
     cursor.close()
