@@ -56,7 +56,6 @@ For more information see
 https://git-scm.com/docs/git-credential-store
 
 ## TODO
-- Add git integration (fetch challenges from repo)
 - Add challenge handouts
 - Add javascript to flag submissions to update page.
 - Add by-university scoreboard
