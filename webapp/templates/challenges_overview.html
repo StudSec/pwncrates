@@ -3,13 +3,13 @@
 
 {% block content %}
     <div class="row">
-    {% for category in categories %}
+    {% for category, description in categories.items() %}
         <div class="col-sm-3 mb-3">
     <div class="card" style="width: 18rem;">
       <img src="https://picsum.photos/536/354" class="card-img-top">
       <div class="card-body">
-        <h5 class="card-title">{{category}}</h5>
-        <p class="card-text">Example category description</p>
+        <h5 class="card-title">{{ category }}</h5>
+        <p class="card-text">{{ description | safe }}</p>
         <a href="{{ url_for('challenges') + '/' + category }}" class="btn btn-primary">Go to category</a>
       </div>
     </div>

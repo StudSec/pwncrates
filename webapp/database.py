@@ -76,8 +76,6 @@ def get_challenges(category, difficulty="hard"):
     results = {}
     for (user_id, name, description, points, subcategory, url, solves) in cursor.fetchall():
         handout_file = get_handout_name(category, name)
-        print("url", url)
-        print("solves", solves)
         if subcategory in results.keys():
             results[subcategory].append((
                 user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves,
@@ -94,11 +92,25 @@ def get_challenges(category, difficulty="hard"):
 
 
 def get_categories():
+    ret = {}
+
     cursor = conn.execute('SELECT DISTINCT category FROM challenges;')
     results = [category[0] for category in cursor.fetchall()]
     cursor.close()
 
-    return results
+    cursor = conn.cursor()
+    for category in results:
+        cursor.execute('SELECT description FROM categories WHERE name = ? AND parent = ? LIMIT 1;', (category, category))
+        description = cursor.fetchone()
+        if description:
+            ret[category] = cmarkgfm.github_flavored_markdown_to_html(description[0])
+        else:
+            ret[category] = ""
+    cursor.close()
+
+    print("DEBUG: returning from get_categories - ", ret, file=sys.stderr)
+
+    return ret
 
 
 def submit_flag(challenge_id, flag, user_id):

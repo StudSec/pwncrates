@@ -59,14 +59,14 @@ def parse_markdown_category(path):
     subcategories = [line for line in lines if "#### " in line]
     try:
         for category in subcategories:
-            ret[category[5:]] = "\n".join(isolate_markdown_category(lines, category))
+            ret[category[5:].strip()] = "\n".join(isolate_markdown_category(lines, category))
 
         # Get main category description
-        ret[lines[0][3:]] = "\n".join(isolate_markdown_category(lines, lines[0]))
+        ret[lines[0][3:].strip()] = "\n".join(isolate_markdown_category(lines, lines[0]))
     except ValueError:
         pass
 
-    return ret, lines[0][3:]
+    return ret, lines[0][3:].strip()
 
 
 # Create challenge zip in the static folder sha1(challenge_name + category).zip
