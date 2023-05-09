@@ -3,7 +3,20 @@ A CTF framework with a focus on education.
 
 
 ## Installation
-To install this application simply run
+Firstly, you need to include the challenges in `data/challenges`
+The repository should have the name `Challenges`.
+
+For example
+```commandline
+git clone https://github.com/StudSec/Challenges-Examples.git 
+mv Challenges-Examples Challenges
+```
+
+*Note: the git repository will automatically be updated
+once a minute. If this is a private repository you can include
+a `.git-credentials` file in `data/`*
+
+Then run pwncrates using
 ```commandline
 docker-compose up
 ```

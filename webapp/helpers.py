@@ -28,6 +28,9 @@ def parse_markdown_challenge(path):
         ret["description"] = ''.join(isolate_markdown_category(lines, "## Description\n"))
         challenge_information = isolate_markdown_category(lines, "## Challenge information\n")
 
+        if not challenge_information:
+            raise ValueError
+
         for line in challenge_information:
             try:
                 key = line.split("|")[1].strip().lower()
@@ -36,7 +39,7 @@ def parse_markdown_challenge(path):
             # We want to skip over the ------ line
             if key != len(key) * key[0]:
                 ret[key] = line.split("|")[2].strip()
-    except ValueError as e:
+    except ValueError:
         pass
     if not all(x in ret.keys() for x in ["description", "flag", "points", "subcategory", "difficulty"]):
         print(f"{path} doesn't contain all required challenge information, skipping")
@@ -60,6 +63,9 @@ def isolate_markdown_category(lines, header):
         if line.startswith("##"):
             return lines[lines.index(header) + 1:index]
         index += 1
+
+    # Reached end of file
+    return lines[lines.index(header) + 1:]
 
 
 def get_handout_name(category, name):
