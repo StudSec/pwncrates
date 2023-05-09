@@ -34,6 +34,8 @@ def update_challenges_from_git():
     updated_challenges = []
     for file in changed_files:
         try:
+            if "README.md" == file.split("/")[1]:
+                db.update_or_create_category(file)
             if "README.md" == file.split("/")[2]:
                 db.update_or_create_challenge(file)
 
@@ -80,6 +82,12 @@ def init_git():
                     create_challenge_handouts(challenge)
             else:
                 print("Invalid challenge:", challenge)
+
+    print("Importing categories...")
+    for category in [x for x in os.listdir("./challenges/Challenges/")
+                     if os.path.isdir(f"./challenges/Challenges/{x}")]:
+        if os.path.exists(f"./challenges/Challenges/{category}/README.md"):
+            db.update_or_create_category(f"./challenges/Challenges/{category}/README.md")
 
 
 def update_git_loop():

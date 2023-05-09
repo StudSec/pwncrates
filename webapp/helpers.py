@@ -48,6 +48,27 @@ def parse_markdown_challenge(path):
     return ret
 
 
+# Parses category markdown, extracts any subcategories and descriptions
+# Returns a dict of all (sub)category names and descriptions and the parent category as a string
+def parse_markdown_category(path):
+    ret = {}
+
+    with open(path, "r") as f:
+        lines = f.readlines()
+
+    subcategories = [line for line in lines if "#### " in line]
+    try:
+        for category in subcategories:
+            ret[category[5:]] = "\n".join(isolate_markdown_category(lines, category))
+
+        # Get main category description
+        ret[lines[0][3:]] = "\n".join(isolate_markdown_category(lines, lines[0]))
+    except ValueError:
+        pass
+
+    return ret, lines[0][3:]
+
+
 # Create challenge zip in the static folder sha1(challenge_name + category).zip
 def create_challenge_handouts(path):
     category, name, _ = path.split("/", 2)

@@ -40,6 +40,15 @@ CREATE TABLE writeups(
     file_name VARCHAR(256)
 );
 
+CREATE TABLE categories(
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(128),
+    description VARCHAR(1024) DEFAULT NULL,
+    parent INT DEFAULT NULL,     -- The parent category, if not a subcategory will be the same as name --
+    CONSTRAINT unique_constraint UNIQUE (name, parent)
+);
+
+
 -- Populate test data --
 INSERT INTO universities
     (name)

@@ -43,6 +43,9 @@ This means any configs, database data, user data, should reside in that. If
 a user would like to backup the entire application it should be a simple as
 backing up the data folder.
 
+If you'd like to manually look at the database you can explore the `.db` file
+in data. One tool for this is https://inloop.github.io/sqlite-viewer/
+
 ## Data
 The `data` folder contains all data for pwncrates. It should contain the
 following setup

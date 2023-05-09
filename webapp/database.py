@@ -202,6 +202,17 @@ def update_or_create_challenge(path):
     cursor.close()
 
 
+def update_or_create_category(path):
+    categories, parent = parse_markdown_category(path)
+
+    cursor = conn.cursor()
+    for category in categories:
+        cursor.execute('INSERT OR REPLACE INTO categories (name, description, parent) values (?, ?, ?);',
+                       (category, categories[category], parent))
+    conn.commit()
+    cursor.close()
+
+
 # Is this unsafe with regards to multithreading?
 conn = sqlite3.connect('./db/pwncrates.db', check_same_thread=False)
 if os.path.getsize("./db/pwncrates.db") == 0:
