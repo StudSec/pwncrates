@@ -10,6 +10,7 @@ class User(UserMixin):
     def __init__(self, user_id, username):
         self.id = user_id
         self.username = username
+        self.university = db.get_university(user_id)
 
     @staticmethod
     def get(user_id):

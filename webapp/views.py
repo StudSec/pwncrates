@@ -6,7 +6,7 @@ from flask import render_template
 from flask_login import current_user, login_required
 import webapp.database as db
 from webapp.helpers import render_markdown
-
+from webapp.models import User
 
 # Home page
 @app.route('/')
@@ -71,6 +71,17 @@ def writeups(challenge_id, writeup_id=None):
 @app.route('/scoreboard')
 def scoreboard():
     return render_template("scoreboard.html", users=db.get_scoreboard())
+
+
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template("profile.html")
+
+
+@app.route('/profile/<int:user_id>')
+def public_profile(user_id):
+    return render_template("profile.html", current_user=User.get(user_id))
 
 
 @app.errorhandler(404)

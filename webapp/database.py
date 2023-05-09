@@ -31,6 +31,17 @@ def get_username(user_id) -> str:
     return results[0]
 
 
+def get_university(user_id):
+    cursor = conn.execute('SELECT U.name FROM universities U, users A WHERE A.id = ? AND A.university_id = U.id LIMIT 1', (user_id,))
+    results = [user_id[0] for user_id in cursor.fetchall()]
+    cursor.close()
+
+    if len(results) == 0:
+        return ""
+
+    return results[0]
+
+
 def get_password(user_name) -> str:
     cursor = conn.execute('SELECT password FROM users WHERE name = ? LIMIT 1', (user_name,))
     results = [password_hash[0] for password_hash in cursor.fetchall()]
@@ -107,8 +118,6 @@ def get_categories():
         else:
             ret[category] = ""
     cursor.close()
-
-    print("DEBUG: returning from get_categories - ", ret, file=sys.stderr)
 
     return ret
 

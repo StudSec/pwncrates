@@ -74,10 +74,9 @@ https://git-scm.com/docs/git-credential-store
 ## TODO
 - Add javascript to flag submissions to update page.
 - Add by-university scoreboard
-- Add descriptions for (sub)categories
 - Add links to easy challenges -> make it easier to get started
 - Add challenge difficulty filter
 - Add a way to add writeups
-- Add profile page + optional fields (universities, links, etc)
+- Add profile page + optional fields (universities, links, etc) in register
 - Add discord auth
 - Migrate database
