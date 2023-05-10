@@ -14,3 +14,8 @@ html {
   bottom: 0;
   width: 100%;
 }
+
+/* This makes challenge titles light up on hover */
+.challenge_name:hover{
+background: #03fcfc; /* light blue */
+}
