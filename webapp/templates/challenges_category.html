@@ -25,14 +25,17 @@
                     <p>
                         Solved! <a href="{{ url_for('writeups', challenge_id=id ) }}">View writeups</a>
                     </p>
-                  <!-- TODO: check if logged in -->
-                  {% else %}
-                      <form method="POST" action="/api/challenges/submit/{{id}}">
+                  {% elif current_user.is_authenticated %}
+                    <form method="POST" action="/api/challenges/submit/{{id}}">
                           <div class="input-group mb-3">
                             <input type="text" name="flag" class="form-control" placeholder="Submit flag" id="{{id}}">
                             <button class="btn btn-primary" type="submit" id="button-addon2">Submit</button>
                           </div>
                     </form>
+                  {% else %}
+                      <p>
+                          <i>You must be logged in to submit flags</i>
+                      </p>
                   {% endif %}
               </li>
         {% endfor %}
