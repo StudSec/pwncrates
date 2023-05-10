@@ -64,12 +64,23 @@ def get_id(user_name) -> str:
     return results[0]
 
 
-def register_user(user_name, password):
-    cursor = conn.execute('INSERT INTO users (name, password) VALUES (?, ?)', (user_name, password))
+def register_user(user_name, password, email):
+    cursor = conn.execute('INSERT INTO users (name, password, email) VALUES (?, ?, ?)', (user_name, password, email))
     conn.commit()
     cursor.close()
-
     return
+
+
+def get_user_information(user_id):
+    cursor = conn.execute('SELECT U.name FROM universities U, users A WHERE A.id = ? AND A.university_id = U.id LIMIT 1', (user_id,))
+    results = [user_id[0] for user_id in cursor.fetchall()]
+    cursor.close()
+
+    if len(results) == 0:
+        return ""
+
+    return results[0]
+    pass
 
 
 def get_challenges(category, difficulty="hard"):

@@ -26,3 +26,6 @@ class User(UserMixin):
     @property
     def is_authenticated(self):
         return True
+
+    def get_user_information(self):
+        pass

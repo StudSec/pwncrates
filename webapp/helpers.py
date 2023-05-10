@@ -62,11 +62,11 @@ def parse_markdown_category(path):
             ret[category[5:].strip()] = "\n".join(isolate_markdown_category(lines, category))
 
         # Get main category description
-        ret[lines[0][3:].strip()] = "\n".join(isolate_markdown_category(lines, lines[0]))
+        ret[path.split("/")[-2]] = "\n".join(isolate_markdown_category(lines, lines[0]))
     except ValueError:
         pass
 
-    return ret, lines[0][3:].strip()
+    return ret, path.split("/")[-2]
 
 
 # Create challenge zip in the static folder sha1(challenge_name + category).zip

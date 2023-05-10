@@ -4,7 +4,10 @@ CREATE TABLE users (
     id INTEGER PRIMARY KEY,
     name VARCHAR(64),
     password VARCHAR(64),
-    university_id INTEGER,
+    email VARCHAR(64) DEFAULT NULL,
+    university_id INTEGER DEFAULT NULL,
+    discord_id VARCHAR(18) DEFAULT NULL,
+    website VARCHAR(64) DEFAULT NULL,
     points INTEGER DEFAULT 0
 );
 

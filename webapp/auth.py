@@ -11,7 +11,6 @@ from webapp import app
 
 import bcrypt
 
-
 login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
@@ -49,8 +48,13 @@ def register():
         if db.get_id(request.form["username"]):
             return render_template('register.html', error='User already exists.')
 
-        db.register_user(request.form["username"], bcrypt.hashpw(request.form["password"].encode(),
-                                                                 bcrypt.gensalt()).decode('ascii'))
+        try:
+            db.register_user(request.form["username"], bcrypt.hashpw(request.form["password"].encode(),
+                                                                     bcrypt.gensalt()).decode('ascii'),
+                             request.form["email"].encode())
+        except KeyError:
+            return "Missing parameters"
+
         user = User(db.get_id(request.form["username"]), request.form["username"])
         login_user(user)
         return redirect(url_for('challenges'))
