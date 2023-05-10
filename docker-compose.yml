@@ -13,3 +13,5 @@ services:
       - ./data/db:/webapp/db
       - ./data/challenges/:/tmp/challenges:ro
       - ./data/.git-credentials:/root/.git-credentials:ro
+      - ./webapp/templates/:/webapp/templates:ro
+      - ./webapp/static/:/webapp/static

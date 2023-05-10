@@ -2,6 +2,7 @@
 *.db
 data/challenges/
 data/.git-credentials
+webapp/static/handouts/*.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
