@@ -4,6 +4,10 @@
 {% block content %}
         <ul class="list-group">
             <li class="list-group-item active">{{ challenge_name }}</li>
+            <form method="POST" action="/writeups/{{challenge_id}}" enctype="multipart/form-data">
+                <input type="file" name="file">
+                <input type="submit" value="Upload">
+            </form>
         {% for author, writeup_id in writeups %}
               <li class="list-group-item">
                   <a href="{{ url_for('writeups', challenge_id=challenge_id, writeup_id=writeup_id) }}">{{ author }}</a>

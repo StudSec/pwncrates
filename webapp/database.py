@@ -32,7 +32,8 @@ def get_username(user_id) -> str:
 
 
 def get_university(user_id):
-    cursor = conn.execute('SELECT U.name FROM universities U, users A WHERE A.id = ? AND A.university_id = U.id LIMIT 1', (user_id,))
+    cursor = conn.execute(
+        'SELECT U.name FROM universities U, users A WHERE A.id = ? AND A.university_id = U.id LIMIT 1', (user_id,))
     results = [user_id[0] for user_id in cursor.fetchall()]
     cursor.close()
 
@@ -71,8 +72,22 @@ def register_user(user_name, password, email):
     return
 
 
+def create_or_update_writeup(challenge_id, user_id, file_name):
+    cursor = conn.cursor()
+
+    cursor = cursor.execute('INSERT OR IGNORE INTO writeups (challenge_id, user_id, file_name) VALUES (?, ?, ?);',
+                            (challenge_id, user_id, file_name))
+    cursor = cursor.execute('UPDATE writeups SET file_name = ? WHERE challenge_id = ? AND user_id = ?;',
+                            (file_name, challenge_id, user_id))
+
+    conn.commit()
+    cursor.close()
+    return
+
+
 def get_user_information(user_id):
-    cursor = conn.execute('SELECT U.name FROM universities U, users A WHERE A.id = ? AND A.university_id = U.id LIMIT 1', (user_id,))
+    cursor = conn.execute(
+        'SELECT U.name FROM universities U, users A WHERE A.id = ? AND A.university_id = U.id LIMIT 1', (user_id,))
     results = [user_id[0] for user_id in cursor.fetchall()]
     cursor.close()
 
@@ -127,7 +142,8 @@ def get_categories():
 
     cursor = conn.cursor()
     for category in results:
-        cursor.execute('SELECT description FROM categories WHERE name = ? AND parent = ? LIMIT 1;', (category, category))
+        cursor.execute('SELECT description FROM categories WHERE name = ? AND parent = ? LIMIT 1;',
+                       (category, category))
         description = cursor.fetchone()
         if description:
             ret[category] = cmarkgfm.github_flavored_markdown_to_html(description[0])
@@ -229,12 +245,20 @@ def update_or_create_challenge(path):
     }
 
     difficulty = difficulties[challenge_data["difficulty"].lower()]
+    cursor = conn.cursor()
 
-    cursor = conn.execute('INSERT OR REPLACE INTO challenges '
-                          '(name, description, points, category, difficulty, subcategory, flag, url) '
-                          'values (?, ?, ?, ?, ?, ?, ?, ?);'
-                          , (name, challenge_data["description"], challenge_data["points"], category,
-                             difficulty, challenge_data["subcategory"], challenge_data["flag"], challenge_data["url"]))
+    cursor.execute('INSERT OR IGNORE INTO challenges '
+                   '(name, description, points, category, difficulty, subcategory, flag, url) '
+                   'values (?, ?, ?, ?, ?, ?, ?, ?);'
+                   , (name, challenge_data["description"], challenge_data["points"], category,
+                      difficulty, challenge_data["subcategory"], challenge_data["flag"], challenge_data["url"]
+                      ))
+
+    cursor.execute('UPDATE challenges SET description = ?, points = ?, category = ?, difficulty = ?, '
+                   'subcategory = ?, flag = ?, url = ? WHERE name = ?',
+                   (challenge_data["description"], challenge_data["points"], category, difficulty,
+                    challenge_data["subcategory"], challenge_data["flag"], challenge_data["url"], name))
+
     conn.commit()
     cursor.close()
 
@@ -244,8 +268,10 @@ def update_or_create_category(path):
 
     cursor = conn.cursor()
     for category in categories:
-        cursor.execute('INSERT OR REPLACE INTO categories (name, description, parent) values (?, ?, ?);',
+        cursor.execute('INSERT OR IGNORE INTO categories (name, description, parent) values (?, ?, ?);',
                        (category, categories[category], parent))
+        cursor.execute('UPDATE categories SET description = ? WHERE name = ?', (categories[category], category))
+
     conn.commit()
     cursor.close()
 
@@ -254,4 +280,3 @@ def update_or_create_category(path):
 conn = sqlite3.connect('./db/pwncrates.db', check_same_thread=False)
 if os.path.getsize("./db/pwncrates.db") == 0:
     initialize_database()
-

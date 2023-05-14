@@ -9,7 +9,7 @@ services:
       - "5000:5000"
     volumes:
       - ./data/pages:/webapp/pages:ro
-      - ./data/writeups:/webapp/writeups:ro
+      - ./data/writeups:/webapp/writeups
       - ./data/db:/webapp/db
       - ./data/challenges/:/tmp/challenges:ro
       - ./data/.git-credentials:/root/.git-credentials:ro

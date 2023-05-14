@@ -1,26 +1,27 @@
 """
 This file handles all non-API and non-auth routes
 """
+import os
+
 from webapp import app
-from flask import render_template
+from flask import render_template, request
 from flask_login import current_user, login_required
 import webapp.database as db
 from webapp.helpers import render_markdown
 from webapp.models import User
+import random
 
-# Home page
+
 @app.route('/')
 def home():
     return render_template("home.html")
 
 
-# Rule page
 @app.route('/rules')
 def rules():
     return render_markdown("./pages/rules.md")
 
 
-# Contributing page
 @app.route('/contributing')
 def contributing():
     return render_markdown("./pages/contributing.md")
@@ -66,6 +67,24 @@ def writeups(challenge_id, writeup_id=None):
     assert(file_name[0].isalnum())
 
     return render_markdown(f"./writeups/{challenge_id}/{file_name[0]}.md")
+
+
+@app.route('/writeups/<int:challenge_id>', methods=["POST"])
+@login_required
+def upload_writeups(challenge_id):
+    file = request.files['file']
+
+    filename = hex(random.getrandbits(128))[2:]
+
+    while f"{filename}.md" in os.listdir(f"writeups/{str(challenge_id)}"):
+        filename = hex(random.getrandbits(16))[2:]
+
+    if file:
+        db.create_or_update_writeup(challenge_id, current_user.id, filename)
+        file.save(f'writeups/{str(challenge_id)}/{filename}.md')
+        return 'OK!'
+    else:
+        return 'No file selected!'
 
 
 @app.route('/scoreboard')

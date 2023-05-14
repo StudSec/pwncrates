@@ -40,7 +40,8 @@ CREATE TABLE writeups(
     id INTEGER PRIMARY KEY,
     challenge_id INTEGER,
     user_id INTEGER,
-    file_name VARCHAR(256)
+    file_name VARCHAR(256),
+    CONSTRAINT unique_constraint UNIQUE (challenge_id, user_id)
 );
 
 CREATE TABLE categories(
