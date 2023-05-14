@@ -92,25 +92,30 @@ def get_challenges(category, difficulty="hard"):
     # Translate the difficulty to int
     difficulty = difficulties[difficulty.lower()]
 
-    cursor = conn.execute('SELECT id, name, description, points, subcategory, url, solves FROM challenges '
-                          'WHERE category = ? AND difficulty <= ?',
+    cursor = conn.execute('SELECT B.description, A.id, A.name, A.description, A.points, A.subcategory, A.url, '
+                          'A.solves FROM challenges A, categories B  WHERE A.category = ? AND A.difficulty <= ? '
+                          'AND A.subcategory = B.name AND B.parent = A.category',
                           (category, difficulty))
     results = {}
-    for (user_id, name, description, points, subcategory, url, solves) in cursor.fetchall():
+    for (category_description, user_id, name, description, points, subcategory, url, solves) in cursor.fetchall():
         handout_file = get_handout_name(category, name)
         if subcategory in results.keys():
-            results[subcategory].append((
+            results[subcategory][1].append((
                 user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves,
                 handout_file if os.path.exists("static/handouts/" + handout_file) else ""
             ))
         else:
-            results[subcategory] = [(
+            results[subcategory] = (category_description, [(
                 user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves,
                 handout_file if os.path.exists("static/handouts/" + handout_file) else ""
-            )]
+            )])
     cursor.close()
 
-    return results
+    ret = []
+    for i in results:
+        ret.append((i, results[i][0], results[i][1]))
+
+    return ret
 
 
 def get_categories():
