@@ -7,14 +7,25 @@ document.addEventListener('DOMContentLoaded', () => {
             let form = handleSubmit.target;
             let url = form.action;
             try {
-                let formData = new FormData(form);
-                let response = await fetch({url, formData});
-                if (response.json() == 'OK') {
-                    form.children[0].children[0].style.backgroundColor = 'lightgreen';
-                }
-                else {
+                let response = await fetch(url, {
+                    method: "POST",
+                    credentials: 'include',
+                    referrer: 'http://localhost:5000/challenges/pwn',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json, text/html',
+                    },
+                    body: 'flag=' + form.children[0].children[0].value,
+                });
+
+                response.json().then(post => {
+                    if (post.status === 'OK') {
+                        form.children[0].children[0].style.backgroundColor = 'lightgreen';
+                    }
+                    else {
                     form.children[0].children[0].style.backgroundColor = '#ff4040';
-                }                
+                    }  
+                });              
             }
             catch (error) {
                 console.error(error);
