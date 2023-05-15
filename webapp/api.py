@@ -7,17 +7,21 @@ from flask_login import login_required, current_user
 import webapp.database as db
 from webapp import app
 from flask import request
+from flask import Response
+import json
 # General API file
 
 
 @app.route('/api/get_users')
 def api_get_users():
-    return {user_id: username for user_id, username in enumerate(db.get_users())}
+    return Response(json.dumps({user_id: username for user_id, username in enumerate(db.get_users())}),
+                    mimetype="application/json")
 
 
 @app.route('/api/challenges/categories')
 def api_get_categories():
-    return db.get_categories()
+    return Response(json.dumps(db.get_categories()),
+                    mimetype="application/json")
 
 
 @app.route('/api/challenges/<category>')
@@ -41,13 +45,15 @@ def api_get_challenges(category):
             ]
         }
 
-    return ret
+    return Response(json.dumps(ret),
+                    mimetype="application/json")
 
 
 @app.route('/api/challenges/submit/<challenge_id>', methods=["POST"])
 @login_required
 def api_submit_challenge(challenge_id):
     try:
-        return db.submit_flag(challenge_id, request.form['flag'], current_user.id)
+        return Response(json.dumps(db.submit_flag(challenge_id, request.form['flag'], current_user.id)),
+                        mimetype="application/json")
     except KeyError:
         return "Flag missing."
