@@ -2,54 +2,56 @@
 {% block title %}pwncrates - {{category}}{% endblock %}
 
 {% block content %}
-{% for name, subcategory_description, challenges in subcategories %}
-<ul class="list-group mb-1">
-    <li class="list-group-item active">
-        <h4>{{ name }}</h4>
-        <p>{{ subcategory_description }}</p>
-    </li>
-    {% for challenge_id, name, description, points, url, challenge_solves, handout in challenges %}
-    <li class="list-group-item ">
-        <a class="text-reset text-decoration-none" data-bs-toggle="collapse" href="#{{challenge_id}}-info" role="button"
-           aria-expanded="false" aria-controls="{{challenge_id}}-info">
-            <div class="d-flex w-100 justify-content-between challenge_name border">
-                <h4>[{{points}}] {{name}}</h4>
-                <h4>{{challenge_solves}} solves</h4>
-            </div>
-        </a>
-        <div class="collapse" id="{{challenge_id}}-info">
-            <p>
-                {{description | safe}}
-            </p>
-            {% if url != "Null" %}
-            <p>
-                Connection: {{ url }}
-            </p>
-            {% endif %}
-
-            {% if handout != "" %}
-            <a href="{{ url_for('static', filename='handouts/' + handout) }}">Download files</a>
-            {% endif %}
-
-            {% if challenge_id in solves %}
-            <p>
-                Solved! <a href="{{ url_for('writeups', challenge_id=challenge_id ) }}">View writeups</a>
-            </p>
-            {% elif current_user.is_authenticated %}
-            <form method="POST" action="/api/challenges/submit/{{challenge_id}}">
-                <div class="input-group mb-3">
-                    <input type="text" name="flag" class="form-control" placeholder="Submit flag" id="{{challenge_id}}">
-                    <button class="btn btn-primary" type="submit" id="button-addon2">Submit</button>
+<div id="challenge_submission">
+    {% for name, subcategory_description, challenges in subcategories %}
+    <ul class="list-group mb-1">
+        <li class="list-group-item active">
+            <h4>{{ name }}</h4>
+            <p>{{ subcategory_description }}</p>
+        </li>
+        {% for challenge_id, name, description, points, url, challenge_solves, handout in challenges %}
+        <li class="list-group-item ">
+            <a class="text-reset text-decoration-none" data-bs-toggle="collapse" href="#{{challenge_id}}-info" role="button"
+            aria-expanded="false" aria-controls="{{challenge_id}}-info">
+                <div class="d-flex w-100 justify-content-between challenge_name border">
+                    <h4>[{{points}}] {{name}}</h4>
+                    <h4>{{challenge_solves}} solves</h4>
                 </div>
-            </form>
-            {% else %}
-            <p>
-                <i>You must be logged in to submit flags</i>
-            </p>
-            {% endif %}
-        </div>
-    </li>
+            </a>
+            <div class="collapse" id="{{challenge_id}}-info">
+                <p>
+                    {{description | safe}}
+                </p>
+                {% if url != "Null" %}
+                <p>
+                    Connection: {{ url }}
+                </p>
+                {% endif %}
+
+                {% if handout != "" %}
+                <a href="{{ url_for('static', filename='handouts/' + handout) }}">Download files</a>
+                {% endif %}
+
+                {% if challenge_id in solves %}
+                <p>
+                    Solved! <a href="{{ url_for('writeups', challenge_id=challenge_id ) }}">View writeups</a>
+                </p>
+                {% elif current_user.is_authenticated %}
+                <form method="POST" action="/api/challenges/submit/{{challenge_id}}">
+                    <div class="input-group mb-3">
+                        <input type="text" name="flag" class="form-control" placeholder="Submit flag" id="{{challenge_id}}">
+                        <button class="btn btn-primary" type="submit" id="button-addon2">Submit</button>
+                    </div>
+                </form>
+                {% else %}
+                <p>
+                    <i>You must be logged in to submit flags</i>
+                </p>
+                {% endif %}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
     {% endfor %}
-</ul>
-{% endfor %}
+</div>
 {% endblock %}
