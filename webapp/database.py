@@ -14,7 +14,7 @@ import sys
 
 def get_users():
     cursor = conn.execute('SELECT name FROM users')
-    results = [name for name in cursor.fetchall()]
+    results = [name[0] for name in cursor.fetchall()]
     cursor.close()
 
     return results
@@ -175,7 +175,7 @@ def submit_flag(challenge_id, flag, user_id):
 
     cursor.close()
 
-    return ret
+    return {"status": ret}
 
 
 def get_scoreboard():

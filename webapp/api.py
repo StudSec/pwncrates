@@ -20,6 +20,7 @@ def api_get_categories():
     return db.get_categories()
 
 
+# TODO: refactor for JSON + update jinja2 from tuple -> dict
 @app.route('/api/challenges/<category>')
 def api_get_challenges(category):
     return db.get_challenges(category)
@@ -28,4 +29,7 @@ def api_get_challenges(category):
 @app.route('/api/challenges/submit/<challenge_id>', methods=["POST"])
 @login_required
 def api_submit_challenge(challenge_id):
-    return db.submit_flag(challenge_id, request.form['flag'], current_user.id)
+    try:
+        return db.submit_flag(challenge_id, request.form['flag'], current_user.id)
+    except KeyError:
+        return "Flag missing."
