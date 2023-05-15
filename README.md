@@ -73,7 +73,6 @@ https://git-scm.com/docs/git-credential-store
 
 ## TODO
 - Add nginx frontend server
-- Add javascript to flag submissions to update page.
 - Add by-university scoreboard
 - Add links to easy challenges -> make it easier to get started
 - Add challenge difficulty filter
