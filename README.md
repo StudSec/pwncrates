@@ -73,14 +73,17 @@ https://git-scm.com/docs/git-credential-store
 
 ## TODO - backend
 - Add nginx frontend server
-- expand profile page + optional fields (universities, links, etc) in register
+- Add university in register
 - Add discord auth
 - Add password reset
+- Add email confirmation
 - Migrate database
 - Add scoreboard api endpoint
 - Add ctf_id->discord id endpoint
 
 ## TODO - frontend
+- Home screen
+- Cards clickable
 - Add challenge difficulty filter
 - Change color schema
 - Change challenge name box

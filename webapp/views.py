@@ -95,17 +95,6 @@ def scoreboard():
     return render_template("scoreboard.html", users=db.get_scoreboard(), universities=db.get_universities())
 
 
-@app.route('/profile')
-@login_required
-def profile():
-    return render_template("profile.html")
-
-
-@app.route('/profile/<int:user_id>')
-def public_profile(user_id):
-    return render_template("profile.html", current_user=User.get(user_id))
-
-
 @app.errorhandler(404)
 def page_not_found(e):
     # note that we set the 404 status explicitly
