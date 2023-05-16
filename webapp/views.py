@@ -72,6 +72,9 @@ def writeups(challenge_id, writeup_id=None):
 @app.route('/writeups/<int:challenge_id>', methods=["POST"])
 @login_required
 def upload_writeups(challenge_id):
+    if challenge_id not in db.get_solves(current_user.id):
+        return "Unauthorized"
+
     file = request.files['file']
 
     filename = hex(random.getrandbits(128))[2:]
