@@ -82,24 +82,36 @@ https://git-scm.com/docs/git-credential-store
 - Add ctf_id->discord id endpoint
 
 ## TODO - frontend
+#### General
 - Home screen
+- Add github emoji instead of "Github link"
+- Look into copyright emoji -> is it legal?
+- Add favicon
+- Check mobile style
+- Update/make 404 page
+- Make stylized login page
+- Make stylized register page
+- Fix top + bottom bar padding
+
+#### Challenges
 - Cards clickable
 - Add challenge difficulty filter
 - Change color schema
 - Change challenge name box
-- Change transition flag successfull submitted -> view writeups
+- Collapse challenge upon successful solve
+- Reset from bad submission (red -> normal)
+- Change connection string appearance
+- Change transition flag successfully submitted -> view writeups
+
+#### Writeups
 - Change writeup submission text/form
 - Set challenge images
-- Add github emoji instead of "Github link"
-- Look into copyright emoji -> is it legal?
+
+#### Scoreboard
 - Improve scoreboard style
 - Add university logos
 - Fix bug -> university filter selector doesn't reset on reload (but scoreboard does)
 - Migrate in-line javascript to script.js in scoreboard.html
-- Make stylized login page
-- Make stylized register page
-- Add favicon
-- Check mobile style
 
 ## TODO - Challenges
 - Add links to easy challenges -> make it easier to get started
