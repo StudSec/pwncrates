@@ -89,7 +89,7 @@ def upload_writeups(challenge_id):
 
 @app.route('/scoreboard')
 def scoreboard():
-    return render_template("scoreboard.html", users=db.get_scoreboard())
+    return render_template("scoreboard.html", users=db.get_scoreboard(), universities=db.get_universities())
 
 
 @app.route('/profile')

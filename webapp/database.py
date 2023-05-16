@@ -20,6 +20,14 @@ def get_users():
     return results
 
 
+def get_universities():
+    cursor = conn.execute('SELECT id, name FROM universities')
+    results = [university_id for university_id in cursor.fetchall()]
+    cursor.close()
+
+    return results
+
+
 def get_username(user_id) -> str:
     cursor = conn.execute('SELECT name FROM users WHERE id = ? LIMIT 1', (user_id,))
     results = [user_id[0] for user_id in cursor.fetchall()]
@@ -179,7 +187,7 @@ def submit_flag(challenge_id, flag, user_id):
 
 
 def get_scoreboard():
-    cursor = conn.execute('SELECT name, points FROM users ORDER BY points DESC;')
+    cursor = conn.execute('SELECT name, university_id, points FROM users ORDER BY points DESC;')
     results = [user for user in cursor.fetchall()]
     cursor.close()
 

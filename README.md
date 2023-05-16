@@ -73,7 +73,6 @@ https://git-scm.com/docs/git-credential-store
 
 ## TODO - backend
 - Add nginx frontend server
-- Add by-university scoreboard
 - expand profile page + optional fields (universities, links, etc) in register
 - Add discord auth
 - Add password reset
@@ -91,6 +90,9 @@ https://git-scm.com/docs/git-credential-store
 - Add github emoji instead of "Github link"
 - Look into copyright emoji -> is it legal?
 - Improve scoreboard style
+- Add university logos
+- Fix bug -> university filter selector doesn't reset on reload (but scoreboard does)
+- Migrate in-line javascript to script.js in scoreboard.html
 - Make stylized login page
 - Make stylized register page
 - Add favicon

@@ -5,23 +5,52 @@
     <div class="container mt-5">
         <h1 class="text-center mb-5">Scoreboard</h1>
 
-        <table class="table table-bordered table-striped">
+        <div class="filter">
+            <select id="university-filter" aria-label="All">
+                <option value="">All</option>
+                {% for university_id, university_name in universities %}
+                    <option value="{{ university_id }}">{{ university_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <table class="table table-striped">
             <thead class="table-header">
                 <tr>
                     <th class="rank">#</th>
                     <th class="team-name">Name</th>
+                    <th class="university-id">University</th>
                     <th class="score">Score</th>
                 </tr>
             </thead>
             <tbody>
-                {% for name, points in users %}
+                {% for name, university_id, points in users %}
                 <tr>
                     <td class="rank">{{loop.index}}</td>
                     <td class="team-name">{{name}}</td>
+                    <td class="university-id">{{university_id}}</td>
                     <td class="score">{{points}}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const universityFilter = document.getElementById('university-filter');
+                const tableRows = document.querySelectorAll('tbody tr');
+
+                universityFilter.addEventListener('change', () => {
+                    const filterValue = universityFilter.value.trim().toLowerCase();
+                    tableRows.forEach(row => {
+                        const universityId = row.querySelector('.university-id').textContent.trim().toLowerCase();
+                        if (filterValue === '' || universityId === filterValue) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        </script>
     </div>
 {% endblock %}
