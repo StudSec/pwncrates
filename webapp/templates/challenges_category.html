@@ -32,12 +32,12 @@
                 <a href="{{ url_for('static', filename='handouts/' + handout) }}">Download files</a>
                 {% endif %}
 
-                {% if challenge_id in solves %}
-                <p>
+                {% if current_user.is_authenticated %}
+                <p style="{% if challenge_id not in solves %}display: none;{% endif %}">
                     Solved! <a href="{{ url_for('writeups', challenge_id=challenge_id ) }}">View writeups</a>
                 </p>
-                {% elif current_user.is_authenticated %}
-                <form method="POST" action="/api/challenges/submit/{{challenge_id}}">
+                <form style="{% if challenge_id in solves %}display: none;{% endif %}"
+                      method="POST" action="/api/challenges/submit/{{challenge_id}}">
                     <div class="input-group mb-3">
                         <input type="text" name="flag" class="form-control" placeholder="Submit flag" id="{{challenge_id}}">
                         <button class="btn btn-primary" type="submit" id="button-addon2">Submit</button>
