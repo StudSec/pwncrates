@@ -71,12 +71,30 @@ the file is as follows
 For more information see
 https://git-scm.com/docs/git-credential-store
 
-## TODO
+## TODO - backend
 - Add nginx frontend server
 - Add by-university scoreboard
-- Add links to easy challenges -> make it easier to get started
-- Add challenge difficulty filter
 - expand profile page + optional fields (universities, links, etc) in register
 - Add discord auth
 - Add password reset
 - Migrate database
+- Add scoreboard api endpoint
+- Add ctf_id->discord id endpoint
+
+## TODO - frontend
+- Add challenge difficulty filter
+- Change color schema
+- Change challenge name box
+- Change transition flag successfull submitted -> view writeups
+- Change writeup submission text/form
+- Set challenge images
+- Add github emoji instead of "Github link"
+- Look into copyright emoji -> is it legal?
+- Improve scoreboard style
+- Make stylized login page
+- Make stylized register page
+- Add favicon
+- Check mobile style
+
+## TODO - Challenges
+- Add links to easy challenges -> make it easier to get started
