@@ -2,6 +2,14 @@
 {% block title %}pwncrates - {{category}}{% endblock %}
 
 {% block content %}
+<div class="filter">
+    <select id="difficulty-filter" autocomplete="off" aria-label="All">
+        <option value="">All</option>
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+    </select>
+</div>
 <div id="challenge_submission">
     {% for name, subcategory_description, challenges in subcategories %}
     <ul class="list-group mb-1">

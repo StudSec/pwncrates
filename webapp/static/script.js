@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         form.children[0].children[0].style.backgroundColor = '#ff4040';
                         setTimeout(function(){
                             form.children[0].children[0].style.backgroundColor = 'white';
-                            // form.children[0].children[0].value = '';
                         }, 1000);
                     }  
                 });              
