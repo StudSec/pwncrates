@@ -116,21 +116,24 @@ def get_challenges(category, difficulty="hard"):
     difficulty = difficulties[difficulty.lower()]
 
     cursor = conn.execute('SELECT B.description, A.id, A.name, A.description, A.points, A.subcategory, A.url, '
-                          'A.solves FROM challenges A, categories B  WHERE A.category = ? AND A.difficulty <= ? '
+                          'A.solves, A.difficulty FROM challenges A, categories B  '
+                          'WHERE A.category = ? AND A.difficulty <= ? '
                           'AND A.subcategory = B.name AND B.parent = A.category',
                           (category, difficulty))
     results = {}
-    for (category_description, user_id, name, description, points, subcategory, url, solves) in cursor.fetchall():
+    for (category_description, user_id, name, description, points, subcategory, url, solves, difficulty) in cursor.fetchall():
         handout_file = get_handout_name(category, name)
         if subcategory in results.keys():
             results[subcategory][1].append((
                 user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves,
-                handout_file if os.path.exists("static/handouts/" + handout_file) else ""
+                handout_file if os.path.exists("static/handouts/" + handout_file) else "",
+                list(difficulties.keys())[difficulty-1]
             ))
         else:
             results[subcategory] = (category_description, [(
                 user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves,
-                handout_file if os.path.exists("static/handouts/" + handout_file) else ""
+                handout_file if os.path.exists("static/handouts/" + handout_file) else "",
+                list(difficulties.keys())[difficulty-1]
             )])
     cursor.close()
 
