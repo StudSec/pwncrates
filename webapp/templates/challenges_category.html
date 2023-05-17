@@ -10,7 +10,7 @@
             <p>{{ subcategory_description }}</p>
         </li>
         {% for challenge_id, name, description, points, url, challenge_solves, handout in challenges %}
-        <li class="list-group-item ">
+        <li class="list-group-item">
             <a class="text-reset text-decoration-none" data-bs-toggle="collapse" href="#{{challenge_id}}-info" role="button"
             aria-expanded="false" aria-controls="{{challenge_id}}-info">
                 <div class="d-flex w-100 justify-content-between challenge_name border">
@@ -33,13 +33,13 @@
                 {% endif %}
 
                 {% if current_user.is_authenticated %}
-                <p style="{% if challenge_id not in solves %}display: none;{% endif %}">
+                <p id="solved" style="{% if challenge_id not in solves %}display: none;{% endif %}">
                     Solved! <a href="{{ url_for('writeups', challenge_id=challenge_id ) }}">View writeups</a>
                 </p>
                 <form style="{% if challenge_id in solves %}display: none;{% endif %}"
                       method="POST" action="/api/challenges/submit/{{challenge_id}}">
                     <div class="input-group mb-3">
-                        <input type="text" name="flag" class="form-control" placeholder="Submit flag" id="{{challenge_id}}">
+                        <input type="text" name="flag" class="form-control" autocomplete="off" placeholder="Submit flag" id="{{challenge_id}}">
                         <button class="btn btn-primary" type="submit" id="button-addon2">Submit</button>
                     </div>
                 </form>

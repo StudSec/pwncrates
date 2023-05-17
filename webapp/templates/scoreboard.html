@@ -6,7 +6,7 @@
         <h1 class="text-center mb-5">Scoreboard</h1>
 
         <div class="filter">
-            <select id="university-filter" aria-label="All">
+            <select id="university-filter" autocomplete="off" aria-label="All">
                 <option value="">All</option>
                 {% for university_id, university_name in universities %}
                     <option value="{{ university_id }}">{{ university_name }}</option>

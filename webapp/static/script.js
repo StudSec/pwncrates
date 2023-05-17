@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let url = form.action;
             try {
                 let response = await fetch(url, {
-                    method: "POST",
+                    method: 'POST',
                     credentials: 'include',
                     referrer: 'http://localhost:5000/challenges/pwn',
                     headers: {
@@ -21,9 +21,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 response.json().then(post => {
                     if (post.status === 'OK') {
                         form.children[0].children[0].style.backgroundColor = 'lightgreen';
+                        setTimeout(function(){
+                            form.style.display = 'none';
+                            document.getElementById('solved').style.display = 'initial';
+                        }, 1000);
                     }
                     else {
-                    form.children[0].children[0].style.backgroundColor = '#ff4040';
+                        form.children[0].children[0].style.backgroundColor = '#ff4040';
+                        setTimeout(function(){
+                            form.children[0].children[0].style.backgroundColor = 'white';
+                            // form.children[0].children[0].value = '';
+                        }, 1000);
                     }  
                 });              
             }
