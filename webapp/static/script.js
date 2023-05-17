@@ -40,12 +40,35 @@ document.addEventListener('DOMContentLoaded', () => {
             }    
         })
 
-        // let difficultyFilter = document.getElementById('difficulty-filter');
-        // let challengeDificulty = challenges.children;
-        // if (challengeDificulty.getAttribute("difficulty") != "easy") {
-        //     challenges.style.display = 'none';
-        // }
+        for (let challenge of form.children) {
+            let difficultyFilter = document.getElementById('difficulty-filter');
+            difficultyFilter.addEventListener('change', () => {
+                challenge.style.display = 'initial';
+                
+                let difficulty = difficultyFilter.value;
+                if (challenge.getAttribute("difficulty")) {
+                    switch (difficulty) {
+                        case 'easy':
+                            if (challenge.getAttribute("difficulty") != "easy") {
+                                challenge.style.display = 'none';
+                            }
+                            break;
+                        case 'medium':
+                            if (challenge.getAttribute("difficulty") != "medium") {
+                                challenge.style.display = 'none';
+                            }
+                            break;
+                        case 'hard':
+                            if (challenge.getAttribute("difficulty") != "hard") {
+                                challenge.style.display = 'none';
+                            }
+                            break;  
+                        default: 
+                            challenge.style.display = 'initial';
+                    }
+                };
+            });
+        }
 
-    }    
-    
+    }        
 });
