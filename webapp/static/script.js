@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let challenges = document.getElementById('challenge_submission').children
     for (let form of challenges) {
+
         form.addEventListener('submit', async function (handleSubmit) {
             handleSubmit.preventDefault();
             let form = handleSubmit.target;
@@ -23,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         form.children[0].children[0].style.backgroundColor = 'lightgreen';
                         setTimeout(function(){
                             form.style.display = 'none';
-                            document.getElementById('solved').style.display = 'initial';
+                            document.getElementById('solved').style.display = 'block';
                         }, 1000);
                     }
                     else {
@@ -38,6 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error(error);
             }    
         })
-    }
+
+        // let difficultyFilter = document.getElementById('difficulty-filter');
+        // let challengeDificulty = challenges.children;
+        // if (challengeDificulty.getAttribute("difficulty") != "easy") {
+        //     challenges.style.display = 'none';
+        // }
+
+    }    
     
 });
