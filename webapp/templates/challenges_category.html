@@ -13,8 +13,10 @@
 <div id="challenge_submission">
     {% for name, subcategory_description, challenges in subcategories %}
     <ul class="list-group mb-1">
-        <h4>{{ name }}</h4>
-        <p>{{ subcategory_description }}</p>
+        <li class="list-group-item active">
+            <h4>{{ name }}</h4>
+            <p>{{ subcategory_description }}</p>
+        </li>
         {% for challenge_id, name, description, points, url, challenge_solves, handout, difficulty in challenges %}
         <li class="list-group-item" difficulty="{{difficulty}}">
             <a class="text-reset text-decoration-none" data-bs-toggle="collapse" href="#{{challenge_id}}-info" role="button"
