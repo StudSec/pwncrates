@@ -11,22 +11,20 @@
     </select>
 </div>
 <div id="challenge_submission">
-{% for name, subcategory_description, challenges in subcategories %}
-<div class="accordion">
-    <h4>{{ name }}</h4>
-    <p>{{ subcategory_description }}</p>
-    {% for challenge_id, name, description, points, url, challenge_solves, handout, difficulty in challenges %}
-      <div class="accordion-item" difficulty="{{difficulty}}">
-        <div class="accordion-header">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#{{challenge_id}}-info"
-                  aria-expanded="true" aria-controls="{{challenge_id}}-info">
-                  <!-- TODO: How to make these alignt on both sides of the button & fix filter breaking-->
-                  <h4>[{{points}}] {{name}}</h4>
-                  <p class="text-end"><a href="/solves/{{challenge_id}}"><h4>{{challenge_solves}} solves</h4></a></p>
-          </button>
-        </div>
-        <div id="{{challenge_id}}-info" class="accordion-collapse collapse show">
-          <div class="accordion-body">
+    {% for name, subcategory_description, challenges in subcategories %}
+    <ul class="list-group mb-1">
+        <li class="list-group-item active">
+            <h4>{{ name }}</h4>
+            <p>{{ subcategory_description }}</p>
+        </li>
+        {% for challenge_id, name, description, points, url, challenge_solves, handout, difficulty in challenges %}
+        <li class="list-group-item trigger challenge_name" difficulty="{{difficulty}}" data-bs-toggle="collapse"
+            data-bs-target="#{{challenge_id}}-info">
+                <div class="d-flex justify-content-between">
+                    <h4>[{{points}}] {{name}}</h4>
+                    <a href="/solves/{{challenge_id}}"><h4>{{challenge_solves}} solves</h4></a>
+                </div>
+            <div class="collapse" id="{{challenge_id}}-info">
                 <p>
                     {{description | safe}}
                 </p>
@@ -56,11 +54,10 @@
                     <i>You must be logged in to submit flags</i>
                 </p>
                 {% endif %}
-          </div>
-        </div>
-      </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
     {% endfor %}
-</div>
-{% endfor %}
 </div>
 {% endblock %}
