@@ -3,6 +3,7 @@ This file serves as the primary interface between the database and the rest of t
 
 Sticking to this convention allows us to easily modify or switch the database without performing shotgun surgery.
 """
+from datetime import datetime
 from webapp.helpers import *
 import cmarkgfm
 import sqlite3
@@ -197,9 +198,19 @@ def get_scoreboard():
     return results
 
 
-def get_solves(user_id):
+def get_user_solves(user_id):
     cursor = conn.execute('SELECT challenge_id FROM solves WHERE user_id = ?;', (user_id,))
     results = [challenge_id[0] for challenge_id in cursor.fetchall()]
+    cursor.close()
+
+    return results
+
+
+def get_challenge_solves(challenge_id):
+    cursor = conn.execute('SELECT U.name, S.solved_time FROM solves S, users U  '
+                          'WHERE S.challenge_id = ? AND S.user_id = U.id ORDER BY S.solved_time DESC;', (challenge_id,))
+    results = [(solve[0], datetime.utcfromtimestamp(solve[1]).strftime('%Y-%m-%d %H:%M:%S'))
+               for solve in cursor.fetchall()]
     cursor.close()
 
     return results
@@ -226,7 +237,7 @@ def get_writeup_file(challenge_id, writeup_id):
 def get_challenge_name(challenge_id):
     cursor = conn.execute('SELECT name FROM challenges '
                           'WHERE id = ?;', (challenge_id,))
-    results = [filename[0] for filename in cursor.fetchall()]
+    results = cursor.fetchone()[0]
     cursor.close()
 
     return results

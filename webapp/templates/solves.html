@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}pwncrates - Scoreboard{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-5">Solves: {{challenge_name}}</h1>
+
+        <table class="table table-striped">
+            <thead class="table-header">
+                <tr>
+                    <th class="rank">#</th>
+                    <th class="user-name">Name</th>
+                    <th class="date">date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for name, time_solved in users %}
+                <tr>
+                    <td class="rank">{{users|length - loop.index + 1}}</td>
+                    <td class="user-name">{{name}}</td>
+                    <td class="date">{{time_solved}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

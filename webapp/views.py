@@ -2,6 +2,7 @@
 This file handles all non-API and non-auth routes
 """
 import os
+import sys
 
 from webapp import app
 from flask import render_template, request
@@ -38,7 +39,7 @@ def challenges(category=None):
         return render_template("404.html")
 
     if current_user.is_authenticated:
-        solves = db.get_solves(current_user.id)
+        solves = db.get_user_solves(current_user.id)
     else:
         solves = []
 
@@ -51,7 +52,7 @@ def challenges(category=None):
 @app.route('/writeups/<int:challenge_id>/<int:writeup_id>')
 @login_required
 def writeups(challenge_id, writeup_id=None):
-    if challenge_id not in db.get_solves(current_user.id):
+    if challenge_id not in db.get_user_solves(current_user.id):
         return "Unauthorized"
 
     if not writeup_id:
@@ -72,7 +73,7 @@ def writeups(challenge_id, writeup_id=None):
 @app.route('/writeups/<int:challenge_id>', methods=["POST"])
 @login_required
 def upload_writeups(challenge_id):
-    if challenge_id not in db.get_solves(current_user.id):
+    if challenge_id not in db.get_user_solves(current_user.id):
         return "Unauthorized"
 
     file = request.files['file']
@@ -88,6 +89,13 @@ def upload_writeups(challenge_id):
         return 'OK!'
     else:
         return 'No file selected!'
+
+
+@app.route('/solves/<int:challenge_id>')
+def solves(challenge_id):
+    print(db.get_challenge_name(challenge_id), file=sys.stderr)
+    return render_template("solves.html", users=db.get_challenge_solves(challenge_id),
+                           challenge_name=db.get_challenge_name(challenge_id))
 
 
 @app.route('/scoreboard')
