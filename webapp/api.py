@@ -57,3 +57,20 @@ def api_submit_challenge(challenge_id):
                         mimetype="application/json")
     except KeyError:
         return "Flag missing."
+
+
+@app.route('/api/scoreboard')
+def api_scoreboard():
+    ret = {}
+    scoreboard = db.get_scoreboard()
+
+    for rank, user in enumerate(scoreboard):
+        ret[rank] = {
+            "username": user[0],
+            "university_id": user[1],
+            "score": user[2],
+            "user_id": user[3]
+        }
+
+    return Response(json.dumps(ret),
+                    mimetype="application/json")

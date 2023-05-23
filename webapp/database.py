@@ -191,7 +191,7 @@ def submit_flag(challenge_id, flag, user_id):
 
 
 def get_scoreboard():
-    cursor = conn.execute('SELECT name, university_id, points FROM users ORDER BY points DESC;')
+    cursor = conn.execute('SELECT name, university_id, points, id FROM users ORDER BY points DESC;')
     results = [user for user in cursor.fetchall()]
     cursor.close()
 
