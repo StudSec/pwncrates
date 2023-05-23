@@ -78,7 +78,7 @@ https://git-scm.com/docs/git-credential-store
 - Add password reset
 - Add email confirmation
 - Migrate database
-- Add scoreboard api endpoint
+- Add user profile page to allow configuration of user settings
 - Add ctf_id->discord id endpoint
 
 ## TODO - frontend
