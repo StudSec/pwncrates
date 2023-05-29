@@ -73,7 +73,7 @@ https://git-scm.com/docs/git-credential-store
 
 ## TODO - backend
 - Add nginx frontend server
-- Add university in register
+- Add university in profile page
 - Add discord auth
 - Add password reset
 - Add email confirmation
@@ -95,9 +95,7 @@ https://git-scm.com/docs/git-credential-store
 
 #### Challenges
 - Cards clickable
-- Add challenge difficulty filter
 - Change color schema
-- Change challenge name box
 - Collapse challenge upon successful solve
 - Reset from bad submission (red -> normal)
 - Change connection string appearance
