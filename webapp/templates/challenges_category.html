@@ -18,13 +18,15 @@
     {% for challenge_id, name, description, points, url, challenge_solves, handout, difficulty in challenges %}
       <div class="accordion-item" difficulty="{{difficulty}}">
         <div class="accordion-header">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#{{challenge_id}}-info"
+          <div class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#{{challenge_id}}-info"
                   aria-expanded="true" aria-controls="{{challenge_id}}-info">
-                  <!-- TODO: How to make these alignt on both sides of the button & fix filter breaking-->
-                  <h4>[{{points}}] {{name}}</h4>
-                  <p class="text-end"><a href="/solves/{{challenge_id}}"><h4>{{challenge_solves}} solves</h4></a></p>
-          </button>
-        </div>
+              <div class="d-flex row w-100">
+                <div class="col-md"><h4>[{{points}}] {{name}}</h4></div>
+                <div class="col-md"><h4><span class="float-end"><a href="/solves/{{challenge_id}}">{{challenge_solves}} solves</a></span></h4>
+                </div>
+              </div>
+            </div>
+          </div>
         <div id="{{challenge_id}}-info" class="accordion-collapse collapse show">
           <div class="accordion-body">
                 <p>
