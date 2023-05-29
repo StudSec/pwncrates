@@ -70,5 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-    }        
+    }
+
+    const solves_links = document.querySelectorAll(".solves_link");
+    for (let solves_link of solves_links) {
+        solves_link.addEventListener('mouseenter', (e) => {
+          let accordionButton = solves_link.closest(".accordion-button");
+          accordionButton.setAttribute('data-bs-toggle', '');
+        });
+        solves_link.addEventListener('mouseleave', (e) => {
+          let accordionButton = solves_link.closest(".accordion-button");
+          accordionButton.setAttribute('data-bs-toggle', 'collapse');
+        });
+    }
 });
