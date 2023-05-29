@@ -20,7 +20,8 @@ CREATE TABLE solves (
     id INTEGER PRIMARY KEY,
     challenge_id INTEGER,
     solved_time INTEGER,  -- Using unix timestamp over builtin datetime because it feels easier to work with - Aidan
-    user_id INTEGER
+    user_id INTEGER,
+    CONSTRAINT unique_constraint UNIQUE (user_id, challenge_id)
 );
 
 CREATE TABLE challenges (
