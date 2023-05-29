@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let challenge of form.children) {
             let difficultyFilter = document.getElementById('difficulty-filter');
             difficultyFilter.addEventListener('change', () => {
-                challenge.style.display = 'initial';
+                challenge.style.display = '';
                 
                 let difficulty = difficultyFilter.value;
                 if (challenge.getAttribute("difficulty")) {
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                             break;  
                         default: 
-                            challenge.style.display = 'initial';
+                            challenge.style.display = '';
                     }
                 };
             });
