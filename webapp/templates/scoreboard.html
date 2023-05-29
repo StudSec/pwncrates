@@ -24,7 +24,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for name, university_id, points in users %}
+                {% for user_id, name, university_id, points in users %}
                 <tr>
                     <td class="rank">{{loop.index}}</td>
                     <td class="team-name">{{name}}</td>

@@ -176,10 +176,8 @@ def submit_flag(challenge_id, flag, user_id):
         else:
             conn.execute('INSERT INTO solves (challenge_id, solved_time, user_id) VALUES (?, ?, ?);',
                          (challenge_id, int(time.time()), user_id))
-            conn.execute('UPDATE challenges SET solves = solves + 1 WHERE id = ?', (challenge_id,))
-            conn.execute('UPDATE users SET points = points + '
-                         '(SELECT points FROM challenges WHERE id = ?) '
-                         'WHERE id = ?', (challenge_id, user_id))
+            conn.execute('UPDATE challenges SET solves = (SELECT COUNT(S.id) FROM solves S WHERE S.challenge_id = ?)'
+                         ' WHERE id = ?', (challenge_id, challenge_id))
             conn.commit()
             ret = "OK"
     else:
@@ -187,11 +185,14 @@ def submit_flag(challenge_id, flag, user_id):
 
     cursor.close()
 
-    return {"status": ret}
+    return ret
 
 
 def get_scoreboard():
-    cursor = conn.execute('SELECT name, university_id, points, id FROM users ORDER BY points DESC;')
+    cursor = conn.execute('SELECT U.id, U.name, U.university_id, IFNULL(SUM(C.points), 0) AS total_points '
+                          'FROM users U LEFT JOIN solves S ON U.id = S.user_id '
+                          'LEFT JOIN challenges C ON S.challenge_id = C.id GROUP BY U.id'
+                          ' ORDER BY total_points DESC;')
     results = [user for user in cursor.fetchall()]
     cursor.close()
 

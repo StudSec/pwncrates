@@ -53,7 +53,7 @@ def api_get_challenges(category):
 @login_required
 def api_submit_challenge(challenge_id):
     try:
-        return Response(json.dumps(db.submit_flag(challenge_id, request.form['flag'], current_user.id)),
+        return Response(json.dumps({"status": db.submit_flag(challenge_id, request.form['flag'], current_user.id)}),
                         mimetype="application/json")
     except KeyError:
         return "Flag missing."
