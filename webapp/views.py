@@ -58,7 +58,7 @@ def writeups(challenge_id, writeup_id=None):
     if not writeup_id:
         return render_template("writeups_overview.html",
                                challenge_id=challenge_id,
-                               challenge_name=db.get_challenge_name(challenge_id)[0],
+                               challenge_name=db.get_challenge_name(challenge_id),
                                writeups=db.get_writeups(challenge_id))
     file_name = db.get_writeup_file(challenge_id, writeup_id)
 
