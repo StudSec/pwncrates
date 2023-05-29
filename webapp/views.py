@@ -93,7 +93,6 @@ def upload_writeups(challenge_id):
 
 @app.route('/solves/<int:challenge_id>')
 def solves(challenge_id):
-    print(db.get_challenge_name(challenge_id), file=sys.stderr)
     return render_template("solves.html", users=db.get_challenge_solves(challenge_id),
                            challenge_name=db.get_challenge_name(challenge_id))
 
