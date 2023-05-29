@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 let response = await fetch(url, {
                     method: 'POST',
                     credentials: 'include',
-                    referrer: 'http://localhost:5000/challenges/pwn',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                         'Accept': 'application/json, text/html',
