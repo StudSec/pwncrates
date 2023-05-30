@@ -5,7 +5,7 @@ services:
     environment:
       - FLASK_APP=main
       - FLASK_ENV=development
-    ports:
+    ports:  # Debug port
       - "5000:5000"
     volumes:
       - ./data/pages:/webapp/pages:ro
@@ -15,3 +15,13 @@ services:
       - ./data/.git-credentials:/root/.git-credentials:ro
       - ./webapp/templates/:/webapp/templates:ro
       - ./webapp/static/:/webapp/static
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./data/ssl/key.pem:/root/ssl/key.pem:ro
+      - ./data/ssl/cert.pem:/root/ssl/cert.pem:ro
+    ports:
+      - "443:443"
+    depends_on:
+      - pwncrates

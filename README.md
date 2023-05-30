@@ -113,3 +113,6 @@ https://git-scm.com/docs/git-credential-store
 
 ## TODO - Challenges
 - Add links to easy challenges -> make it easier to get started
+
+## TODO - Final
+- Remove all debug/development switches (print statements, docker configs, flask settings, etc)
