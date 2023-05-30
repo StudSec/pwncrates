@@ -28,6 +28,17 @@ def contributing():
     return render_markdown("./pages/contributing.md")
 
 
+@app.route('/profile')
+@login_required
+def profile():
+    return render_template("profile.html")
+
+
+@app.route('/profile/<int:user_id>')
+def public_profile(user_id):
+    return render_template("profile.html", current_user=User.get(user_id))
+
+
 # General category page, contains an overview of the categories if no category is specified
 @app.route('/challenges')
 @app.route('/challenges/<category>')
