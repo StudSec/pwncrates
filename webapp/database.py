@@ -200,10 +200,12 @@ def get_scoreboard():
 
 
 def get_user_solves(user_id):
-    cursor = conn.execute('SELECT challenge_id FROM solves WHERE user_id = ?;', (user_id,))
-    results = [challenge_id[0] for challenge_id in cursor.fetchall()]
+    cursor = conn.execute('SELECT S.challenge_id, C.name, S.solved_time, C.points FROM solves S, Challenges C WHERE '
+                          'S.user_id = ? AND C.id = S.challenge_id ORDER BY S.solved_time DESC;', (user_id,))
+    results = [(solve_data[0], solve_data[1], datetime.utcfromtimestamp(solve_data[2]).strftime('%Y-%m-%d %H:%M:%S'),
+                solve_data[3])
+               for solve_data in cursor.fetchall()]
     cursor.close()
-
     return results
 
 

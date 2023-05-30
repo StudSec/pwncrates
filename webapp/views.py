@@ -31,12 +31,25 @@ def contributing():
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template("profile.html")
+    scores = db.get_scoreboard()
+    index = [i for i in range(len(scores)) if scores[i][0] == current_user.id][0]
+    rank, score = index + 1, scores[index][3]
+
+    return render_template("profile.html", solves=db.get_user_solves(current_user.id),
+                           rank=(rank, score))
 
 
 @app.route('/profile/<int:user_id>')
 def public_profile(user_id):
-    return render_template("profile.html", current_user=User.get(user_id))
+    user = User.get(user_id)
+    user.authenticated = False
+
+    scores = db.get_scoreboard()
+    index = [i for i in range(len(scores)) if scores[i][0] == user.id][0]
+    rank, score = index + 1, scores[index][3]
+
+    return render_template("profile.html", current_user=user, solves=db.get_user_solves(user.id),
+                           rank=(rank, score))
 
 
 # General category page, contains an overview of the categories if no category is specified
@@ -50,12 +63,12 @@ def challenges(category=None):
         return render_template("404.html")
 
     if current_user.is_authenticated:
-        solves = db.get_user_solves(current_user.id)
+        solved_challenges = [solve[0] for solve in db.get_user_solves(current_user.id)]
     else:
-        solves = []
+        solved_challenges = []
 
     return render_template("challenges_category.html", category=category,
-                           subcategories=db.get_challenges(category), solves=solves)
+                           subcategories=db.get_challenges(category), solves=solved_challenges)
 
 
 # Writeups page, contains an overview of all available writeups if no specific one is specified.
@@ -63,7 +76,7 @@ def challenges(category=None):
 @app.route('/writeups/<int:challenge_id>/<int:writeup_id>')
 @login_required
 def writeups(challenge_id, writeup_id=None):
-    if challenge_id not in db.get_user_solves(current_user.id):
+    if challenge_id not in [solve[0] for solve in db.get_user_solves(current_user.id)]:
         return "Unauthorized"
 
     if not writeup_id:
@@ -84,7 +97,7 @@ def writeups(challenge_id, writeup_id=None):
 @app.route('/writeups/<int:challenge_id>', methods=["POST"])
 @login_required
 def upload_writeups(challenge_id):
-    if challenge_id not in db.get_user_solves(current_user.id):
+    if challenge_id not in [solve[0] for solve in db.get_user_solves(current_user.id)]:
         return "Unauthorized"
 
     file = request.files['file']
@@ -92,7 +105,7 @@ def upload_writeups(challenge_id):
     filename = hex(random.getrandbits(128))[2:]
 
     while f"{filename}.md" in os.listdir(f"writeups/{str(challenge_id)}"):
-        filename = hex(random.getrandbits(16))[2:]
+        filename = hex(random.getrandbits(128))[2:]
 
     if file:
         db.create_or_update_writeup(challenge_id, current_user.id, filename)

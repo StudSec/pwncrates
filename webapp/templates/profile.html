@@ -2,14 +2,45 @@
 {% block title %}pwncrates - Profile{% endblock %}
 
 {% block content %}
+    <!-- if current person, -->
     <h1>Profile</h1>
+    {% if current_user.is_authenticated %}
+    <p>
+        logged in as {{current_user.username}}
+        - show + edit options for email
+        - option to connect discord
+        - option to change university
+    </p>
+    {% endif %}
 	<p>
         Name: {{ current_user.username }}
+        # {{rank[0]}}
+        points: {{rank[1]}}
     </p>
     <p>
         University: {{ current_user.university }}
     </p>
-    <p>
-        TODO: stats and info
-    </p>
+    <div class="container mt-5">
+        <h1 class="text-center mb-5">Solves:</h1>
+
+        <table class="table table-striped">
+            <thead class="table-header">
+                <tr>
+                    <th class="points">Points</th>
+                    <th class="challenge-name">Challenge</th>
+                    <th class="date">Date</th>
+                </tr>
+            </thead>
+           <tbody>
+                {% for challenge_id, challenge_name, time_solved, points in solves %}
+                <tr>
+                    <td class="rank">{{points}}</td>
+                    <td class="user-name">{{challenge_name}}</td>
+                    <td class="date">{{time_solved}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </tbody>
+        </table>
+    </div>
 {% endblock %} 

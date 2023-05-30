@@ -11,6 +11,7 @@ class User(UserMixin):
         self.id = user_id
         self.username = username
         self.university = db.get_university(user_id)
+        self.authenticated = True
 
     @staticmethod
     def get(user_id):
@@ -25,7 +26,7 @@ class User(UserMixin):
 
     @property
     def is_authenticated(self):
-        return True
+        return self.authenticated
 
     def get_user_information(self):
         pass

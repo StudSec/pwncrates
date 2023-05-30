@@ -72,13 +72,13 @@ For more information see
 https://git-scm.com/docs/git-credential-store
 
 ## TODO - backend
-- Add university in profile page
 - Add discord auth
 - Add password reset
 - Add email confirmation
 - Migrate database
 - Add user profile page to allow configuration of user settings
 - Add ctf_id->discord id endpoint
+- refactor/cleanup database file
 
 ## TODO - frontend
 #### General
@@ -99,6 +99,7 @@ https://git-scm.com/docs/git-credential-store
 - Reset from bad submission (red -> normal)
 - Change connection string appearance
 - Change transition flag successfully submitted -> view writeups
+- Mark solved challenges
 
 #### Writeups
 - Change writeup submission text/form
