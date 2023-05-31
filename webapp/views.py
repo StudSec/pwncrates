@@ -32,8 +32,12 @@ def contributing():
 @login_required
 def profile():
     scores = db.get_scoreboard()
-    index = [i for i in range(len(scores)) if scores[i][0] == current_user.id][0]
-    rank, score = index + 1, scores[index][3]
+
+    try:
+        index = [i for i in range(len(scores)) if scores[i][0] == int(current_user.id)][0]
+        rank, score = index + 1, scores[index][3]
+    except IndexError:
+        rank, score = 0, 0
 
     return render_template("profile.html", solves=db.get_user_solves(current_user.id),
                            rank=(rank, score))
@@ -42,11 +46,19 @@ def profile():
 @app.route('/profile/<int:user_id>')
 def public_profile(user_id):
     user = User.get(user_id)
+
+    if not user:
+        return render_template("404.html")
+
     user.authenticated = False
 
     scores = db.get_scoreboard()
-    index = [i for i in range(len(scores)) if scores[i][0] == user.id][0]
-    rank, score = index + 1, scores[index][3]
+
+    try:
+        index = [i for i in range(len(scores)) if scores[i][0] == user_id][0]
+        rank, score = index + 1, scores[index][3]
+    except IndexError:
+        rank, score = 0, 0
 
     return render_template("profile.html", current_user=user, solves=db.get_user_solves(user.id),
                            rank=(rank, score))
