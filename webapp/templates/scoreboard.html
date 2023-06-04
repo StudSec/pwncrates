@@ -27,7 +27,7 @@
                 {% for user_id, name, university_id, points in users %}
                 <tr>
                     <td class="rank">{{loop.index}}</td>
-                    <td class="team-name">{{name}}</td>
+                    <td class="team-name"><a href="{{url_for('public_profile', user_id=user_id)}}">{{name}}</a></td>
                     <td class="university-id">{{university_id}}</td>
                     <td class="score">{{points}}</td>
                 </tr>
