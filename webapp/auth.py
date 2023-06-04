@@ -36,12 +36,21 @@ def load_user(user_id):
 @app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        password = db.get_password(request.form["username"])
+        user_info = db.get_user(email=request.form["email"])
 
-        if not password:
-            return render_template('login.html', error='Invalid credentials')
+        print(user_info, file=sys.stderr)
+
+        if not user_info:
+            return render_template('login.html', error='Invalid credentials.')
+
+        if not user_info["password"]:
+            return render_template('login.html', error='Password login not supported.')
+
+        password = user_info["password"]
+
         if password == bcrypt.hashpw(request.form["password"].encode(), password.encode()).decode():
-            user = User(db.get_id(request.form["username"]), request.form["username"])
+            user = User(db.get_user(email=request.form["email"])["id"],
+                        db.get_user(email=request.form["email"])["username"])
             login_user(user)
             return redirect(url_for('home'))
 
@@ -56,7 +65,8 @@ def login():
 def register():
     if request.method == "POST":
         print(request.form["email"], file=sys.stderr)
-        if db.get_discord_id_by_email(request.form["email"])[1]:
+        print(db.get_user(email=request.form["email"]), file=sys.stderr)
+        if db.get_user(email=request.form["email"]):
             return render_template('register.html', error='Email already taken')
 
         if not re.match(r'^[\w\.+-]+@[\w\.-]+\.\w+$', request.form["email"]):
@@ -65,12 +75,14 @@ def register():
         try:
             db.register_user(request.form["username"], bcrypt.hashpw(request.form["password"].encode(),
                                                                      bcrypt.gensalt()).decode('ascii'),
-                             request.form["email"].encode())
+                             request.form["email"])
         except KeyError:
             return "Missing parameters"
 
-        user = User(db.get_id(request.form["username"]), request.form["username"])
+        user = User(db.get_user(email=request.form["email"])["id"],
+                    db.get_user(email=request.form["email"])["username"])
         login_user(user)
+
         return redirect(url_for('challenges'))
 
     else:
@@ -132,17 +144,17 @@ def discord_oauth_callback():
     email = user_data.get("email")
     name = user_data.get("username")
 
-    stored_discord_id, stored_id, stored_name = db.get_discord_id_by_email(email)
+    stored_info = db.get_user(email=email)
 
-    if not stored_id:
+    if not stored_info:
         db.register_user(name, "", email)
         db.update_discord_id(discord_id, email)
 
-    elif stored_discord_id != discord_id:
+    elif stored_info["discord_id"] != discord_id:
         db.update_discord_id(discord_id, email)
 
-    _, stored_id, stored_name = db.get_discord_id_by_email(email)
-    user = User(stored_id, stored_name)
+    stored_info = db.get_user(email=email)
+    user = User(stored_info["id"], stored_info["username"])
     login_user(user)
 
     return redirect(url_for('home'))
