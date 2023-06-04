@@ -12,6 +12,7 @@ import webapp.database as db
 from webapp import app
 import requests
 import json
+import re
 
 from urllib import parse
 
@@ -51,13 +52,15 @@ def login():
 
 
 # Register page
-# TODO: check if email is taken + add database unique constraint for email + ensure email cannot be null
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        # Check if user exists
+        print(request.form["email"], file=sys.stderr)
         if db.get_discord_id_by_email(request.form["email"])[1]:
             return render_template('register.html', error='Email already taken')
+
+        if not re.match(r'^[\w\.+-]+@[\w\.-]+\.\w+$', request.form["email"]):
+            return render_template('register.html', error='Invalid email')
 
         try:
             db.register_user(request.form["username"], bcrypt.hashpw(request.form["password"].encode(),
