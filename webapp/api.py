@@ -74,3 +74,15 @@ def api_scoreboard():
 
     return Response(json.dumps(ret),
                     mimetype="application/json")
+
+
+@app.route('/api/discord_id/<user_id>')
+def api_discord_id(user_id):
+    user_data = db.get_user(user_id=user_id)
+
+    ret = {
+        "discord_id": user_data["discord_id"]
+    }
+
+    return Response(json.dumps(ret),
+                    mimetype="application/json")
