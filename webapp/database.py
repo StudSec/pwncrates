@@ -13,100 +13,7 @@ import os
 import sys
 
 
-def get_users():
-    cursor = conn.execute('SELECT name FROM users')
-    results = [name[0] for name in cursor.fetchall()]
-    cursor.close()
-
-    return results
-
-
-def get_universities():
-    cursor = conn.execute('SELECT id, name FROM universities')
-    results = [university_id for university_id in cursor.fetchall()]
-    cursor.close()
-
-    return results
-
-
-def get_username(user_id) -> str:
-    cursor = conn.execute('SELECT name FROM users WHERE id = ? LIMIT 1', (user_id,))
-    results = [user_id[0] for user_id in cursor.fetchall()]
-    cursor.close()
-
-    if len(results) == 0:
-        return ""
-
-    return results[0]
-
-
-def get_university(user_id):
-    cursor = conn.execute(
-        'SELECT U.name FROM universities U, users A WHERE A.id = ? AND A.university_id = U.id LIMIT 1', (user_id,))
-    results = [user_id[0] for user_id in cursor.fetchall()]
-    cursor.close()
-
-    if len(results) == 0:
-        return ""
-
-    return results[0]
-
-
-def get_password(user_name) -> str:
-    cursor = conn.execute('SELECT password FROM users WHERE name = ? LIMIT 1', (user_name,))
-    results = [password_hash[0] for password_hash in cursor.fetchall()]
-    cursor.close()
-
-    if len(results) == 0:
-        return ""
-
-    return results[0]
-
-
-def get_id(user_name) -> str:
-    cursor = conn.execute('SELECT id FROM users WHERE name = ? LIMIT 1', (user_name,))
-    results = [password_hash[0] for password_hash in cursor.fetchall()]
-    cursor.close()
-
-    if len(results) == 0:
-        return ""
-
-    return results[0]
-
-
-def register_user(user_name, password, email):
-    cursor = conn.execute('INSERT INTO users (name, password, email) VALUES (?, ?, ?)', (user_name, password, email))
-    conn.commit()
-    cursor.close()
-    return
-
-
-def create_or_update_writeup(challenge_id, user_id, file_name):
-    cursor = conn.cursor()
-
-    cursor = cursor.execute('INSERT OR IGNORE INTO writeups (challenge_id, user_id, file_name) VALUES (?, ?, ?);',
-                            (challenge_id, user_id, file_name))
-    cursor = cursor.execute('UPDATE writeups SET file_name = ? WHERE challenge_id = ? AND user_id = ?;',
-                            (file_name, challenge_id, user_id))
-
-    conn.commit()
-    cursor.close()
-    return
-
-
-def get_user_information(user_id):
-    cursor = conn.execute(
-        'SELECT U.name FROM universities U, users A WHERE A.id = ? AND A.university_id = U.id LIMIT 1', (user_id,))
-    results = [user_id[0] for user_id in cursor.fetchall()]
-    cursor.close()
-
-    if len(results) == 0:
-        return ""
-
-    return results[0]
-    pass
-
-
+# Lookup functions
 def get_challenges(category, difficulty="hard"):
     difficulties = {
         "easy": 1,
@@ -145,6 +52,53 @@ def get_challenges(category, difficulty="hard"):
     return ret
 
 
+def get_user_solves(user_id):
+    cursor = conn.execute('SELECT S.challenge_id, C.name, S.solved_time, C.points FROM solves S, Challenges C WHERE '
+                          'S.user_id = ? AND C.id = S.challenge_id ORDER BY S.solved_time DESC;', (user_id,))
+    results = [(solve_data[0], solve_data[1], datetime.utcfromtimestamp(solve_data[2]).strftime('%Y-%m-%d %H:%M:%S'),
+                solve_data[3])
+               for solve_data in cursor.fetchall()]
+    cursor.close()
+    return results
+
+
+def get_challenge_solves(challenge_id):
+    cursor = conn.execute('SELECT U.name, S.solved_time FROM solves S, users U  '
+                          'WHERE S.challenge_id = ? AND S.user_id = U.id ORDER BY S.solved_time DESC;', (challenge_id,))
+    results = [(solve[0], datetime.utcfromtimestamp(solve[1]).strftime('%Y-%m-%d %H:%M:%S'))
+               for solve in cursor.fetchall()]
+    cursor.close()
+
+    return results
+
+
+def get_scoreboard():
+    cursor = conn.execute('SELECT U.id, U.name, U.university_id, IFNULL(SUM(C.points), 0) AS total_points '
+                          'FROM users U LEFT JOIN solves S ON U.id = S.user_id '
+                          'LEFT JOIN challenges C ON S.challenge_id = C.id GROUP BY U.id'
+                          ' ORDER BY total_points DESC;')
+    results = [user for user in cursor.fetchall()]
+    cursor.close()
+
+    return results
+
+
+def get_users():
+    cursor = conn.execute('SELECT name FROM users')
+    results = [name[0] for name in cursor.fetchall()]
+    cursor.close()
+
+    return results
+
+
+def get_universities():
+    cursor = conn.execute('SELECT id, name FROM universities')
+    results = [university_id for university_id in cursor.fetchall()]
+    cursor.close()
+
+    return results
+
+
 def get_categories():
     ret = {}
 
@@ -164,76 +118,6 @@ def get_categories():
     cursor.close()
 
     return ret
-
-
-def submit_flag(challenge_id, flag, user_id):
-    cursor = conn.execute('SELECT DISTINCT flag FROM challenges WHERE id = ? AND flag = ?;', (challenge_id, flag))
-
-    if cursor.fetchone():
-        cursor = conn.execute('SELECT id FROM solves WHERE challenge_id = ? AND user_id = ?;', (challenge_id, user_id))
-        if cursor.fetchone():
-            ret = "Already solved"
-        else:
-            conn.execute('INSERT INTO solves (challenge_id, solved_time, user_id) VALUES (?, ?, ?);',
-                         (challenge_id, int(time.time()), user_id))
-            conn.execute('UPDATE challenges SET solves = (SELECT COUNT(S.id) FROM solves S WHERE S.challenge_id = ?)'
-                         ' WHERE id = ?', (challenge_id, challenge_id))
-            conn.commit()
-            ret = "OK"
-    else:
-        ret = "Incorrect flag"
-
-    cursor.close()
-
-    return ret
-
-
-def get_scoreboard():
-    cursor = conn.execute('SELECT U.id, U.name, U.university_id, IFNULL(SUM(C.points), 0) AS total_points '
-                          'FROM users U LEFT JOIN solves S ON U.id = S.user_id '
-                          'LEFT JOIN challenges C ON S.challenge_id = C.id GROUP BY U.id'
-                          ' ORDER BY total_points DESC;')
-    results = [user for user in cursor.fetchall()]
-    cursor.close()
-
-    return results
-
-
-def get_user_solves(user_id):
-    cursor = conn.execute('SELECT S.challenge_id, C.name, S.solved_time, C.points FROM solves S, Challenges C WHERE '
-                          'S.user_id = ? AND C.id = S.challenge_id ORDER BY S.solved_time DESC;', (user_id,))
-    results = [(solve_data[0], solve_data[1], datetime.utcfromtimestamp(solve_data[2]).strftime('%Y-%m-%d %H:%M:%S'),
-                solve_data[3])
-               for solve_data in cursor.fetchall()]
-    cursor.close()
-    return results
-
-
-def get_discord_id_by_email(email):
-    cursor = conn.execute('SELECT discord_id, id, name FROM users WHERE email = ? LIMIT 1', (email,))
-    results = [user_info for user_info in cursor.fetchall()]
-    cursor.close()
-
-    if len(results) == 0:
-        return "", "", ""
-
-    return results[0]
-
-
-def update_discord_id(discord_id, email):
-    conn.execute("UPDATE users SET discord_id = ? WHERE email = ?", (discord_id, email))
-    conn.commit()
-    return
-
-
-def get_challenge_solves(challenge_id):
-    cursor = conn.execute('SELECT U.name, S.solved_time FROM solves S, users U  '
-                          'WHERE S.challenge_id = ? AND S.user_id = U.id ORDER BY S.solved_time DESC;', (challenge_id,))
-    results = [(solve[0], datetime.utcfromtimestamp(solve[1]).strftime('%Y-%m-%d %H:%M:%S'))
-               for solve in cursor.fetchall()]
-    cursor.close()
-
-    return results
 
 
 def get_writeups(challenge_id):
@@ -261,6 +145,127 @@ def get_challenge_name(challenge_id):
     cursor.close()
 
     return results
+
+
+# User functions
+def get_user(user_id=None, email=None):
+    if user_id:
+        cursor = conn.execute(
+            'SELECT U.email, U.name, U.university_id, A.name, U.discord_id, U.password '
+            'FROM users U LEFT JOIN universities A ON U.university_id = A.id '
+            'WHERE U.id = ? LIMIT 1;', (user_id,))
+        results = [
+            {
+                "id": user_id,
+                "email": user_info[0],
+                "username": user_info[1],
+                "university_id": user_info[2],
+                "university_name": user_info[3],
+                "discord_id": user_info[4],
+                "password": user_info[5],
+             } for user_info in cursor.fetchall()
+        ]
+        cursor.close()
+
+        if len(results) == 0:
+            return ""
+
+        return results[0]
+    if email:
+        cursor = conn.execute(
+            'SELECT U.id, U.name, U.university_id, A.name, U.discord_id, U.password '
+            'FROM users U LEFT JOIN universities A ON U.university_id = A.id '
+            'WHERE U.email = ? LIMIT 1;', (email,))
+        results = [
+            {
+                "id": user_info[0],
+                "email": email,
+                "username": user_info[1],
+                "university_id": user_info[2],
+                "university_name": user_info[3],
+                "discord_id": user_info[4],
+                "password": user_info[5],
+            } for user_info in cursor.fetchall()
+        ]
+        cursor.close()
+
+        if len(results) == 0:
+            return ""
+
+        return results[0]
+    return ""
+
+
+def get_user_information(user_id):
+    cursor = conn.execute(
+        'SELECT U.name FROM universities U, users A WHERE A.id = ? AND A.university_id = U.id LIMIT 1', (user_id,))
+    results = [user_id[0] for user_id in cursor.fetchall()]
+    cursor.close()
+
+    if len(results) == 0:
+        return ""
+
+    return results[0]
+
+
+def get_discord_id_by_email(email):
+    cursor = conn.execute('SELECT discord_id, id, name FROM users WHERE email = ? LIMIT 1', (email,))
+    results = [user_info for user_info in cursor.fetchall()]
+    cursor.close()
+
+    if len(results) == 0:
+        return "", "", ""
+
+    return results[0]
+
+
+# Actions
+def register_user(user_name, password, email):
+    cursor = conn.execute('INSERT INTO users (name, password, email) VALUES (?, ?, ?)', (user_name, password, email))
+    conn.commit()
+    cursor.close()
+    return
+
+
+def create_or_update_writeup(challenge_id, user_id, file_name):
+    cursor = conn.cursor()
+
+    cursor = cursor.execute('INSERT OR IGNORE INTO writeups (challenge_id, user_id, file_name) VALUES (?, ?, ?);',
+                            (challenge_id, user_id, file_name))
+    cursor = cursor.execute('UPDATE writeups SET file_name = ? WHERE challenge_id = ? AND user_id = ?;',
+                            (file_name, challenge_id, user_id))
+
+    conn.commit()
+    cursor.close()
+    return
+
+
+def submit_flag(challenge_id, flag, user_id):
+    cursor = conn.execute('SELECT DISTINCT flag FROM challenges WHERE id = ? AND flag = ?;', (challenge_id, flag))
+
+    if cursor.fetchone():
+        cursor = conn.execute('SELECT id FROM solves WHERE challenge_id = ? AND user_id = ?;', (challenge_id, user_id))
+        if cursor.fetchone():
+            ret = "Already solved"
+        else:
+            conn.execute('INSERT INTO solves (challenge_id, solved_time, user_id) VALUES (?, ?, ?);',
+                         (challenge_id, int(time.time()), user_id))
+            conn.execute('UPDATE challenges SET solves = (SELECT COUNT(S.id) FROM solves S WHERE S.challenge_id = ?)'
+                         ' WHERE id = ?', (challenge_id, challenge_id))
+            conn.commit()
+            ret = "OK"
+    else:
+        ret = "Incorrect flag"
+
+    cursor.close()
+
+    return ret
+
+
+def update_discord_id(discord_id, email):
+    conn.execute("UPDATE users SET discord_id = ? WHERE email = ?", (discord_id, email))
+    conn.commit()
+    return
 
 
 def initialize_database():
