@@ -38,8 +38,6 @@ def login():
     if request.method == "POST":
         user_info = db.get_user(email=request.form["email"])
 
-        print(user_info, file=sys.stderr)
-
         if not user_info:
             return render_template('login.html', error='Invalid credentials.')
 
@@ -64,8 +62,6 @@ def login():
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        print(request.form["email"], file=sys.stderr)
-        print(db.get_user(email=request.form["email"]), file=sys.stderr)
         if db.get_user(email=request.form["email"]):
             return render_template('register.html', error='Email already taken')
 

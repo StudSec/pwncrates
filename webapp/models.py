@@ -12,7 +12,6 @@ class User(UserMixin):
     def __init__(self, user_id, username):
         self.id = user_id
         self.username = username
-        print(db.get_user(user_id=user_id), file=sys.stderr)
         self.university = db.get_user(user_id=user_id)["university_name"]
         self.authenticated = True
 
