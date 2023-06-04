@@ -72,7 +72,6 @@ For more information see
 https://git-scm.com/docs/git-credential-store
 
 ## TODO - backend
-- Add discord auth
 - Add password reset
 - Add email confirmation
 - Migrate database
