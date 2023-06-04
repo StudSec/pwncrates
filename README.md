@@ -79,6 +79,8 @@ https://git-scm.com/docs/git-credential-store
 - Add user profile page to allow configuration of user settings
 - Add ctf_id->discord id endpoint
 - refactor/cleanup database file
+- Look into nginx warnings
+- Add a privacy policy + terms of service
 
 ## TODO - frontend
 #### General

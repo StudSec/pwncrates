@@ -209,6 +209,23 @@ def get_user_solves(user_id):
     return results
 
 
+def get_discord_id_by_email(email):
+    cursor = conn.execute('SELECT discord_id, id, name FROM users WHERE email = ? LIMIT 1', (email,))
+    results = [user_info for user_info in cursor.fetchall()]
+    cursor.close()
+
+    if len(results) == 0:
+        return "", "", ""
+
+    return results[0]
+
+
+def update_discord_id(discord_id, email):
+    conn.execute("UPDATE users SET discord_id = ? WHERE email = ?", (discord_id, email))
+    conn.commit()
+    return
+
+
 def get_challenge_solves(challenge_id):
     cursor = conn.execute('SELECT U.name, S.solved_time FROM solves S, users U  '
                           'WHERE S.challenge_id = ? AND S.user_id = U.id ORDER BY S.solved_time DESC;', (challenge_id,))

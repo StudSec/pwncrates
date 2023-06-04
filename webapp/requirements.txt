@@ -8,3 +8,4 @@ Jinja2==3.1.2
 MarkupSafe==2.1.2
 Werkzeug==2.3.0
 cmarkgfm==2022.10.27
+requests==2.31.0
