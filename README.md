@@ -72,12 +72,12 @@ For more information see
 https://git-scm.com/docs/git-credential-store
 
 ## TODO - backend
+- Switch from username auth to email auth
 - Add password reset
 - Add email confirmation
 - Migrate database
 - Add user profile page to allow configuration of user settings
 - Add ctf_id->discord id endpoint
-- refactor/cleanup database file
 - Add a privacy policy + terms of service
 - Disable debug mode + remove init.sql test date
 
