@@ -15,6 +15,7 @@ services:
       - ./data/.git-credentials:/root/.git-credentials:ro
       - ./webapp/templates/:/webapp/templates:ro
       - ./webapp/static/:/webapp/static
+      - ./data/config.json:/webapp/config.json:ro
   nginx:
     image: nginx
     volumes:
