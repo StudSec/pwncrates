@@ -37,7 +37,7 @@ def confirm_email(to_email, link):
 
 Thank you for creating an account with us. Please click on the link below to confirm your email address:
 
-" + link + "
+{link}
 
 Best regards,
 The StudSec Team
