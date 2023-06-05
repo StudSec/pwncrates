@@ -1,3 +1,4 @@
+import sys
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
@@ -28,7 +29,10 @@ def send_email(to_email, subject, message):
         server.quit()
 
     except Exception as e:
-        print("Error sending email: ", e)
+        print("Error sending email: ", e, file=sys.stderr)
+        return "Failed to send email"
+
+    return None
 
 
 def confirm_email(to_email, link):
@@ -43,7 +47,7 @@ Best regards,
 The StudSec Team
 """
 
-    send_email(to_email, subject, message)
+    return send_email(to_email, subject, message)
 
 
 def forgot_password(to_email, link):
@@ -58,4 +62,4 @@ Best regards,
 The StudSec Team
 """
 
-    send_email(to_email, subject, message)
+    return send_email(to_email, subject, message)

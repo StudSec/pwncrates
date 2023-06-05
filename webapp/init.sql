@@ -58,7 +58,7 @@ CREATE TABLE links(
     type VARCHAR(16),
     code  VARCHAR(256),
     CONSTRAINT unique_constraint UNIQUE (code)
-)
+);
 
 
 -- Populate test data --

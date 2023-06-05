@@ -19,7 +19,7 @@ def get_email_from_link(link_type, code):
 
     cursor = conn.execute("SELECT email FROM links WHERE code = ? AND type = ?", (code, link_type))
 
-    results = [email[0] for email in cursor.fetchone()]
+    results = [email[0] for email in cursor.fetchall()]
     cursor.close()
     return results
 
@@ -29,7 +29,7 @@ def get_link_from_email(email, link_type):
 
     cursor = conn.execute("SELECT code FROM links WHERE email = ? AND type = ?", (email, link_type))
 
-    results = [code[0] for code in cursor.fetchone()]
+    results = [code[0] for code in cursor.fetchall()]
     cursor.close()
 
     return results

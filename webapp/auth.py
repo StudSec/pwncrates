@@ -12,7 +12,7 @@ from webapp.models import User
 import webapp.database as db
 from webapp import app
 import requests
-import mail
+from . import mail
 import json
 import re
 
@@ -85,7 +85,8 @@ def register():
             db.insert_link(email, "confirmation", code)
             db.register_user(username, bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii'), email)
 
-            mail.confirm_email(email, f"{config['hostname']}/{url_for('confirm_email')}?code={code}")
+            if mail.confirm_email(email, f"https://{config['hostname']}{url_for('confirm_email')}?code={code}"):
+                return render_template('register.html', error='Failed to send confirmation email')
         except KeyError:
             return "Missing parameters"
 
@@ -102,16 +103,18 @@ def password_reset():
 
     if request.method == "POST":
         try:
-            if code:
-                email = db.get_email_from_link("password", code)
+            if "code" in request.form.keys():
+                email = db.get_email_from_link("reset", request.form["code"])
                 if not email:
                     return "Invalid code"
+
+                email = email[0]
 
                 if request.form["new_password"] != request.form["confirm_password"]:
                     return render_template("forgot_password.html", option="password", error="Passwords don't match")
 
                 password = request.form["new_password"]
-                db.change_user_password(email, password)
+                db.change_user_password(email, bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii'))
                 flash('Password changed')
                 return redirect(url_for("login"))
             else:
@@ -119,7 +122,7 @@ def password_reset():
                 code = os.urandom(16).hex()
                 db.insert_link(email, "reset", code)
 
-                mail.forgot_password(email, f"{config['hostname']}/{url_for('password_reset')}?code={code}")
+                mail.forgot_password(email, f"https://{config['hostname']}{url_for('password_reset')}?code={code}")
 
                 flash("Reset link sent")
                 return redirect(url_for('login'))
@@ -127,9 +130,9 @@ def password_reset():
             return "Missing parameters"
 
     if code:
-        if not db.get_email_from_link("password", code):
+        if not db.get_email_from_link("reset", code):
             return "Invalid code"
-        return render_template("forgot_password.html", option="password")
+        return render_template("forgot_password.html", option="password", code=code)
     else:
         return render_template("forgot_password.html")
 
