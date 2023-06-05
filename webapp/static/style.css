@@ -9,13 +9,85 @@ html {
   position: relative;
   min-height: 100%;
 }
+
+a {
+  color: white;
+}
+
+button {
+  width: 15.36%;
+}
+
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
 }
 
-/* This makes challenge titles light up on hover */
-.challenge_name:hover{
-background: #03fcfc; /* light blue */
+.nav-link {
+  color: white;
+}
+
+.nav-link.active {
+  color: #1c8adb;
+}
+
+.nav-link.active:hover {
+  color: #1464bc;
+}
+
+.navbar.navbar-expand-lg.navbar-dark.bg-dark.fixed-top {
+  background-color: #1c8adb !important;
+}
+
+.footer.bg-dark.text-light.py-3 {
+  background-color: #1c8adb !important;
+}
+
+.btn.btn-primary {
+  --bs-btn-bg: #1c8adb;
+  --bs-btn-border-color: #1c8adb;
+  --bs-btn-hover-bg: #1464bc;
+  --bs-btn-hover-border-color: #1464bc;
+}
+
+#password {
+  background: hsl(0deg 0% 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  color: hsl(0deg 0% 30%);
+}
+
+#email {
+  background: hsl(0deg 0% 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  color: hsl(0deg 0% 30%);
+}
+
+#username {
+  background: hsl(0deg 0% 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  color: hsl(0deg 0% 30%);
+}
+
+.btn.btn-secondary.btn-lg.btn-block {
+  --bs-btn-bg: #1c8adb;
+  --bs-btn-border-color: #1c8adb;
+  --bs-btn-hover-bg: #1464bc;
+  --bs-btn-hover-border-color: #1464bc;
+  width: 17.182%;
+}
+
+.team-name > a {
+  color: black;
+  text-decoration: none;
+}
+
+form {
+  padding-bottom: 10px;
 }
