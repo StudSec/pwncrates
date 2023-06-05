@@ -22,6 +22,8 @@ docker-compose up
 ```
 This will start pwncrates on `http://localhost:5000/`
 
+If you want to have email and oauth functionality you need to configure `config.json`
+
 ## Development
 For development, you likely want to rapidly redeploy the docker
 instance. For that you may use the following three commands.
@@ -72,14 +74,9 @@ For more information see
 https://git-scm.com/docs/git-credential-store
 
 ## TODO - backend
-- Switch from username auth to email auth
-- Add password reset
-- Add email confirmation
 - Migrate database
 - Add user profile page to allow configuration of user settings
-- Add ctf_id->discord id endpoint
 - Add a privacy policy + terms of service
-- Disable debug mode + remove init.sql test date
 
 ## TODO - frontend
 #### General
@@ -116,4 +113,4 @@ https://git-scm.com/docs/git-credential-store
 - Add links to easy challenges -> make it easier to get started
 
 ## TODO - Final
-- Remove all debug/development switches (print statements, docker configs, flask settings, etc)
+- Remove all debug/development switches (print statements, docker configs, flask settings, init.sql data, etc)
