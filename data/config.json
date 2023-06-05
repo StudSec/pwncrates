@@ -1,5 +1,9 @@
 {
     "oauth_client_id": "",
     "oauth_client_secret": "",
-    "oauth_redirect_uri": ""
+    "oauth_redirect_uri": "",
+    "SMTP_HOST": "",
+    "SMTP_PORT": "",
+    "SMTP_USER": "",
+    "SMTP_PASS": ""
 }
