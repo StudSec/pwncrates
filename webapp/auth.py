@@ -6,7 +6,7 @@ This includes authentication to the API endpoint, this allows us to easily modif
 import sys
 
 from flask_login import LoginManager, login_user, login_required, logout_user
-from flask import request, render_template, redirect, url_for
+from flask import request, render_template, redirect, url_for, flash
 from webapp.models import User
 import webapp.database as db
 from webapp import app
@@ -39,20 +39,20 @@ def login():
         user_info = db.get_user(email=request.form["email"])
 
         if not user_info:
-            return render_template('login.html', error='Invalid credentials.')
-
-        if not user_info["password"]:
-            return render_template('login.html', error='Password login not supported.')
+            flash('Invalid credentials')
+            return render_template('login.html')
 
         password = user_info["password"]
 
         if password == bcrypt.hashpw(request.form["password"].encode(), password.encode()).decode():
+            # Check if user is still pending verification by checking the database
             user = User(db.get_user(email=request.form["email"])["id"],
                         db.get_user(email=request.form["email"])["username"])
             login_user(user)
             return redirect(url_for('home'))
 
-        return render_template('login.html', error='Invalid credentials')
+        flash('Invalid credentials')
+        return render_template('login.html')
 
     else:
         return render_template('login.html')
@@ -69,11 +69,16 @@ def register():
             return render_template('register.html', error='Invalid email')
 
         try:
+            # Generate confirmation link
+            # Insert it into database
             db.register_user(request.form["username"], bcrypt.hashpw(request.form["password"].encode(),
                                                                      bcrypt.gensalt()).decode('ascii'),
                              request.form["email"])
+            # Send email
         except KeyError:
             return "Missing parameters"
+
+        # Redirect to login
 
         user = User(db.get_user(email=request.form["email"])["id"],
                     db.get_user(email=request.form["email"])["username"])
@@ -83,6 +88,13 @@ def register():
 
     else:
         return render_template('register.html')
+
+
+@app.route('/password_reset')
+def password_reste():
+    # If code parameter is set -> reset form
+    # otherwise ask for email
+    pass
 
 
 @app.route('/logout')
@@ -132,7 +144,8 @@ def discord_oauth_callback():
             "Authorization": f"Bearer {access_token}"
         }).json()
         if "message" in user_data.keys() and user_data["message"] == '401: Unauthorized':
-            return "discord auth failed"
+            flash('Discord auth failed.')
+            return redirect(url_for('login'))
     except (ValueError, TypeError):
         return "invalid code"
 

@@ -3,9 +3,15 @@
 
 {% block content %}
     <h1>Login</h1>
-    {% if error %}
-        <p>{{ error }}</p>
-    {% endif %}
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <p>
+        {% for message in messages %}
+          {{ message }}
+        {% endfor %}
+        </p>
+      {% endif %}
+    {% endwith %}
     <form method="post" action="{{ url_for('login') }}">
         <label for="email">Email:</label>
         <input type="text" id="email" name="email" required><br>
