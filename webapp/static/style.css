@@ -129,7 +129,7 @@ form {
 
 .filter {
   position: absolute;
-  top: 20%;
+  top: 135px;
   left: 22.8%;
   transform: translate(-50%, -50%);
 }
