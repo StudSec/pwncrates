@@ -3,6 +3,7 @@ This file contains all routes and code relevant to authentication.
 
 This includes authentication to the API endpoint, this allows us to easily modify authentication settings site-wide.
 """
+import os
 import sys
 
 from flask_login import LoginManager, login_user, login_required, logout_user
@@ -11,6 +12,7 @@ from webapp.models import User
 import webapp.database as db
 from webapp import app
 import requests
+import mail
 import json
 import re
 
@@ -36,21 +38,26 @@ def load_user(user_id):
 @app.route('/login', methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        user_info = db.get_user(email=request.form["email"])
+        try:
+            user_info = db.get_user(email=request.form["email"])
 
-        if not user_info:
-            flash('Invalid credentials')
-            return render_template('login.html')
+            if not user_info:
+                flash('Invalid credentials')
+                return render_template('login.html')
 
-        password = user_info["password"]
+            password = user_info["password"]
 
-        if password == bcrypt.hashpw(request.form["password"].encode(), password.encode()).decode():
-            # Check if user is still pending verification by checking the database
-            user = User(db.get_user(email=request.form["email"])["id"],
-                        db.get_user(email=request.form["email"])["username"])
-            login_user(user)
-            return redirect(url_for('home'))
-
+            if password == bcrypt.hashpw(request.form["password"].encode(), password.encode()).decode():
+                # Check if user is still pending verification by checking the database
+                if len(db.get_link_from_email(request.form["email"], "confirmation")) != 0:
+                    flash('Account not yet activated')
+                    return render_template('login.html')
+                user = User(db.get_user(email=request.form["email"])["id"],
+                            db.get_user(email=request.form["email"])["username"])
+                login_user(user)
+                return redirect(url_for('home'))
+        except KeyError:
+            pass
         flash('Invalid credentials')
         return render_template('login.html')
 
@@ -62,39 +69,84 @@ def login():
 @app.route('/register', methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        if db.get_user(email=request.form["email"]):
-            return render_template('register.html', error='Email already taken')
-
-        if not re.match(r'^[\w\.+-]+@[\w\.-]+\.\w+$', request.form["email"]):
-            return render_template('register.html', error='Invalid email')
-
         try:
-            # Generate confirmation link
-            # Insert it into database
-            db.register_user(request.form["username"], bcrypt.hashpw(request.form["password"].encode(),
-                                                                     bcrypt.gensalt()).decode('ascii'),
-                             request.form["email"])
-            # Send email
+            # We check that the parameters are set before performing any actions
+            username = request.form["username"]
+            password = request.form["password"]
+            email = request.form["email"]
+
+            if db.get_user(email=email):
+                return render_template('register.html', error='Email already taken')
+
+            if not re.match(r'^[\w\.+-]+@[\w\.-]+\.\w+$', email):
+                return render_template('register.html', error='Invalid email')
+
+            code = os.urandom(16).hex()
+            db.insert_link(email, "confirmation", code)
+            db.register_user(username, bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii'), email)
+
+            mail.confirm_email(email, f"{config['hostname']}/{url_for('confirm_email')}?code={code}")
         except KeyError:
             return "Missing parameters"
 
-        # Redirect to login
-
-        user = User(db.get_user(email=request.form["email"])["id"],
-                    db.get_user(email=request.form["email"])["username"])
-        login_user(user)
-
-        return redirect(url_for('challenges'))
+        flash('Registered, confirmation email sent.')
+        return redirect(url_for('login'))
 
     else:
         return render_template('register.html')
 
 
-@app.route('/password_reset')
-def password_reste():
-    # If code parameter is set -> reset form
-    # otherwise ask for email
-    pass
+@app.route('/password_reset', methods=["GET", "POST"])
+def password_reset():
+    code = request.args.get('code')
+
+    if request.method == "POST":
+        try:
+            if code:
+                email = db.get_email_from_link("password", code)
+                if not email:
+                    return "Invalid code"
+
+                if request.form["new_password"] != request.form["confirm_password"]:
+                    return render_template("forgot_password.html", option="password", error="Passwords don't match")
+
+                password = request.form["new_password"]
+                db.change_user_password(email, password)
+                flash('Password changed')
+                return redirect(url_for("login"))
+            else:
+                email = request.form["email"]
+                code = os.urandom(16).hex()
+                db.insert_link(email, "reset", code)
+
+                mail.forgot_password(email, f"{config['hostname']}/{url_for('password_reset')}?code={code}")
+
+                flash("Reset link sent")
+                return redirect(url_for('login'))
+        except KeyError:
+            return "Missing parameters"
+
+    if code:
+        if not db.get_email_from_link("password", code):
+            return "Invalid code"
+        return render_template("forgot_password.html", option="password")
+    else:
+        return render_template("forgot_password.html")
+
+
+@app.route('/confirm_email')
+def confirm_email():
+    code = request.args.get('code')
+
+    if not code:
+        return redirect(url_for("login"))
+
+    if db.remove_link("confirmation", code):
+        flash("Account activated")
+        return redirect(url_for("login"))
+
+    flash("Invalid code")
+    return redirect(url_for("login"))
 
 
 @app.route('/logout')

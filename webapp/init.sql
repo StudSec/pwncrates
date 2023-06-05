@@ -53,6 +53,13 @@ CREATE TABLE categories(
     CONSTRAINT unique_constraint UNIQUE (name, parent)
 );
 
+CREATE TABLE links(
+    email VARCHAR(64),
+    type VARCHAR(16),
+    code  VARCHAR(256),
+    CONSTRAINT unique_constraint UNIQUE (code)
+)
+
 
 -- Populate test data --
 INSERT INTO universities

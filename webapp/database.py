@@ -14,6 +14,27 @@ import sys
 
 
 # Lookup functions
+def get_email_from_link(link_type, code):
+    assert link_type == "confirmation" or link_type == "reset"
+
+    cursor = conn.execute("SELECT email FROM links WHERE code = ? AND type = ?", (code, link_type))
+
+    results = [email[0] for email in cursor.fetchone()]
+    cursor.close()
+    return results
+
+
+def get_link_from_email(email, link_type):
+    assert link_type == "confirmation" or link_type == "reset"
+
+    cursor = conn.execute("SELECT code FROM links WHERE email = ? AND type = ?", (email, link_type))
+
+    results = [code[0] for code in cursor.fetchone()]
+    cursor.close()
+
+    return results
+
+
 def get_challenges(category, difficulty="hard"):
     difficulties = {
         "easy": 1,
@@ -229,6 +250,13 @@ def register_user(user_name, password, email):
     return
 
 
+def change_user_password(email, password):
+    cursor = conn.execute('UPDATE users SET password = ? WHERE email = ?', (password, email))
+    conn.commit()
+    cursor.close()
+    return
+
+
 def create_or_update_writeup(challenge_id, user_id, file_name):
     cursor = conn.cursor()
 
@@ -323,6 +351,27 @@ def update_or_create_category(path):
 
     conn.commit()
     cursor.close()
+
+
+def insert_link(email, link_type, code):
+    assert(link_type == "confirmation" or link_type == "reset")
+
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO links (email, type, code) VALUES (?, ?, ?);", (email, link_type, code))
+    conn.commit()
+
+
+def remove_link(link_type, code):
+    assert(link_type == "confirmation" or link_type == "reset")
+
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM links WHERE type = ? AND code = ?;", (link_type, code))
+    conn.commit()
+
+    if cursor.rowcount > 0:
+        return cursor.rowcount
+    else:
+        return ""
 
 
 # Is this unsafe with regards to multithreading?
