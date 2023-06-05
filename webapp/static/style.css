@@ -1,6 +1,6 @@
 /* This prevents the top navigational bar and footer from overlapping with the main content. */
 body {
-    padding-top: 70px;
+    padding-top: 100px;
     padding-bottom: 70px;
 }
 
@@ -88,6 +88,125 @@ button {
   text-decoration: none;
 }
 
+.solves_link {
+  color: black;
+  text-decoration: none;
+}
+
 form {
   padding-bottom: 10px;
+}
+
+/* h4 {
+  padding-top: 20px;
+}
+
+.col-md > h4 {
+  padding-top: 0px;
+  margin-bottom: 0px;
+} */
+
+.accordion-button:not(.collapsed) {
+  background-color: lightgray;
+}
+
+.accordion-item {
+  margin-bottom: 50px;
+}
+
+/* select {
+  margin-bottom: 50px;
+  margin-top: 20px;
+} */
+
+.mt-5 {
+  margin-top: 0px !important;
+}
+
+.text-center {
+  margin-bottom: 0px !important;
+}
+
+.filter {
+  position: absolute;
+  top: 135px;
+  left: 22.8%;
+  transform: translate(-50%, -50%);
+}
+
+.filter select {
+  background-color: #1c8adb;
+  color: white;
+  padding: 12px;
+  width: 250px;
+  border: none;
+  font-size: 20px;
+  appearance: none;
+  outline: none;
+}
+
+.filter::before {
+  content: "\f13a";
+  font-family: FontAwesome;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20%;
+  height: 100%;
+  text-align: center;
+  font-size: 28px;
+  line-height: 52.5px;
+  color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+.filter select option {
+  padding: 30px;
+}
+
+#challenge_submission {
+  margin-top: 100px;
+}
+
+.table.table-striped {
+  margin-top: 100px;
+}
+
+.scoreboard-filter {
+  position: absolute;
+  top: 25%;
+  left: 22.8%;
+  transform: translate(-50%, -50%);
+}
+
+.scoreboard-filter select {
+  background-color: #1c8adb;
+  color: white;
+  padding: 12px;
+  width: 250px;
+  border: none;
+  font-size: 20px;
+  appearance: none;
+  outline: none;
+}
+
+.scoreboard-filter::before {
+  content: "\f13a";
+  font-family: FontAwesome;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20%;
+  height: 100%;
+  text-align: center;
+  font-size: 28px;
+  line-height: 52.5px;
+  color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+.scoreboard-filter select option {
+  padding: 30px;
 }
