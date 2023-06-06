@@ -10,10 +10,6 @@ html {
   min-height: 100%;
 }
 
-a {
-  color: white;
-}
-
 button {
   width: 15.36%;
 }
@@ -24,7 +20,7 @@ button {
   width: 100%;
 }
 
-.nav-link {
+.nav-link-white {
   color: white;
 }
 
