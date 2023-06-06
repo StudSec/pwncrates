@@ -111,6 +111,7 @@ https://git-scm.com/docs/git-credential-store
 - Change connection string appearance
 - Change transition flag successfully submitted -> view writeups
 - Mark solved challenges
+- Fix invisible writeup link on solved challenge
 
 #### Writeups
 - Change writeup submission text/form
