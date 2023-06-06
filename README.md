@@ -22,7 +22,20 @@ docker-compose up
 ```
 This will start pwncrates on `http://localhost:5000/`
 
-If you want to have email and oauth functionality you need to configure `config.json`
+If you want to have email and oauth functionality you need to create and configure a file in `data/config.json`.
+The file needs to be structured as follows:
+```json
+{
+    "hostname": "",           // Public hostname/ip/dns, used for link generation
+    "oauth_client_id": "",
+    "oauth_client_secret": "",
+    "oauth_redirect_uri": "",
+    "SMTP_HOST": "",
+    "SMTP_PORT": 587,
+    "SMTP_USER": "",
+    "SMTP_PASS": ""
+}
+```
 
 ## Development
 For development, you likely want to rapidly redeploy the docker
