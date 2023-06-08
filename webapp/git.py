@@ -92,8 +92,11 @@ def init_git():
 
 def update_git_loop():
     while True:
-        update_challenges_from_git()
-        time.sleep(60)
+        try:
+            update_challenges_from_git()
+            time.sleep(60)
+        except Exception as e:
+            print("Error updating git:", e)
 
 
 init_git()
