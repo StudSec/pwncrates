@@ -99,8 +99,12 @@ def update_git_loop():
             print("Error updating git:", e)
 
 
-init_git()
-update_challenges_from_git()
+try:
+    init_git()
+    update_challenges_from_git()
+except Exception as e:
+    print("Error initializing git:", e)
+
 thread = threading.Thread(target=update_git_loop)
 thread.daemon = True
 thread.start()
