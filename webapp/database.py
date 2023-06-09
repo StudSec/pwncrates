@@ -305,12 +305,12 @@ def initialize_database():
     conn.commit()
 
 
-def update_or_create_challenge(path):
+def update_or_create_challenge(path, folder="challenges/Challenges/"):
     # Get information
     category, name, _ = path.split("/", 2)
 
     # Specify path to start in git directory
-    challenge_data = parse_markdown_challenge("challenges/Challenges/" + path)
+    challenge_data = parse_markdown_challenge(folder + path)
 
     if challenge_data == {}:
         return
@@ -340,8 +340,8 @@ def update_or_create_challenge(path):
     cursor.close()
 
 
-def update_or_create_category(path):
-    categories, parent = parse_markdown_category(path)
+def update_or_create_category(path, folder="challenges/Challenges/"):
+    categories, parent = parse_markdown_category(folder + path)
 
     cursor = conn.cursor()
     for category in categories:
