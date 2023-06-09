@@ -26,7 +26,7 @@ If you want to have email and oauth functionality you need to create and configu
 The file needs to be structured as follows:
 ```json
 {
-    "hostname": "",           // Public hostname/ip/dns, used for link generation
+    "hostname": "",
     "oauth_client_id": "",
     "oauth_client_secret": "",
     "oauth_redirect_uri": "",
@@ -36,6 +36,12 @@ The file needs to be structured as follows:
     "SMTP_PASS": ""
 }
 ```
+
+The file will need to exist with the above structure regardless. Currently there is no support to disabled oauth & email
+verification. However the file will accept empty/ dummy values (but will of course not work).
+
+The `hostname` field should contain the servers ip address/dns name, it is used to generate links for password 
+resets/account verifications.
 
 ## Development
 For development, you likely want to rapidly redeploy the docker
