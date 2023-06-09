@@ -35,7 +35,7 @@ def update_challenges_from_git():
     for file in changed_files:
         try:
             if "README.md" == file.split("/")[1]:
-                db.update_or_create_category(file, folder="")
+                db.update_or_create_category(file)
             if "README.md" == file.split("/")[2]:
                 db.update_or_create_challenge(file)
 
@@ -51,7 +51,7 @@ def update_challenges_from_git():
         except IndexError:
             pass
         except FileNotFoundError as error:
-            print(f"Error parsing {file}:", error)
+            print(f"Error parsing {file}:", error, file=sys.stderr)
 
 
 def git_update():
@@ -89,7 +89,7 @@ def init_git():
     for category in [x for x in os.listdir("./challenges/Challenges/")
                      if os.path.isdir(f"./challenges/Challenges/{x}")]:
         if os.path.exists(f"./challenges/Challenges/{category}/README.md"):
-            db.update_or_create_category(f"./challenges/Challenges/{category}/README.md")
+            db.update_or_create_category(f"./challenges/Challenges/{category}/README.md", folder="")
 
 
 def update_git_loop():
@@ -105,7 +105,7 @@ try:
     init_git()
     update_challenges_from_git()
 except Exception as e:
-    print("Error initializing git:", e)
+    print("Error initializing git:", e, file=sys.stderr)
 
 thread = threading.Thread(target=update_git_loop)
 thread.daemon = True
