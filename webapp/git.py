@@ -35,7 +35,7 @@ def update_challenges_from_git():
     for file in changed_files:
         try:
             if "README.md" == file.split("/")[1]:
-                db.update_or_create_category(file)
+                db.update_or_create_category(file, folder="")
             if "README.md" == file.split("/")[2]:
                 db.update_or_create_challenge(file)
 
@@ -50,6 +50,8 @@ def update_challenges_from_git():
                 create_challenge_handouts(file)
         except IndexError:
             pass
+        except FileNotFoundError as error:
+            print(f"Error parsing {file}:", error)
 
 
 def git_update():
