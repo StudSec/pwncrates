@@ -5,8 +5,6 @@ services:
     environment:
       - FLASK_APP=main
       - FLASK_ENV=development
-    ports:  # Debug port
-      - "5000:5000"
     volumes:
       - ./data/pages:/webapp/pages:ro
       - ./data/writeups:/webapp/writeups
