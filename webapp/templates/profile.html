@@ -2,26 +2,21 @@
 {% block title %}pwncrates - Profile{% endblock %}
 
 {% block content %}
-    <!-- if current person, -->
-    <h1>Profile</h1>
-    {% if current_user.is_authenticated %}
-    <p>
-        logged in as {{current_user.username}}
-        - show + edit options for email
-        - option to connect discord
-        - option to change university
-    </p>
-    {% endif %}
-	<p>
-        Name: {{ current_user.username }}
-        # {{rank[0]}}
-        points: {{rank[1]}}
-    </p>
-    <p>
-        University: {{ current_user.university }}
-    </p>
     <div class="container mt-5">
-        <h1 class="text-center mb-5">Solves:</h1>
+        <h1 class="text-center">#{{ rank[0] }} - {{ current_user.username }}</h1>
+         {% if current_user.is_authenticated %}
+        <form action="{{url_for('api_update_profile')}}" method="POST">
+          <div class="form-group text-center">
+            <select class="" id="university" name="university" onchange="updateUniversity()">
+              {% for university_id, university_name in universities %}
+                    <option value="{{ university_id }}">{{ university_name }}</option>
+                {% endfor %}
+            </select>
+          </div>
+        </form>
+        {% else %}
+        <h6 class="text-center mb-5">{{ current_user.university }}</h6>
+        {% endif %}
 
         <table class="table table-striped">
             <thead class="table-header">
@@ -43,4 +38,13 @@
             </tbody>
         </table>
     </div>
+    <script>
+        function updateUniversity() {
+          fetch('{{ url_for("api_update_profile") }}', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'university=' + encodeURIComponent(document.getElementById('university').value)
+          });
+        }
+    </script>
 {% endblock %} 

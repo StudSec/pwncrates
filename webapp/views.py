@@ -35,12 +35,12 @@ def profile():
 
     try:
         index = [i for i in range(len(scores)) if scores[i][0] == int(current_user.id)][0]
-        rank, score = index + 1, scores[index][3]
+        rank, score = index + 1, scores[index][4]
     except IndexError:
         rank, score = 0, 0
 
     return render_template("profile.html", solves=db.get_user_solves(current_user.id),
-                           rank=(rank, score))
+                           rank=(rank, score), universities=db.get_universities())
 
 
 @app.route('/profile/<int:user_id>')
@@ -53,10 +53,10 @@ def public_profile(user_id):
     user.authenticated = False
 
     scores = db.get_scoreboard()
-
+    print(scores, file=sys.stderr)
     try:
         index = [i for i in range(len(scores)) if scores[i][0] == user_id][0]
-        rank, score = index + 1, scores[index][3]
+        rank, score = index + 1, scores[index][4]
     except IndexError:
         rank, score = 0, 0
 

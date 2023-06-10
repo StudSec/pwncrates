@@ -93,12 +93,15 @@ For more information see
 https://git-scm.com/docs/git-credential-store
 
 ## TODO - backend
+- Discord nonce
+- Discord account linking after creation
+- Add CSP headers & friends
 - Migrate database
-- Add user profile page to allow configuration of user settings
 - Add a privacy policy + terms of service
 
 ## TODO - frontend
 #### General
+- Move Javascript to script.js
 - Home screen
 - Add github emoji instead of "Github link"
 - Look into copyright emoji -> is it legal?

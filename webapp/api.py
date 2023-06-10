@@ -56,7 +56,22 @@ def api_submit_challenge(challenge_id):
         return Response(json.dumps({"status": db.submit_flag(challenge_id, request.form['flag'], current_user.id)}),
                         mimetype="application/json")
     except KeyError:
-        return "Flag missing."
+        return Response(json.dumps({"Error": "Flag missing."}), mimetype="application/json")
+
+
+@app.route('/api/profile/update', methods=["POST"])
+@login_required
+def api_update_profile():
+    try:
+        university_id = int(request.form["university"])
+        if len([university for university in db.get_universities() if university[0] == university_id]) == 0:
+            return Response(json.dumps({"Error": "Invalid university id"}), mimetype="application/json")
+        db.update_user_university(current_user.id, request.form["university"])
+        return Response(json.dumps({"Status": "OK"}), mimetype="application/json")
+    except KeyError:
+        return Response(json.dumps({"Error": "Missing parameters"}), mimetype="application/json")
+    except ValueError:
+        return Response(json.dumps({"Error": "Invalid datatype"}), mimetype="application/json")
 
 
 @app.route('/api/scoreboard')

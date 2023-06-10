@@ -298,6 +298,12 @@ def update_discord_id(discord_id, email):
     return
 
 
+def update_user_university(user_id, university_id):
+    conn.execute("UPDATE users SET university_id = ? WHERE id = ?", (university_id, user_id))
+    conn.commit()
+    return
+
+
 def initialize_database():
     with open('init.sql', 'r') as f:
         sql_code = f.read()

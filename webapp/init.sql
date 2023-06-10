@@ -5,7 +5,7 @@ CREATE TABLE users (
     name VARCHAR(64),
     password VARCHAR(64),
     email VARCHAR(64) UNIQUE NOT NULL,
-    university_id INTEGER DEFAULT NULL,
+    university_id INTEGER DEFAULT 1,
     discord_id VARCHAR(18) DEFAULT NULL,
     website VARCHAR(64) DEFAULT NULL,
     points INTEGER DEFAULT 0
@@ -65,14 +65,15 @@ CREATE TABLE links(
 INSERT INTO universities
     (name)
 VALUES
+    ("Global"),
     ("Vrije Universiteit"),
     ("Radboud");
 
 INSERT INTO users
-    (name, email, password, university_id)
+    (name, email, password)
 VALUES
-    ('test_user_alpha', 'alpha@example.com', '$2b$12$SGY380.14bqpOtclkPf42eyt2RfIuQsoIEYkK16Qj8w0lZuF2qcDy', 1), -- the word blue hashed --
-    ('test_user_bravo', 'bravo@example.com', '$2b$12$v/vd5XM/WLLpMGXeKfrg0u7zd2AcJwQX7NNwSpZs4MXCZ7kYUlvr6', 1); -- the word yellow hashed --
+    ('test_user_alpha', 'alpha@example.com', '$2b$12$SGY380.14bqpOtclkPf42eyt2RfIuQsoIEYkK16Qj8w0lZuF2qcDy'), -- the word blue hashed --
+    ('test_user_bravo', 'bravo@example.com', '$2b$12$v/vd5XM/WLLpMGXeKfrg0u7zd2AcJwQX7NNwSpZs4MXCZ7kYUlvr6'); -- the word yellow hashed --
 
 INSERT INTO writeups
     (challenge_id, user_id, file_name)
