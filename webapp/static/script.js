@@ -82,4 +82,27 @@ document.addEventListener('DOMContentLoaded', () => {
           accordionButton.setAttribute('data-bs-toggle', 'collapse');
         });
     }
+
+    const universityFilter = document.getElementById('university-filter');
+    const tableRows = document.querySelectorAll('tbody tr');
+
+    universityFilter.addEventListener('change', () => {
+        const filterValue = universityFilter.value.trim().toLowerCase();
+        tableRows.forEach(row => {
+            const universityId = row.querySelector('.university-id').getAttribute("university").trim().toLowerCase();
+            if (filterValue === '' || universityId === filterValue) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
 });
+
+function updateUniversity() {
+  fetch('{{ url_for("api_update_profile") }}', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: 'university=' + encodeURIComponent(document.getElementById('university').value)
+  });
+}

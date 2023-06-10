@@ -38,13 +38,4 @@
             </tbody>
         </table>
     </div>
-    <script>
-        function updateUniversity() {
-          fetch('{{ url_for("api_update_profile") }}', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: 'university=' + encodeURIComponent(document.getElementById('university').value)
-          });
-        }
-    </script>
 {% endblock %} 
