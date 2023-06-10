@@ -53,7 +53,7 @@ def public_profile(user_id):
     user.authenticated = False
 
     scores = db.get_scoreboard()
-    print(scores, file=sys.stderr)
+
     try:
         index = [i for i in range(len(scores)) if scores[i][0] == user_id][0]
         rank, score = index + 1, scores[index][4]

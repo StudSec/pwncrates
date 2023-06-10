@@ -93,7 +93,7 @@ For more information see
 https://git-scm.com/docs/git-credential-store
 
 ## TODO - backend
-- Discord nonce
+- Discord nonce (https://discord.com/developers/docs/topics/oauth2#state-and-security)
 - Discord account linking after creation
 - Add CSP headers & friends
 - Migrate database
