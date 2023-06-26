@@ -102,7 +102,6 @@ https://git-scm.com/docs/git-credential-store
 #### General
 - Move Javascript to script.js
 - Home screen
-- Add github emoji instead of "Github link"
 - Look into copyright emoji -> is it legal?
 - Add favicon
 - Check mobile style
