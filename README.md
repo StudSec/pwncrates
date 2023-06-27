@@ -110,7 +110,6 @@ https://git-scm.com/docs/git-credential-store
 - Make stylized register page
 
 #### Challenges
-- Cards clickable
 - Change color schema
 - Collapse challenge upon successful solve
 - Reset from bad submission (red -> normal)
