@@ -104,7 +104,6 @@ https://git-scm.com/docs/git-credential-store
 - Home screen
 - Add favicon
 - Check mobile style
-- Update/make 404 page
 - Make stylized login page
 - Make stylized register page
 
@@ -126,6 +125,7 @@ https://git-scm.com/docs/git-credential-store
 - Add university logos
 - Fix bug -> university filter selector doesn't reset on reload (but scoreboard does)
 - Migrate in-line javascript to script.js in scoreboard.html
+- Fix filter absolute position
 
 ## TODO - Challenges
 - Add links to easy challenges -> make it easier to get started

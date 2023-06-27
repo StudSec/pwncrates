@@ -8,6 +8,15 @@ main > .container {
   padding: 80px 20px 0;
 }
 
+/* Custom css for the 404 page */
+.page-not-found {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30vh;
+    margin: 0;
+}
+
 button {
   width: 15.36%;
 }
