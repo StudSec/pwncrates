@@ -1,11 +1,11 @@
 /* Keep the main content from overlapping with the top bar */
 main > .container {
-  padding: 110px 15px 0;
+  padding: 100px 15px 0;
 }
 
 /* Keep the side bar from overlapping with the top bar */
 .sidebar {
-  padding: 90px 15px 0;
+  padding: 80px 20px 0;
 }
 
 button {
