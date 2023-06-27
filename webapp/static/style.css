@@ -1,23 +1,15 @@
-/* This prevents the top navigational bar and footer from overlapping with the main content. */
-body {
-    padding-top: 100px;
-    padding-bottom: 70px;
+/* Keep the main content from overlapping with the top bar */
+main > .container {
+  padding: 110px 15px 0;
 }
 
-/* This fixes the footer to the bottom. */
-html {
-  position: relative;
-  min-height: 100%;
+/* Keep the side bar from overlapping with the top bar */
+.sidebar {
+  padding: 90px 15px 0;
 }
 
 button {
   width: 15.36%;
-}
-
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
 }
 
 .nav-link-white {
@@ -93,15 +85,6 @@ form {
   padding-bottom: 10px;
 }
 
-/* h4 {
-  padding-top: 20px;
-}
-
-.col-md > h4 {
-  padding-top: 0px;
-  margin-bottom: 0px;
-} */
-
 .accordion-button:not(.collapsed) {
   background-color: lightgray;
 }
@@ -113,11 +96,6 @@ form {
 .accordion {
     margin-bottom: 50px;
 }
-
-/* select {
-  margin-bottom: 50px;
-  margin-top: 20px;
-} */
 
 .mt-5 {
   margin-top: 0px !important;
