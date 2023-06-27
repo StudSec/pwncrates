@@ -102,13 +102,11 @@ https://git-scm.com/docs/git-credential-store
 #### General
 - Move Javascript to script.js
 - Home screen
-- Look into copyright emoji -> is it legal?
 - Add favicon
 - Check mobile style
 - Update/make 404 page
 - Make stylized login page
 - Make stylized register page
-- Fix top + bottom bar padding
 
 #### Challenges
 - Cards clickable

@@ -1,6 +1,6 @@
 /* Keep the main content from overlapping with the top bar */
 main > .container {
-  padding: 100px 15px 0;
+  padding: 100px 0 0 150px;
 }
 
 /* Keep the side bar from overlapping with the top bar */
