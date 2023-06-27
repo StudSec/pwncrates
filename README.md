@@ -22,6 +22,8 @@ docker-compose up
 ```
 This will start pwncrates on `http://localhost:5000/`
 
+`update.sh` is also included, which is a simple way to check for remote changes and redeploy if needed.
+
 If you want to have email and oauth functionality you need to create and configure a file in `data/config.json`.
 The file needs to be structured as follows:
 ```json
