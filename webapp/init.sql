@@ -60,14 +60,34 @@ CREATE TABLE links(
 );
 
 
--- Populate test data --
+-- Add universities from: https://universitairemasters.nl/universiteiten/ --
 INSERT INTO universities
     (name)
 VALUES
     ("Global"),
-    ("Vrije Universiteit"),
-    ("Radboud");
+    ("Erasmus Universiteit Rotterdam"),
+    ("Maastricht University"),
+    ("Radboud Universiteit"),
+    ("Rijksuniversiteit Groningen"),
+    ("Tilburg University"),
+    ("Universiteit Leiden"),
+    ("Universiteit Utrecht"),
+    ("Universiteit van Amsterdam"),
+    ("Vrije Universiteit Amsterdam"),
+    ("Maastricht School of Management"),
+    ("Nyenrode Business Universiteit"),
+    ("Nederlandse Defensie Academie"),
+    ("Universiteit voor Humanistiek"),
+    ("Open Universiteit"),
+    ("Protestantse Theologische Universiteit"),
+    ("Theologische Universiteit Apeldoorn"),
+    ("Theologische Universiteit Kampen"),
+    ("Technische Universiteit Delft"),
+    ("Technische Universiteit Eindhoven"),
+    ("Universiteit Twente"),
+    ("Wageningen University & Research");
 
+-- Populate test data --
 INSERT INTO users
     (name, email, password)
 VALUES
