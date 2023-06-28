@@ -17,6 +17,11 @@ main > .container {
     margin: 0;
 }
 
+.challenge-card {
+    width: 300px;
+    padding: 15px;
+}
+
 button {
   width: 15.36%;
 }
