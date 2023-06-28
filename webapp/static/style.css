@@ -17,6 +17,7 @@ main > .container {
     margin: 0;
 }
 
+/* Custom css for the category cards in the challenge category overview*/
 .challenge-card {
     width: 300px;
     padding: 15px;
