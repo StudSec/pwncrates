@@ -4,9 +4,9 @@
 {% block content %}
     <div class="row">
     {% for category, description in categories.items() %}
-        <div class="col-sm-3 mb-3">
+        <div class="col-md-3">
         <a href="{{ url_for('challenges') + '/' + category }}" class="card-block stretched-link text-decoration-none">
-            <div class="card" style="width: 18rem;">
+            <div class="card">
               <img src="https://picsum.photos/536/354" class="card-img-top">
               <div class="card-body">
                 <h5 class="card-title">{{ category }}</h5>
