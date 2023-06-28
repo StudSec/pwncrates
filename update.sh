@@ -15,6 +15,6 @@ fi
 git pull origin main
 
 # Execute the deployment command
-docker-compose down
+docker-compose down --remove-orphans
 docker-compose build
 docker-compose up -d
