@@ -6,7 +6,7 @@ CREATE TABLE users (
     password VARCHAR(64),
     email VARCHAR(64) UNIQUE NOT NULL,
     university_id INTEGER DEFAULT 1,
-    discord_id VARCHAR(18) DEFAULT NULL,
+    discord_id VARCHAR(18) DEFAULT NULL
 );
 
 CREATE TABLE universities (
