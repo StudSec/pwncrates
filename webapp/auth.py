@@ -46,6 +46,9 @@ def login():
                 return render_template('login.html')
 
             password = user_info["password"]
+            if not password:
+                flash('Please reset password or use Oauth.')
+                return render_template('login.html')
 
             if password == bcrypt.hashpw(request.form["password"].encode(), password.encode()).decode():
                 # Check if user is still pending verification by checking the database
