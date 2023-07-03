@@ -4,7 +4,6 @@ services:
     build: ./webapp/
     environment:
       - FLASK_APP=main
-      - FLASK_ENV=development
     volumes:
       - ./data/pages:/webapp/pages:ro
       - ./data/writeups:/webapp/writeups

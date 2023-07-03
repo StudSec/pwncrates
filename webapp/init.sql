@@ -62,37 +62,25 @@ CREATE TABLE links(
 INSERT INTO universities
     (name)
 VALUES
-    ("Global"),
-    ("Erasmus Universiteit Rotterdam"),
-    ("Maastricht University"),
-    ("Radboud Universiteit"),
-    ("Rijksuniversiteit Groningen"),
-    ("Tilburg University"),
-    ("Universiteit Leiden"),
-    ("Universiteit Utrecht"),
-    ("Universiteit van Amsterdam"),
-    ("Vrije Universiteit Amsterdam"),
-    ("Maastricht School of Management"),
-    ("Nyenrode Business Universiteit"),
-    ("Nederlandse Defensie Academie"),
-    ("Universiteit voor Humanistiek"),
-    ("Open Universiteit"),
-    ("Protestantse Theologische Universiteit"),
-    ("Theologische Universiteit Apeldoorn"),
-    ("Theologische Universiteit Kampen"),
-    ("Technische Universiteit Delft"),
-    ("Technische Universiteit Eindhoven"),
-    ("Universiteit Twente"),
-    ("Wageningen University & Research");
-
--- Populate test data --
-INSERT INTO users
-    (name, email, password)
-VALUES
-    ('test_user_alpha', 'alpha@example.com', '$2b$12$SGY380.14bqpOtclkPf42eyt2RfIuQsoIEYkK16Qj8w0lZuF2qcDy'), -- the word blue hashed --
-    ('test_user_bravo', 'bravo@example.com', '$2b$12$v/vd5XM/WLLpMGXeKfrg0u7zd2AcJwQX7NNwSpZs4MXCZ7kYUlvr6'); -- the word yellow hashed --
-
-INSERT INTO writeups
-    (challenge_id, user_id, file_name)
-VALUES
-    (1, 1, "exampleWriteup");
+    ('Global'),
+    ('Erasmus Universiteit Rotterdam'),
+    ('Maastricht University'),
+    ('Radboud Universiteit'),
+    ('Rijksuniversiteit Groningen'),
+    ('Tilburg University'),
+    ('Universiteit Leiden'),
+    ('Universiteit Utrecht'),
+    ('Universiteit van Amsterdam'),
+    ('Vrije Universiteit Amsterdam'),
+    ('Maastricht School of Management'),
+    ('Nyenrode Business Universiteit'),
+    ('Nederlandse Defensie Academie'),
+    ('Universiteit voor Humanistiek'),
+    ('Open Universiteit'),
+    ('Protestantse Theologische Universiteit'),
+    ('Theologische Universiteit Apeldoorn'),
+    ('Theologische Universiteit Kampen'),
+    ('Technische Universiteit Delft'),
+    ('Technische Universiteit Eindhoven'),
+    ('Universiteit Twente'),
+    ('Wageningen University & Research');
