@@ -31,7 +31,6 @@ CREATE TABLE challenges (
     difficulty INTEGER,
     subcategory VARCHAR(64),
     flag VARCHAR(128),
-    solves INTEGER DEFAULT 0,
     url VARCHAR(128) DEFAULT NULL
 );
 

@@ -45,7 +45,8 @@ def get_challenges(category, difficulty="hard"):
     difficulty = difficulties[difficulty.lower()]
 
     cursor = conn.execute('SELECT B.description, A.id, A.name, A.description, A.points, A.subcategory, A.url, '
-                          'A.solves, A.difficulty FROM challenges A, categories B  '
+                          '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id) AS solve_count, '
+                          'A.difficulty FROM challenges A, categories B  '
                           'WHERE A.category = ? AND A.difficulty <= ? '
                           'AND A.subcategory = B.name AND B.parent = A.category',
                           (category, difficulty))

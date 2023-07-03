@@ -91,11 +91,7 @@ for statement in old_database:
             solve_data = list(csv.reader([solve], delimiter=',', quotechar="'"))[0]
             solve_challenge_id = solve_data[1]
             solve_user_id = solve_data[2]
-            print(f"""
-challenge: {solve_challenge_id}
-user:      {solve_user_id}
-            """)
-            # Insert into database
+
             cursor = conn.cursor()
             try:
                 cursor.execute("INSERT INTO solves (challenge_id, solved_time, user_id) VALUES (?, ?, ?);",
@@ -105,5 +101,5 @@ user:      {solve_user_id}
             except (sqlite3.IntegrityError, KeyError):
                 pass
             cursor.close()
-        conn.commit()
 
+        conn.commit()
