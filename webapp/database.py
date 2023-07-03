@@ -173,7 +173,7 @@ def get_challenge_name(challenge_id):
 def get_user(user_id=None, email=None):
     if user_id:
         cursor = conn.execute(
-            'SELECT U.email, U.name, U.university_id, A.name, U.discord_id, U.password, U.website '
+            'SELECT U.email, U.name, U.university_id, A.name, U.discord_id, U.password '
             'FROM users U LEFT JOIN universities A ON U.university_id = A.id '
             'WHERE U.id = ? LIMIT 1;', (user_id,))
         results = [
@@ -185,7 +185,6 @@ def get_user(user_id=None, email=None):
                 "university_name": user_info[3],
                 "discord_id": user_info[4],
                 "password": user_info[5],
-                "website": user_info[6],
              } for user_info in cursor.fetchall()
         ]
         cursor.close()
@@ -196,7 +195,7 @@ def get_user(user_id=None, email=None):
         return results[0]
     if email:
         cursor = conn.execute(
-            'SELECT U.id, U.name, U.university_id, A.name, U.discord_id, U.password, U.website '
+            'SELECT U.id, U.name, U.university_id, A.name, U.discord_id, U.password'
             'FROM users U LEFT JOIN universities A ON U.university_id = A.id '
             'WHERE U.email = ? LIMIT 1;', (email,))
         results = [
@@ -208,7 +207,6 @@ def get_user(user_id=None, email=None):
                 "university_name": user_info[3],
                 "discord_id": user_info[4],
                 "password": user_info[5],
-                "website": user_info[6]
             } for user_info in cursor.fetchall()
         ]
         cursor.close()
