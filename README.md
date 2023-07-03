@@ -39,11 +39,16 @@ The file needs to be structured as follows:
 }
 ```
 
-The file will need to exist with the above structure regardless. Currently there is no support to disabled oauth & email
-verification. However the file will accept empty/ dummy values (but will of course not work).
+The file will need to exist with the above structure regardless. Currently, there is no support to disabled oauth & email
+verification. However, the file will accept empty/ dummy values (but will of course not work).
 
 The `hostname` field should contain the servers ip address/dns name, it is used to generate links for password 
 resets/account verifications.
+
+#### Migrating from ctfd
+You can use the migration script in `./scripts/` to migrate a ctfd database to pwncrates. However, this has minimal
+support, it will automate a lot for you, but it's not a "run and forget" solution. It expects a mysql dump/backup file
+called `backup.sql` to be in the same folder as the script.
 
 ## Development
 For development, you likely want to rapidly redeploy the docker
@@ -98,13 +103,12 @@ https://git-scm.com/docs/git-credential-store
 - Discord nonce (https://discord.com/developers/docs/topics/oauth2#state-and-security)
 - Discord account linking after creation
 - Add CSP headers
-- Migrate database
 
 ## TODO - frontend
 #### General
 - Move Javascript to script.js
 - Fix javascript errors
-- Home screen
+- Improve homescreen
 - Add favicon
 - Check mobile style
 - Make stylized login page
@@ -117,20 +121,15 @@ https://git-scm.com/docs/git-credential-store
 - Change connection string appearance
 - Change transition flag successfully submitted -> view writeups
 - Mark solved challenges
+- Set challenge images
 
 #### Writeups
 - Change writeup submission text/form
-- Set challenge images
 
 #### Scoreboard
-- Improve scoreboard style
-- Add university logos
-- Fix bug -> university filter selector doesn't reset on reload (but scoreboard does)
 - Migrate in-line javascript to script.js in scoreboard.html
 - Fix filter absolute position
 
 ## TODO - Challenges
 - Add links to easy challenges -> make it easier to get started
 
-## TODO - Final
-- Remove all debug/development switches (print statements, docker configs, flask settings, init.sql data, etc)
