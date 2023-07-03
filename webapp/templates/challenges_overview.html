@@ -5,8 +5,8 @@
     <div class="row">
     {% for category, description in categories.items() %}
         <div class="challenge-card">
-        <a href="{{ url_for('challenges') + '/' + category }}" class="card card-block stretched-link text-decoration-none">
-            <div class="card">
+        <a href="{{ url_for('challenges') + '/' + category }}" class="card card-block stretched-link text-decoration-none h-100">
+            <div class="card h-100">
               <img src="https://picsum.photos/536/354" class="card-img-top">
               <div class="card-body">
                 <h5 class="card-title text-center">{{ category }}</h5>
