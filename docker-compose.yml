@@ -8,7 +8,7 @@ services:
       - ./data/pages:/webapp/pages:ro
       - ./data/writeups:/webapp/writeups
       - ./data/db:/webapp/db
-      - ./data/challenges/:/tmp/challenges:ro
+      - ./data/challenges/:/tmp/challenges
       - ./data/.git-credentials:/root/.git-credentials:ro
       - ./webapp/templates/:/webapp/templates:ro
       - ./webapp/static/:/webapp/static
