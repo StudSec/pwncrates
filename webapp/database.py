@@ -195,7 +195,7 @@ def get_user(user_id=None, email=None):
         return results[0]
     if email:
         cursor = conn.execute(
-            'SELECT U.id, U.name, U.university_id, A.name, U.discord_id, U.password'
+            'SELECT U.id, U.name, U.university_id, A.name, U.discord_id, U.password '
             'FROM users U LEFT JOIN universities A ON U.university_id = A.id '
             'WHERE U.email = ? LIMIT 1;', (email,))
         results = [
