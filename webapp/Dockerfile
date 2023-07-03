@@ -12,4 +12,4 @@ RUN pip install -r requirements.txt
 # Add the rest of the files
 COPY . .
 
-ENTRYPOINT flask run --host=0.0.0.0 --debug
+ENTRYPOINT flask run --host=0.0.0.0
