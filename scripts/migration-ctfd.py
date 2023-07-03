@@ -55,7 +55,7 @@ for statement in old_database:
             challenge_lookup[str(challenge_old_id)] = str(challenge_new_id[0])
 
 # Manual
-challenge_lookup["19"] = "31"   # Easy 0day challenge
+# challenge_lookup["19"] = "31"
 
 
 # Get submission times
