@@ -103,6 +103,8 @@ https://git-scm.com/docs/git-credential-store
 - Discord nonce (https://discord.com/developers/docs/topics/oauth2#state-and-security)
 - Discord account linking after creation
 - Add CSP headers
+- Don't cache main page ->  confusion after oauth callback
+- Hide users?
 
 ## TODO - frontend
 #### General
