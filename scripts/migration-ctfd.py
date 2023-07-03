@@ -1,66 +1,109 @@
+import datetime
 import re
+import csv
 import sqlite3
-# Open the backup.sql file
-bckup = open("backup.sql", "r")
-sqlitecon = sqlite3.connect("../data/db/pwncrates.db")
-# Read the file
-bckup = bckup.read()
-# Split the file into a list of queries
-bckup = bckup.split(";")
-"""
+conn = sqlite3.connect("../data/db/pwncrates.db")
+with open("backup.sql", "r") as f:
+    old_database = f.read().split(";\n")
 
-DROP TABLE IF EXISTS `users`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `oauth_id` int(11) DEFAULT NULL,
-  `name` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `password` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `type` varchar(80) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `secret` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `website` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `affiliation` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `country` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `bracket` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `hidden` tinyint(1) DEFAULT NULL,
-  `banned` tinyint(1) DEFAULT NULL,
-  `verified` tinyint(1) DEFAULT NULL,
-  `team_id` int(11) DEFAULT NULL,
-  `created` datetime(6) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`),
-  UNIQUE KEY `id` (`id`,`oauth_id`),
-  UNIQUE KEY `oauth_id` (`oauth_id`),
-  KEY `team_id` (`team_id`),
-  CONSTRAINT `users_ibfk_1` FOREIGN KEY (`team_id`) REFERENCES `teams` (`id`),
-  CONSTRAINT `CONSTRAINT_1` CHECK (`hidden` in (0,1)),
-  CONSTRAINT `CONSTRAINT_2` CHECK (`banned` in (0,1)),
-  CONSTRAINT `CONSTRAINT_3` CHECK (`verified` in (0,1))
-) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+# Insert users & create lookup table
+user_lookup = {}
+for statement in old_database:
+    if statement.startswith("INSERT INTO `users` VALUES"):
+        users = re.findall(r'\((.*?)\)', statement)
+        for user in users:
+            user_data = list(csv.reader([user], delimiter=',', quotechar="'"))[0]
+            username = user_data[2]
+            email = user_data[4]
+            old_id = user_data[0]
 
---
--- Dumping data for table `users`
---
+            cursor = conn.cursor()
+            try:
+                cursor.execute("INSERT INTO users (name, email) VALUES (?, ?);", (username, email))
+                user_lookup[str(old_id)] = str(cursor.lastrowid)
+                cursor.close()
+            except sqlite3.IntegrityError:
+                cursor.execute("SELECT id FROM users WHERE email = ?;", (email,))
+                user_lookup[str(old_id)] = str(cursor.fetchone()[0])
+                cursor.close()
+                continue
 
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-"""
-# For each of the values inserted into the users table, print the email address
-for j in range(1, len(bckup)):
-    print(bckup[j])
-    print("----------------")
-    if bckup[j].startswith("\nINSERT INTO `users` VALUES"):
-        # Get every string within brackets
-        email = re.findall(r'\((.*?)\)', bckup[j])
-        for e in email:
-            username = e.split(",")[2]
-            password = e.split(",")[3]
-            email = e.split(",")[4]
-            university = e.split(",")[8]
-            # INSERT INTO USERS NULL, name, password, university, 0
+        conn.commit()
 
-            sqlitecon.execute("INSERT INTO users VALUES (NULL, ?, ?, ?, 0)", (username, password, university))
-            
+# Create challenge lookup table old_id -> new id
+challenge_lookup = {}
+for statement in old_database:
+    if statement.startswith("INSERT INTO `challenges` VALUES"):
+        challenges = re.findall(r'\((.*?)\)', statement)
+        for challenge in challenges:
+            challenge_data = list(csv.reader([challenge], delimiter=',', quotechar="'"))[0]
+
+            if len(challenge_data) < 2:
+                continue
+
+            challenge_old_id = challenge_data[0]
+            challenge_name = challenge_data[1]
+
+            cursor = conn.cursor()
+            # Casing might have changed
+            cursor.execute("SELECT id FROM challenges WHERE name COLLATE NOCASE = ?;", (challenge_name,))
+            challenge_new_id = cursor.fetchone()
+            if not challenge_new_id or len(challenge_new_id) == 0:
+                print(f"Could not find challenge {challenge_name.encode()} with id {challenge_old_id} "
+                      f"add manually if needed")
+                continue
+            challenge_lookup[str(challenge_old_id)] = str(challenge_new_id[0])
+
+# Manual
+challenge_lookup["19"] = "31"   # Easy 0day challenge
+
+
+# Get submission times
+submission_lookup = {}
+for statement in old_database:
+    if statement.startswith("INSERT INTO `submissions` VALUES"):
+        submissions = re.findall(r'\((.*?)\)', statement)
+        for submission in submissions:
+            submission_data = list(csv.reader([submission], delimiter=',', quotechar="'"))[0]
+
+            # A bit hacky, but some flag submissions cause csv reader to bug out for reasons unknown
+            # to me. As a workaround we can ignore any submission that's malformed.
+            try:
+                if submission_data[6] != "correct":
+                    continue
+            except IndexError:
+                print(f"malformed submission, skipping {submission}")
+                continue
+            old_challenge_id = submission_data[1]
+            old_user_id = submission_data[2]
+            submission_type = submission_data[6]
+            submission_date = submission_data[7]
+
+            submission_lookup[(old_challenge_id, old_user_id)] = int(
+                datetime.datetime.strptime(submission_date, '%Y-%m-%d %H:%M:%S.%f').strftime('%s')
+            )
+
+# Update solves table
+for statement in old_database:
+    if statement.startswith("INSERT INTO `solves` VALUES"):
+        solves = re.findall(r'\((.*?)\)', statement)
+        for solve in solves:
+            solve_data = list(csv.reader([solve], delimiter=',', quotechar="'"))[0]
+            solve_challenge_id = solve_data[1]
+            solve_user_id = solve_data[2]
+            print(f"""
+challenge: {solve_challenge_id}
+user:      {solve_user_id}
+            """)
+            # Insert into database
+            cursor = conn.cursor()
+            try:
+                cursor.execute("INSERT INTO solves (challenge_id, solved_time, user_id) VALUES (?, ?, ?);",
+                               (challenge_lookup[solve_challenge_id],
+                                submission_lookup[(solve_challenge_id, solve_user_id)],
+                                user_lookup[solve_user_id]))
+            except (sqlite3.IntegrityError, KeyError):
+                pass
+            cursor.close()
+        conn.commit()
+
