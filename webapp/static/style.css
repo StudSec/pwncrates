@@ -23,6 +23,21 @@ main {
     padding: 15px;
 }
 
+/* Custom css for 'code blocks' used in connection strings */
+.code-block {
+  background-color: #f0f0f0;
+  padding: 10px;
+  font-family: monospace;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  overflow-x: auto;
+}
+
+.code-block p {
+  padding: 0 20px;
+  margin: 0;
+}
+
 button {
   width: 15.36%;
 }

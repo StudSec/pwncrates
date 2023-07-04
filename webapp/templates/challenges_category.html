@@ -38,9 +38,9 @@
                     {{description | safe}}
                 </p>
                 {% if url != "Null" %}
-                <p>
-                    Connection: {{ url }}
-                </p>
+                <div class="code-block"><p>
+                    {{ url }}
+                </p></div>
                 {% endif %}
 
                 {% if handout != "" %}
