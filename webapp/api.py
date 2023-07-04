@@ -77,7 +77,7 @@ def api_scoreboard():
         ret[rank] = {
             "username": user[1],
             "university": user[3],
-            "position": rank,
+            "position": rank+1,
             "score": user[4],
             "user_id": user[0]
         }
