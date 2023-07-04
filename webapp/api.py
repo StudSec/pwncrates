@@ -12,12 +12,6 @@ import json
 # General API file
 
 
-@app.route('/api/get_users')
-def api_get_users():
-    return Response(json.dumps({user_id: username for user_id, username in enumerate(db.get_users())}),
-                    mimetype="application/json")
-
-
 @app.route('/api/challenges/categories')
 def api_get_categories():
     return Response(json.dumps(db.get_categories()),
