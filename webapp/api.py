@@ -70,17 +70,17 @@ def api_update_profile():
 
 @app.route('/api/scoreboard')
 def api_scoreboard():
-    ret = {}
+    ret = []
     scoreboard = db.get_scoreboard()
 
     for rank, user in enumerate(scoreboard):
-        ret[rank] = {
+        ret.append({
             "username": user[1],
             "university": user[3],
             "position": rank+1,
             "score": user[4],
             "user_id": user[0]
-        }
+        })
 
     return Response(json.dumps(ret),
                     mimetype="application/json")
