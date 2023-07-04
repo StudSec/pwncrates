@@ -75,10 +75,10 @@ def api_scoreboard():
 
     for rank, user in enumerate(scoreboard):
         ret[rank] = {
-            "username": user[0],
-            "university_id": user[1],
-            "score": user[2],
-            "user_id": user[3]
+            "username": user[1],
+            "university": user[3],
+            "score": user[4],
+            "user_id": user[0]
         }
 
     return Response(json.dumps(ret),
