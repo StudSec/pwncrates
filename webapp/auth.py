@@ -58,7 +58,7 @@ def login():
                 user = User(db.get_user(email=request.form["email"])["id"],
                             db.get_user(email=request.form["email"])["username"])
                 login_user(user)
-                return redirect(url_for('home'))
+                return redirect(url_for('challenges'))
         except KeyError:
             pass
         flash('Invalid credentials')
@@ -224,5 +224,5 @@ def discord_oauth_callback():
     user = User(stored_info["id"], stored_info["username"])
     login_user(user)
 
-    return redirect(url_for('home'))
+    return redirect(url_for('challenges'))
 
