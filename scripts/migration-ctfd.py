@@ -103,3 +103,23 @@ for statement in old_database:
             cursor.close()
 
         conn.commit()
+
+# Optional: If the discord plugin is present we want to associate each discord id to its relevant account.
+for statement in old_database:
+    if statement.startswith("INSERT INTO `discorduser` VALUES"):
+        discord_users = re.findall(r'\((.*?)\)', statement)
+        for discord_user in discord_users:
+            discord_data = list(csv.reader([discord_user], delimiter=',', quotechar="'"))[0]
+            old_user_id = discord_data[0]
+            discord_id = discord_data[2]
+
+            cursor = conn.cursor()
+            try:
+                cursor.execute("UPDATE users SET discord_id = ? WHERE ID = ?;",
+                               (discord_id,
+                                user_lookup[old_user_id]))
+            except (sqlite3.IntegrityError, KeyError):
+                pass
+            cursor.close()
+
+        conn.commit()
