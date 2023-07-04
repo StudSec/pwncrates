@@ -7,9 +7,10 @@
          {% if current_user.is_authenticated %}
         <form action="{{url_for('api_update_profile')}}" method="POST">
           <div class="form-group text-center">
-            <select class="" id="university" name="university" onchange="updateUniversity()">
+            <select class="" id="university" name="university"
+                    onchange="updateUniversity('{{ url_for('api_update_profile') }}')">
               {% for university_id, university_name in universities %}
-                    <option value="{{ university_id }}">{{ university_name }}</option>
+                    <option value="{{ university_id }}" {% if current_user.university == university_name %} selected="selected" {% endif %}>{{ university_name }}</option>
                 {% endfor %}
             </select>
           </div>

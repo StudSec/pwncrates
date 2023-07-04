@@ -99,8 +99,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-function updateUniversity() {
-  fetch('{{ url_for("api_update_profile") }}', {
+function updateUniversity(update_url) {
+  fetch(update_url, {
     method: 'POST',
     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
     body: 'university=' + encodeURIComponent(document.getElementById('university').value)
