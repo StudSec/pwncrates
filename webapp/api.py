@@ -8,8 +8,13 @@ import webapp.database as db
 from webapp import app
 from flask import request
 from flask import Response
+import requests
 import json
 # General API file
+
+# Read and eval config file
+with open("config.json", "r") as f:
+    config = json.loads(f.read())
 
 
 @app.route('/api/challenges/categories')
@@ -47,7 +52,15 @@ def api_get_challenges(category):
 @login_required
 def api_submit_challenge(challenge_id):
     try:
-        return Response(json.dumps({"status": db.submit_flag(challenge_id, request.form['flag'], current_user.id)}),
+        status = db.submit_flag(challenge_id, request.form['flag'], current_user.id)
+        if status != "OK":
+            return Response(json.dumps({"status": status}),
+                            mimetype="application/json")
+        data = {
+            "content": f"{db.get_user(user_id=current_user.id)['username']} solved {db.get_challenge_name(challenge_id)}!"
+        }
+        requests.post(config["webhook_url"], json=data)
+        return Response(json.dumps({"status": status}),
                         mimetype="application/json")
     except KeyError:
         return Response(json.dumps({"Error": "Flag missing."}), mimetype="application/json")
