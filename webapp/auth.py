@@ -100,7 +100,7 @@ def register():
         return render_template('register.html')
 
 
-@app.route('/password_reset', methods=["GET", "POST"])
+@app.route('/password-reset', methods=["GET", "POST"])
 def password_reset():
     code = request.args.get('code')
 
