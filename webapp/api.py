@@ -3,6 +3,8 @@ This file contains all API routes.
 
 An API route is used either by external applications (for example the StudBot), or client side javascript.
 """
+import sys
+
 from flask_login import login_required, current_user
 import webapp.database as db
 from webapp import app
@@ -56,6 +58,8 @@ def api_submit_challenge(challenge_id):
         if status != "OK":
             return Response(json.dumps({"status": status}),
                             mimetype="application/json")
+        print("Posting to webhook url", file=sys.stderr)
+        print(f"Webhook url {config['webhook_url']}", file=sys.stderr)
         data = {
             "content": f"{db.get_user(user_id=current_user.id)['username']} solved {db.get_challenge_name(challenge_id)}!"
         }
