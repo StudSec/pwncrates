@@ -18,11 +18,9 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br>
         <button class="btn btn-secondary btn-lg btn-block" type="submit">Login</button>
+        <a class="btn btn-secondary btn-lg btn-block" href="{{ url_for('password_reset') }}">Reset password</a>
     </form>
 
-    2<a class="btn btn-secondary btn-lg btn-block" href="{{ url_for('password_reset') }}">
-                Reset password
-            </a>
     <a class="btn btn-secondary btn-lg btn-block" href="{{ url_for('discord_oauth') }}">
                 Login with Discord
             </a>
