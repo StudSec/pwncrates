@@ -279,8 +279,6 @@ def submit_flag(challenge_id, flag, user_id):
         else:
             conn.execute('INSERT INTO solves (challenge_id, solved_time, user_id) VALUES (?, ?, ?);',
                          (challenge_id, int(time.time()), user_id))
-            conn.execute('UPDATE challenges SET solves = (SELECT COUNT(S.id) FROM solves S WHERE S.challenge_id = ?)'
-                         ' WHERE id = ?', (challenge_id, challenge_id))
             conn.commit()
             ret = "OK"
     else:
