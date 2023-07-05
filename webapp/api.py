@@ -55,15 +55,16 @@ def api_get_challenges(category):
 def api_submit_challenge(challenge_id):
     try:
         status = db.submit_flag(challenge_id, request.form['flag'], current_user.id)
+
         if status != "OK":
             return Response(json.dumps({"status": status}),
                             mimetype="application/json")
-        print("Posting to webhook url", file=sys.stderr)
-        print(f"Webhook url {config['webhook_url']}", file=sys.stderr)
+
         data = {
             "content": f"{db.get_user(user_id=current_user.id)['username']} solved {db.get_challenge_name(challenge_id)}!"
         }
         requests.post(config["webhook_url"], json=data)
+
         return Response(json.dumps({"status": status}),
                         mimetype="application/json")
     except KeyError:
