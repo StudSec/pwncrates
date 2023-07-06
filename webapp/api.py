@@ -63,7 +63,8 @@ def api_submit_challenge(challenge_id):
         data = {
             "content": f"{db.get_user(user_id=current_user.id)['username']} solved {db.get_challenge_name(challenge_id)}!"
         }
-        requests.post(config["webhook_url"], json=data)
+        if config["webhook_url"].startswith("http"):
+            requests.post(config["webhook_url"], json=data)
 
         return Response(json.dumps({"status": status}),
                         mimetype="application/json")
