@@ -9,18 +9,18 @@ The repository should have the name `Challenges`.
 For example
 ```commandline
 git clone https://github.com/StudSec/Challenges-Examples.git 
-mv Challenges-Examples Challenges
+mv Challenges-Examples data/challenges/Challenges
 ```
 
 *Note: the git repository will automatically be updated
 once a minute. If this is a private repository you can include
-a `.git-credentials` file in `data/`*
+a `.git-credentials` file in `data/`. See the data paragraph for more information.*
 
 Then run pwncrates using
 ```commandline
 docker-compose up
 ```
-This will start pwncrates on `http://localhost:5000/`
+This will start pwncrates on `http://localhost/`
 
 `update.sh` is also included, which is a simple way to check for remote changes and redeploy if needed.
 
