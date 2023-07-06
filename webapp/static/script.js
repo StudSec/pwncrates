@@ -24,13 +24,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         setTimeout(function(){
                             form.style.display = 'none';
                             document.getElementById('solved').style.display = 'block';
-                        }, 1000);
+                        }, 2000);
+                        var parent = form.parentElement.parentElement.parentElement.children[0].children[0].children[0];
+                        var solves = parent.children[1].children[0].children[0].children[0];
+                        var num = solves.textContent.split(' ')[0];
+                        solves.textContent = solves.textContent.replace(num, num * 1 + 1);
                     }
                     else {
                         form.children[0].children[0].style.backgroundColor = '#ff4040';
                         setTimeout(function(){
                             form.children[0].children[0].style.backgroundColor = 'white';
-                        }, 1000);
+                        }, 2000);
                     }  
                 });              
             }
