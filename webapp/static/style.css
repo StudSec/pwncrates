@@ -154,7 +154,7 @@ form {
 }
 
 .filter::before {
-  content: "\f13a";
+  content: url("/static/svg/fa-chevron-circle-down-white.svg");
   font-family: FontAwesome;
   position: absolute;
   top: 0;
@@ -200,7 +200,7 @@ form {
 }
 
 .scoreboard-filter::before {
-  content: "\f13a";
+  content: url("/static/svg/fa-chevron-circle-down-white.svg");
   font-family: FontAwesome;
   position: absolute;
   top: 0;
