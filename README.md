@@ -107,6 +107,7 @@ https://git-scm.com/docs/git-credential-store
 - Confusion after oauth callback -> navigation is required before top bar updates
 - Hide users?
 - Install/initialize script
+- Add ssl certificates to .gitignore
 
 ## TODO - frontend
 #### General
