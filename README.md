@@ -3,6 +3,15 @@ A CTF framework with a focus on education.
 
 
 ## Installation
+#### The short version:
+
+```commandline
+./install.sh
+docker-compose up
+```
+
+#### The longer (manual) version:
+
 Firstly, you need to include the challenges in `data/challenges`
 The repository should have the name `Challenges`.
 
@@ -108,6 +117,7 @@ https://git-scm.com/docs/git-credential-store
 - Hide users?
 - Install/initialize script
 - Add ssl certificates to .gitignore
+- Move challenges/Challenges to challenges/
 
 ## TODO - frontend
 #### General
