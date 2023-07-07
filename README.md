@@ -115,8 +115,6 @@ https://git-scm.com/docs/git-credential-store
 - Add CSP headers
 - Confusion after oauth callback -> navigation is required before top bar updates
 - Hide users?
-- Install/initialize script
-- Add ssl certificates to .gitignore
 - Move challenges/Challenges to challenges/
 
 ## TODO - frontend
@@ -133,7 +131,6 @@ https://git-scm.com/docs/git-credential-store
 - Change color schema
 - Collapse challenge upon successful solve
 - Reset from bad submission (red -> normal)
-- Change connection string appearance
 - Change transition flag successfully submitted -> view writeups
 - Mark solved challenges
 - Set challenge images
