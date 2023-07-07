@@ -2,7 +2,7 @@
 {% block title %}pwncrates - Profile{% endblock %}
 
 {% block content %}
-    <div class="container mt-5">
+    <div class="container mt-0">
         <h1 class="text-center">#{{ rank[0] }} - {{ current_user.username }}</h1>
          {% if current_user.is_authenticated %}
         <form action="{{url_for('api_update_profile')}}" method="POST">
