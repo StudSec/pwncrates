@@ -6,6 +6,7 @@ webapp/static/handouts/*.zip
 data/ssl/*.pem
 data/writeups/*
 data/config.json
+backup.sql
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
