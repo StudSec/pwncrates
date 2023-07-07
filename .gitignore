@@ -8,6 +8,9 @@ data/writeups/*
 data/config.json
 backup.sql
 
+# Pycharm
+.idea/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
