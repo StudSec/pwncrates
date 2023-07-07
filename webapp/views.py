@@ -116,15 +116,18 @@ def upload_writeups(challenge_id):
 
     filename = hex(random.getrandbits(128))[2:]
 
+    if not os.path.exists(f"writeups/{str(challenge_id)}"):
+        os.makedirs(f"writeups/{str(challenge_id)}")
+
     while f"{filename}.md" in os.listdir(f"writeups/{str(challenge_id)}"):
         filename = hex(random.getrandbits(128))[2:]
 
     if file:
         db.create_or_update_writeup(challenge_id, current_user.id, filename)
         file.save(f'writeups/{str(challenge_id)}/{filename}.md')
-        return 'OK!'
+        return 'OK'
     else:
-        return 'No file selected!'
+        return 'No file uploaded!'
 
 
 @app.route('/solves/<int:challenge_id>')
