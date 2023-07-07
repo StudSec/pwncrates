@@ -12,11 +12,11 @@ echo '  "SMTP_PASS": "",'            >> data/config.json
 echo '  "webhook_url": ""'           >> data/config.json
 echo '}'                             >> data/config.json
 
-read -r "Populate with test? (y/n): " response
+read -p "Populate with test? (y/n): " response
 
-mkdir data/ssl
-mkdir data/db
-mkdir data/challenges
+mkdir data/ssl 2>/dev/null
+mkdir data/db 2>/dev/null
+mkdir data/challenges 2>/dev/null
 
 if [[ $response == "y" ]]; then
   python3 scripts/test-users.py
