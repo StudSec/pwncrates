@@ -2,72 +2,74 @@
 {% block title %}pwncrates - {{category}}{% endblock %}
 
 {% block content %}
-<div class="filter">
-    <select id="difficulty-filter" autocomplete="off" aria-label="All">
-        <option value="">All</option>
-        <option value="easy">Easy</option>
-        <option value="medium">Medium</option>
-        <option value="hard">Hard</option>
-    </select>
-</div>
-<div id="challenge_submission" class="challenge_submission">
-{% for name, subcategory_description, challenges in subcategories %}
-<div class="accordion">
-    <h4>{{ name }}</h4>
-    <p>{{ subcategory_description }}</p>
-    {% for challenge_id, name, description, points, url, challenge_solves, handout, difficulty in challenges %}
-      <div class="accordion-item" difficulty="{{difficulty}}">
-        <div class="accordion-header">
-          <div class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#{{challenge_id}}-info"
-                  aria-expanded="true" aria-controls="{{challenge_id}}-info">
-              <div class="d-flex row w-100">
-                  <div class="col-md">
-                      {% if challenge_id in solves %}<s>{% endif %}
-                      <h4>[{{points}}] {{name}}</h4>
-                      {% if challenge_id in solves %}</s> {% endif %}
-                  </div>
-                <div class="col-md"><h4>
-                    <span class="float-end"><a href="/solves/{{challenge_id}}" class="solves_link">{{challenge_solves}} solves</a></span>
-                </h4></div>
+<div class="block mt-0">
+  <div class="filter mb-1">
+      <select id="difficulty-filter" autocomplete="off" aria-label="All">
+          <option value="">All</option>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+      </select>
+  </div>
+  <div id="challenge_submission" class="challenge_submission mb-1 mt-2">
+  {% for name, subcategory_description, challenges in subcategories %}
+  <div class="accordion">
+      <h4>{{ name }}</h4>
+      <p>{{ subcategory_description }}</p>
+      {% for challenge_id, name, description, points, url, challenge_solves, handout, difficulty in challenges %}
+        <div class="accordion-item" difficulty="{{difficulty}}">
+          <div class="accordion-header">
+            <div class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#{{challenge_id}}-info"
+                    aria-expanded="true" aria-controls="{{challenge_id}}-info">
+                <div class="d-flex row w-100">
+                    <div class="col-md">
+                        {% if challenge_id in solves %}<s>{% endif %}
+                        <h4>[{{points}}] {{name}}</h4>
+                        {% if challenge_id in solves %}</s> {% endif %}
+                    </div>
+                  <div class="col-md"><h4>
+                      <span class="float-end"><a href="/solves/{{challenge_id}}" class="solves_link">{{challenge_solves}} solves</a></span>
+                  </h4></div>
+                </div>
               </div>
             </div>
-          </div>
-        <div id="{{challenge_id}}-info" class="accordion-collapse collapse">
-          <div class="accordion-body">
-                <p>
-                    {{description | safe}}
-                </p>
-                {% if url != "Null" %}
-                <div class="code-block"><p>
-                    {{ url }}
-                </p></div>
-                {% endif %}
-
-                {% if handout != "" %}
-                <a href="{{ url_for('static', filename='handouts/' + handout) }}">Download files</a>
-                {% endif %}
-
-                {% if current_user.is_authenticated %}
-                <p id="solved" style="{% if challenge_id not in solves %}display: none;{% endif %}">
-                    Solved! <a href="{{ url_for('writeups', challenge_id=challenge_id ) }}">View writeups</a>
-                </p>
-                <form style="{% if challenge_id in solves %}display: none;{% endif %}"
-                      method="POST" action="/api/challenges/submit/{{challenge_id}}">
-                    <div class="input-group mb-3">
-                        <input type="text" name="flag" class="form-control" autocomplete="off" placeholder="Submit flag" id="{{challenge_id}}">
-                        <button class="btn btn-primary" type="submit" id="button-addon2">Submit</button>
-                    </div>
-                </form>
-                {% else %}
-                <p>
-                    <i>You must be logged in to submit flags</i>
-                </p>
-                {% endif %}
+          <div id="{{challenge_id}}-info" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                  <p>
+                      {{description | safe}}
+                  </p>
+                  {% if url != "Null" %}
+                  <div class="code-block"><p>
+                      {{ url }}
+                  </p></div>
+                  {% endif %}
+  
+                  {% if handout != "" %}
+                  <a href="{{ url_for('static', filename='handouts/' + handout) }}">Download files</a>
+                  {% endif %}
+  
+                  {% if current_user.is_authenticated %}
+                  <p id="solved" style="{% if challenge_id not in solves %}display: none;{% endif %}">
+                      Solved! <a href="{{ url_for('writeups', challenge_id=challenge_id ) }}">View writeups</a>
+                  </p>
+                  <form style="{% if challenge_id in solves %}display: none;{% endif %}"
+                        method="POST" action="/api/challenges/submit/{{challenge_id}}">
+                      <div class="input-group mb-3">
+                          <input type="text" name="flag" class="form-control" autocomplete="off" placeholder="Submit flag" id="{{challenge_id}}">
+                          <button class="btn btn-primary" type="submit" id="button-addon2">Submit</button>
+                      </div>
+                  </form>
+                  {% else %}
+                  <p>
+                      <i>You must be logged in to submit flags</i>
+                  </p>
+                  {% endif %}
+            </div>
           </div>
         </div>
-      </div>
-    {% endfor %}
-</div>
-{% endfor %}
+      {% endfor %}
+  </div>
+  {% endfor %}
+  </div>
 </div>
 {% endblock %}
