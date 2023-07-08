@@ -1,5 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
+    if (window.location.pathname.startsWith('/challenges')) {
+        manageChallanges();
+    }
 
+    if (window.location.pathname.startsWith('/scoreboard')) {
+        manageScoreboard();
+    }
+});
+
+function updateUniversity(update_url) {
+  fetch(update_url, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: 'university=' + encodeURIComponent(document.getElementById('university').value)
+  });
+}
+
+function manageChallanges() {
     let challenges = document.getElementById('challenge_submission').children
     for (let form of challenges) {
 
@@ -73,20 +90,22 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-    }
+        const solves_links = document.querySelectorAll(".solves_link");
+        for (let solves_link of solves_links) {
+            solves_link.addEventListener('mouseenter', (e) => {
+                let accordionButton = solves_link.closest(".accordion-button");
+                accordionButton.setAttribute('data-bs-toggle', '');
+            });
+            solves_link.addEventListener('mouseleave', (e) => {
+                let accordionButton = solves_link.closest(".accordion-button");
+                accordionButton.setAttribute('data-bs-toggle', 'collapse');
+            });
+        }   
 
-    const solves_links = document.querySelectorAll(".solves_link");
-    for (let solves_link of solves_links) {
-        solves_link.addEventListener('mouseenter', (e) => {
-          let accordionButton = solves_link.closest(".accordion-button");
-          accordionButton.setAttribute('data-bs-toggle', '');
-        });
-        solves_link.addEventListener('mouseleave', (e) => {
-          let accordionButton = solves_link.closest(".accordion-button");
-          accordionButton.setAttribute('data-bs-toggle', 'collapse');
-        });
     }
+}
 
+function manageScoreboard() {
     const universityFilter = document.getElementById('university-filter');
     const tableRows = document.querySelectorAll('tbody tr');
 
@@ -101,12 +120,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-});
-
-function updateUniversity(update_url) {
-  fetch(update_url, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    body: 'university=' + encodeURIComponent(document.getElementById('university').value)
-  });
 }
