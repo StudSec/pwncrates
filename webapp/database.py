@@ -308,7 +308,7 @@ def initialize_database():
     conn.commit()
 
 
-def update_or_create_challenge(path, folder="challenges/Challenges/"):
+def update_or_create_challenge(path, folder="challenges/"):
     # Get information
     category, name, _ = path.split("/", 2)
 
@@ -343,7 +343,7 @@ def update_or_create_challenge(path, folder="challenges/Challenges/"):
     cursor.close()
 
 
-def update_or_create_category(path, folder="challenges/Challenges/"):
+def update_or_create_category(path, folder="challenges/"):
     categories, parent = parse_markdown_category(folder + path)
 
     cursor = conn.cursor()
