@@ -14,10 +14,10 @@ import sys
 
 
 def git_files_changed():
-    subprocess.run(['git', '--no-pager', 'fetch'], cwd="challenges/Challenges",
+    subprocess.run(['git', '--no-pager', 'fetch'], cwd="challenges",
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     diff_output = subprocess.run(['git', '--no-pager', 'diff', '--name-only', 'main', 'origin/main'],
-                                 stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, cwd="challenges/Challenges")
+                                 stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, cwd="challenges")
     changed_files = diff_output.stdout.decode().split("\n")
 
     return changed_files
@@ -40,7 +40,7 @@ def update_challenges_from_git():
                 db.update_or_create_challenge(file)
 
                 # Could be the challenge wasn't yet imported, update handout if it doesn't already exist
-                if os.path.exists("./challenges/Challenges/" + file[:-9] + "Handouts") and \
+                if os.path.exists("./challenges/" + file[:-9] + "Handouts") and \
                         not os.path.exists(f"static/handouts/{get_handout_name(file.split('/')[0], file.split('/')[1])}"):
                     updated_challenges.append(file)
                     create_challenge_handouts(file)
@@ -56,11 +56,11 @@ def update_challenges_from_git():
 
 def git_update():
     # Rebase on origin, the reason we do this is to avoid conflicts when (accidentally) writing files
-    subprocess.run(['git', 'checkout', 'main'], cwd='challenges/Challenges', stdout=subprocess.DEVNULL,
+    subprocess.run(['git', 'checkout', 'main'], cwd='challenges', stdout=subprocess.DEVNULL,
                    stderr=subprocess.DEVNULL)
-    subprocess.run(['git', '--no-pager', 'reset', '--hard', 'HEAD'], cwd="challenges/Challenges",
+    subprocess.run(['git', '--no-pager', 'reset', '--hard', 'HEAD'], cwd="challenges",
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    subprocess.run(['git', '--no-pager', 'pull'], cwd="challenges/Challenges", stdout=subprocess.DEVNULL,
+    subprocess.run(['git', '--no-pager', 'pull'], cwd="challenges", stdout=subprocess.DEVNULL,
                    stderr=subprocess.DEVNULL)
     return
 
@@ -68,11 +68,11 @@ def git_update():
 def init_git():
     # Copy challenge directory from Read Only volume to local
     subprocess.run(['cp', '-r', '/tmp/challenges/', '.'])
-    subprocess.run(['git', '--no-pager', 'config', 'credential.helper', 'store'], cwd="challenges/Challenges",
+    subprocess.run(['git', '--no-pager', 'config', 'credential.helper', 'store'], cwd="challenges",
                    stdout=subprocess.DEVNULL)
 
     print("Importing challenges...")
-    with open("./challenges/Challenges/README.md") as f:
+    with open("./challenges/README.md") as f:
         matches = re.findall(r"]\((.*?)\)", f.read())
         for challenge in matches:
             if challenge.endswith("README.md"):
@@ -80,16 +80,16 @@ def init_git():
                 # We have to account for url encoding, fortunately the only case for this is the space character
                 db.update_or_create_challenge(challenge)
 
-                if os.path.exists("./challenges/Challenges/" + challenge[:-9] + "Handout"):
+                if os.path.exists("./challenges/" + challenge[:-9] + "Handout"):
                     create_challenge_handouts(challenge)
             else:
                 print("Invalid challenge:", challenge)
 
     print("Importing categories...")
-    for category in [x for x in os.listdir("./challenges/Challenges/")
-                     if os.path.isdir(f"./challenges/Challenges/{x}")]:
-        if os.path.exists(f"./challenges/Challenges/{category}/README.md"):
-            db.update_or_create_category(f"./challenges/Challenges/{category}/README.md", folder="")
+    for category in [x for x in os.listdir("./challenges/")
+                     if os.path.isdir(f"./challenges/{x}")]:
+        if os.path.exists(f"./challenges/{category}/README.md"):
+            db.update_or_create_category(f"./challenges/{category}/README.md", folder="")
 
 
 def update_git_loop():

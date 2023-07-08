@@ -76,7 +76,7 @@ def create_challenge_handouts(path):
     subprocess.run(['zip', '-FSr', f'../../../../static/handouts/{get_handout_name(category, name)}',
                     f'Handout'],
                    stdout=subprocess.DEVNULL,
-                   cwd=f'challenges/Challenges/{category}/{name}')
+                   cwd=f'challenges/{category}/{name}')
 
 
 # Takes a list of markdown lines and returns a list of lines that fall under the header.

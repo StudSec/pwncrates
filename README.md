@@ -18,7 +18,7 @@ The repository should have the name `Challenges`.
 For example
 ```commandline
 git clone https://github.com/StudSec/Challenges-Examples.git 
-mv Challenges-Examples data/challenges/Challenges
+mv Challenges-Examples data/challenges/
 ```
 
 *Note: the git repository will automatically be updated
@@ -115,7 +115,6 @@ https://git-scm.com/docs/git-credential-store
 - Add CSP headers
 - Confusion after oauth callback -> navigation is required before top bar updates
 - Hide users?
-- Move challenges/Challenges to challenges/
 
 ## TODO - frontend
 #### General
