@@ -119,16 +119,8 @@ form {
   background-color: lightgray;
 }
 
-.challenge_submission {
-  margin-bottom: 50px;
-}
-
 .accordion {
     margin-bottom: 50px;
-}
-
-.mt-5 {
-  margin-top: 0px !important;
 }
 
 .text-center {
@@ -171,21 +163,6 @@ form {
 
 .filter select option {
   padding: 30px;
-}
-
-#challenge_submission {
-  margin-top: 100px;
-}
-
-.table.table-striped {
-  margin-top: 100px;
-}
-
-.scoreboard-filter {
-  position: absolute;
-  top: 25%;
-  left: 22.8%;
-  transform: translate(-50%, -50%);
 }
 
 .scoreboard-filter select {
