@@ -6,7 +6,12 @@ import subprocess
 import cmarkgfm
 import hashlib
 import sys
+import os
 
+challenge_path = "challenges/"
+#Stopgap solution to support older versions of the software
+if (not os.path.exists(challenge_path+"README.md")):
+    challenge_path = "challenges/Challanges"
 
 def render_markdown(file_name):
     try:
@@ -76,7 +81,7 @@ def create_challenge_handouts(path):
     subprocess.run(['zip', '-FSr', f'../../../../static/handouts/{get_handout_name(category, name)}',
                     f'Handout'],
                    stdout=subprocess.DEVNULL,
-                   cwd=f'challenges/{category}/{name}')
+                   cwd=f'{challenge_path}/{category}/{name}')
 
 
 # Takes a list of markdown lines and returns a list of lines that fall under the header.

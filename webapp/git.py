@@ -8,16 +8,23 @@ import webapp.database as db
 import threading
 import time
 import re
+import os
 
 
 import sys
 
+challenge_path = "challenges/"
+#Stopgap solution to support older versions of the software
+if (not os.path.exists(challenge_path+"README.md")):
+    challenge_path = "challenges/Challanges"
+
+
 
 def git_files_changed():
-    subprocess.run(['git', '--no-pager', 'fetch'], cwd="challenges",
+    subprocess.run(['git', '--no-pager', 'fetch'], cwd=challenge_path,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     diff_output = subprocess.run(['git', '--no-pager', 'diff', '--name-only', 'main', 'origin/main'],
-                                 stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, cwd="challenges")
+                                 stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, cwd=challenge_path)
     changed_files = diff_output.stdout.decode().split("\n")
 
     return changed_files
@@ -58,9 +65,9 @@ def git_update():
     # Rebase on origin, the reason we do this is to avoid conflicts when (accidentally) writing files
     subprocess.run(['git', 'checkout', 'main'], cwd='challenges', stdout=subprocess.DEVNULL,
                    stderr=subprocess.DEVNULL)
-    subprocess.run(['git', '--no-pager', 'reset', '--hard', 'HEAD'], cwd="challenges",
+    subprocess.run(['git', '--no-pager', 'reset', '--hard', 'HEAD'], cwd=challenge_path,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    subprocess.run(['git', '--no-pager', 'pull'], cwd="challenges", stdout=subprocess.DEVNULL,
+    subprocess.run(['git', '--no-pager', 'pull'], cwd=challenge_path, stdout=subprocess.DEVNULL,
                    stderr=subprocess.DEVNULL)
     return
 
@@ -68,7 +75,7 @@ def git_update():
 def init_git():
     # Copy challenge directory from Read Only volume to local
     subprocess.run(['cp', '-r', '/tmp/challenges/', '.'])
-    subprocess.run(['git', '--no-pager', 'config', 'credential.helper', 'store'], cwd="challenges",
+    subprocess.run(['git', '--no-pager', 'config', 'credential.helper', 'store'], cwd=challenge_path,
                    stdout=subprocess.DEVNULL)
 
     print("Importing challenges...")
