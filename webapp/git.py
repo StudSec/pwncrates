@@ -13,14 +13,8 @@ import os
 
 import sys
 
-challenge_path = "challenges/"
-#Stopgap solution to support older versions of the software
-if (not os.path.exists(challenge_path+"README.md")):
-    challenge_path = "challenges/Challanges"
-
-
-
 def git_files_changed():
+    challenge_path = get_challenge_path()
     subprocess.run(['git', '--no-pager', 'fetch'], cwd=challenge_path,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     diff_output = subprocess.run(['git', '--no-pager', 'diff', '--name-only', 'main', 'origin/main'],
@@ -31,6 +25,7 @@ def git_files_changed():
 
 
 def update_challenges_from_git():
+    challenge_path = get_challenge_path()
     changed_files = git_files_changed()
     git_update()
 
@@ -47,7 +42,7 @@ def update_challenges_from_git():
                 db.update_or_create_challenge(file)
 
                 # Could be the challenge wasn't yet imported, update handout if it doesn't already exist
-                if os.path.exists("./challenges/" + file[:-9] + "Handouts") and \
+                if os.path.exists(f"./{challenge_path}" + file[:-9] + "Handouts") and \
                         not os.path.exists(f"static/handouts/{get_handout_name(file.split('/')[0], file.split('/')[1])}"):
                     updated_challenges.append(file)
                     create_challenge_handouts(file)
@@ -62,8 +57,9 @@ def update_challenges_from_git():
 
 
 def git_update():
+    challenge_path = get_challenge_path()
     # Rebase on origin, the reason we do this is to avoid conflicts when (accidentally) writing files
-    subprocess.run(['git', 'checkout', 'main'], cwd='challenges', stdout=subprocess.DEVNULL,
+    subprocess.run(['git', 'checkout', 'main'], cwd=challenge_path, stdout=subprocess.DEVNULL,
                    stderr=subprocess.DEVNULL)
     subprocess.run(['git', '--no-pager', 'reset', '--hard', 'HEAD'], cwd=challenge_path,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -73,13 +69,14 @@ def git_update():
 
 
 def init_git():
+    challenge_path = get_challenge_path()
     # Copy challenge directory from Read Only volume to local
-    subprocess.run(['cp', '-r', '/tmp/challenges/', '.'])
+    subprocess.run(['cp', '-r', f'/tmp/{challenge_path}/', '.'])
     subprocess.run(['git', '--no-pager', 'config', 'credential.helper', 'store'], cwd=challenge_path,
                    stdout=subprocess.DEVNULL)
 
     print("Importing challenges...")
-    with open("./challenges/README.md") as f:
+    with open(f"./{challenge_path}/README.md") as f:
         matches = re.findall(r"]\((.*?)\)", f.read())
         for challenge in matches:
             if challenge.endswith("README.md"):
@@ -87,16 +84,16 @@ def init_git():
                 # We have to account for url encoding, fortunately the only case for this is the space character
                 db.update_or_create_challenge(challenge)
 
-                if os.path.exists("./challenges/" + challenge[:-9] + "Handout"):
+                if os.path.exists(f"./{challenge_path}/" + challenge[:-9] + "Handout"):
                     create_challenge_handouts(challenge)
             else:
                 print("Invalid challenge:", challenge)
 
     print("Importing categories...")
-    for category in [x for x in os.listdir("./challenges/")
-                     if os.path.isdir(f"./challenges/{x}")]:
-        if os.path.exists(f"./challenges/{category}/README.md"):
-            db.update_or_create_category(f"./challenges/{category}/README.md", folder="")
+    for category in [x for x in os.listdir(f"./{challenge_path}/")
+                     if os.path.isdir(f"./{challenge_path}/{x}")]:
+        if os.path.exists(f"./{challenge_path}/{category}/README.md"):
+            db.update_or_create_category(f"./{challenge_path}/{category}/README.md", folder="")
 
 
 def update_git_loop():

@@ -11,10 +11,6 @@ import time
 import os
 
 import sys
-challenge_path = "challenges/"
-#Stopgap solution to support older versions of the software
-if (not os.path.exists(challenge_path+"README.md")):
-    challenge_path = "challenges/Challanges"
 
 # Lookup functions
 def get_email_from_link(link_type, code):
@@ -311,7 +307,7 @@ def initialize_database():
     conn.commit()
 
 
-def update_or_create_challenge(path, folder=challenge_path):
+def update_or_create_challenge(path, folder=get_challenge_path()):
     # Get information
     category, name, _ = path.split("/", 2)
 
@@ -346,7 +342,7 @@ def update_or_create_challenge(path, folder=challenge_path):
     cursor.close()
 
 
-def update_or_create_category(path, folder=challenge_path):
+def update_or_create_category(path, folder=get_challenge_path()):
     categories, parent = parse_markdown_category(folder + path)
 
     cursor = conn.cursor()
