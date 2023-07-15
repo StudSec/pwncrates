@@ -2,8 +2,8 @@
 {% block title %}pwncrates - {{category}}{% endblock %}
 
 {% block content %}
-<div class="block mt-0">
-  <div class="filter mb-1">
+<div class="container">
+  <div class="filter row mb-5">
       <select id="difficulty-filter" autocomplete="off" aria-label="All">
           <option value="">All</option>
           <option value="easy">Easy</option>
@@ -11,7 +11,7 @@
           <option value="hard">Hard</option>
       </select>
   </div>
-  <div id="challenge_submission" class="challenge_submission mb-1 mt-2">
+  <div id="challenge_submission" class="challenge_submission row">
   {% for name, subcategory_description, challenges in subcategories %}
   <div class="accordion">
       <h4>{{ name }}</h4>
