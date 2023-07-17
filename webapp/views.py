@@ -42,7 +42,7 @@ def public_profile(user_id):
         return render_template("404.html")
     
 
-    self_profile = user.id == current_user.id
+    self_profile = current_user.is_authenticated and user.id == current_user.id
     universities = []
     if self_profile:
         universities = db.get_universities()
