@@ -16,7 +16,6 @@ read -p "Populate with test? (y/n): " response
 
 mkdir data/ssl 2>/dev/null
 mkdir data/db 2>/dev/null
-mkdir data/challenges 2>/dev/null
 
 if [[ $response == "y" ]]; then
   python3 scripts/test-users.py
@@ -24,8 +23,7 @@ if [[ $response == "y" ]]; then
   mv key.pem data/ssl/
   mv cert.pem data/ssl/
   git clone https://github.com/StudSec/Challenges-Examples.git
-  mv Challenges-Examples/* data/challenges
-  rm -rf Challenges-Examples
+  mv Challenges-Examples data/challenges
   echo "Test data populated!"
 else
   echo "Make sure to put your data in the following directories:"
