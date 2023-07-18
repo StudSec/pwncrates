@@ -4,7 +4,7 @@
 {% block content %}
     <div class="container mt-0">
         <h1 class="text-center mb-0">#{{ rank[0] }} - {{ current_user.username }}</h1>
-         {% if current_user.is_authenticated %}
+         {% if self_profile %}
         <form action="{{url_for('api_update_profile')}}" method="POST">
           <div class="form-group text-center mb-0">
             <select class="" id="university" name="university"

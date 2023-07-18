@@ -31,16 +31,7 @@ def contributing():
 @app.route('/profile')
 @login_required
 def profile():
-    scores = db.get_scoreboard()
-
-    try:
-        index = [i for i in range(len(scores)) if scores[i][0] == int(current_user.id)][0]
-        rank, score = index + 1, scores[index][4]
-    except IndexError:
-        rank, score = 0, 0
-
-    return render_template("profile.html", solves=db.get_user_solves(current_user.id),
-                           rank=(rank, score), universities=db.get_universities())
+    return public_profile(current_user.id)
 
 
 @app.route('/profile/<int:user_id>')
@@ -49,8 +40,12 @@ def public_profile(user_id):
 
     if not user:
         return render_template("404.html")
+    
 
-    user.authenticated = False
+    self_profile = current_user.is_authenticated and user.id == current_user.id
+    universities = []
+    if self_profile:
+        universities = db.get_universities()
 
     scores = db.get_scoreboard()
 
@@ -61,7 +56,7 @@ def public_profile(user_id):
         rank, score = 0, 0
 
     return render_template("profile.html", current_user=user, solves=db.get_user_solves(user.id),
-                           rank=(rank, score))
+                           rank=(rank, score), self_profile=self_profile, universities=universities)
 
 
 # General category page, contains an overview of the categories if no category is specified
