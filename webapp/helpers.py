@@ -6,7 +6,14 @@ import subprocess
 import cmarkgfm
 import hashlib
 import sys
+import os
 
+
+def get_challenge_path():
+    if os.path.isfile("/tmp/challenges/README.md"):
+        return "challenges/"
+    else:
+        return "challenges/Challenges/"
 
 def render_markdown(file_name):
     try:
@@ -72,11 +79,12 @@ def parse_markdown_category(path):
 # Create challenge zip in the static folder sha1(challenge_name + category).zip
 def create_challenge_handouts(path):
     category, name, _ = path.split("/", 2)
+    challenge_path = get_challenge_path()
     # Replaces existing zip
     subprocess.run(['zip', '-FSr', f'../../../../static/handouts/{get_handout_name(category, name)}',
                     f'Handout'],
                    stdout=subprocess.DEVNULL,
-                   cwd=f'challenges/Challenges/{category}/{name}')
+                   cwd=f'{challenge_path}/{category}/{name}')
 
 
 # Takes a list of markdown lines and returns a list of lines that fall under the header.

@@ -12,7 +12,6 @@ import os
 
 import sys
 
-
 # Lookup functions
 def get_email_from_link(link_type, code):
     assert link_type == "confirmation" or link_type == "reset"
@@ -308,7 +307,7 @@ def initialize_database():
     conn.commit()
 
 
-def update_or_create_challenge(path, folder="challenges/Challenges/"):
+def update_or_create_challenge(path, folder=get_challenge_path()):
     # Get information
     category, name, _ = path.split("/", 2)
 
@@ -343,7 +342,7 @@ def update_or_create_challenge(path, folder="challenges/Challenges/"):
     cursor.close()
 
 
-def update_or_create_category(path, folder="challenges/Challenges/"):
+def update_or_create_category(path, folder=get_challenge_path()):
     categories, parent = parse_markdown_category(folder + path)
 
     cursor = conn.cursor()
