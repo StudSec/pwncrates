@@ -31,7 +31,7 @@ def contributing():
 @app.route('/profile')
 @login_required
 def profile():
-    return public_profile(current_user.id)
+    return public_profile(int(current_user.id))
 
 
 @app.route('/profile/<int:user_id>')
