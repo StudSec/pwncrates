@@ -10,10 +10,12 @@ import os
 
 
 def get_challenge_path():
-    if os.path.isfile("/tmp/challenges/README.md"):
+    if os.path.isfile("challenges/README.md"):
+        print("passing check", file=sys.stderr)
         return "challenges/"
     else:
         return "challenges/Challenges/"
+
 
 def render_markdown(file_name):
     try:

@@ -7,11 +7,10 @@ from webapp.helpers import *
 import webapp.database as db
 import threading
 import time
+import sys
 import re
 import os
 
-
-import sys
 
 def git_files_changed():
     challenge_path = get_challenge_path()
@@ -69,9 +68,9 @@ def git_update():
 
 
 def init_git():
-    challenge_path = get_challenge_path()
     # Copy challenge directory from Read Only volume to local
-    subprocess.run(['cp', '-r', f'/tmp/{challenge_path}/', '.'])
+    subprocess.run(['cp', '-r', f'/tmp/challenges/', '.'])
+    challenge_path = get_challenge_path()
     subprocess.run(['git', '--no-pager', 'config', 'credential.helper', 'store'], cwd=challenge_path,
                    stdout=subprocess.DEVNULL)
 
