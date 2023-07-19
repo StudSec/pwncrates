@@ -13,6 +13,7 @@ def inject_globals():
                 routes={
                     "Home": url_for("home"),
                     "Rules": url_for("rules"),
+                    "Getting started": url_for("getting_started"),
                     "Challenges": url_for("challenges"),
                     "Contributing": url_for("contributing"),
                     "Scoreboard": url_for("scoreboard")

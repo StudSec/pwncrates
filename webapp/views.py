@@ -23,6 +23,11 @@ def rules():
     return render_markdown("./pages/rules.md")
 
 
+@app.route('/getting-started')
+def getting_started():
+    return render_markdown("./pages/getting_started.md")
+
+
 @app.route('/contributing')
 def contributing():
     return render_markdown("./pages/contributing.md")
