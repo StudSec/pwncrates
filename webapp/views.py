@@ -20,17 +20,17 @@ def home():
 
 @app.route('/rules')
 def rules():
-    return render_markdown("./pages/rules.md")
+    return render_markdown("./pages/rules.md", title="Rules")
 
 
 @app.route('/getting-started')
 def getting_started():
-    return render_markdown("./pages/getting_started.md")
+    return render_markdown("./pages/getting_started.md", title="Getting started")
 
 
 @app.route('/contributing')
 def contributing():
-    return render_markdown("./pages/contributing.md")
+    return render_markdown("./pages/contributing.md", title="Contributing")
 
 
 @app.route('/profile')

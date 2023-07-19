@@ -17,14 +17,14 @@ def get_challenge_path():
         return "challenges/Challenges/"
 
 
-def render_markdown(file_name):
+def render_markdown(file_name, title=""):
     try:
         with open(file_name, "r") as f:
             content = cmarkgfm.github_flavored_markdown_to_html(f.read())
     except FileNotFoundError:
         print(f"File {file_name} not found!", file=sys.stderr)
         return render_template("404.html")
-    return render_template("markdown_page.html", markdown_content=content)
+    return render_template("markdown_page.html", markdown_content=content, page_title=title)
 
 
 # Iterate through challenge README.md, return title, description, points, flag
