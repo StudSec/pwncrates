@@ -1,6 +1,13 @@
 # Contributing
 StudSec is community driven, because of this we want anyone to be able to help out!
 
+## "Getting started" page
+The getting started page is aimed at helping beginners get started with CTF's, found an amazing resource you want to add?
+See something that can be improved? Spot a Typo? You can contribute to it by going to https://github.com/StudSec/pwncrates
+and make a pull request with the proposed changes to `data/pages/getting_started.md`.
+
+For more information on pull requests see here: https://www.youtube.com/watch?v=8lGpZkjnkt4
+
 ### New challenge
 Anyone is free to submit a new challenge, and we will gladly credit you for your hard work.
 However, do keep in mind the challenges are tested before being deployed, and they might be
