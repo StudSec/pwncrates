@@ -119,7 +119,6 @@ https://git-scm.com/docs/git-credential-store
 ## TODO - frontend
 #### General
 - Move Javascript to script.js
-- Fix javascript errors
 - Improve homescreen
 - Add favicon
 - Check mobile style
@@ -139,7 +138,6 @@ https://git-scm.com/docs/git-credential-store
 
 #### Scoreboard
 - Migrate in-line javascript to script.js in scoreboard.html
-- Fix filter absolute position
 
 ## TODO - Challenges
 - Add links to easy challenges -> make it easier to get started
