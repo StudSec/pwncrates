@@ -127,7 +127,8 @@ form {
   background-color: #1c8adb;
   color: white;
   padding: 12px;
-  width: 250px;
+  width: 20%;
+  max-width: 250px;
   border: none;
   font-size: 20px;
   appearance: none;
@@ -145,6 +146,7 @@ form {
   top: 0;
   left: 0;
   width: 18.5%;
+  max-width: 230px;
   height: 100%;
   text-align: right;
   font-size: 24px;
