@@ -119,6 +119,12 @@ def get_universities():
 
     return results
 
+def get_scoreboard_universities():
+    cursor = conn.execute('SELECT distinct A.id, A.name FROM users U left join universities A on U.university_id = A.id')
+    results = [university_id for university_id in cursor.fetchall()]
+    cursor.close()
+    return results
+
 
 def get_categories():
     ret = {}
