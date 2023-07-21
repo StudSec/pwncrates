@@ -123,6 +123,10 @@ form {
     margin-bottom: 50px;
 }
 
+.solved {
+  text-decoration: line-through;
+}
+
 .filter select {
   background-color: #1c8adb;
   color: white;
