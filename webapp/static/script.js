@@ -41,7 +41,8 @@ function drawProfileChart(ctx) {
                 ticks: {
                     autoSkip: true,
                     maxTicksLimit: 20
-                }
+                },
+                parsing: false
               }
             }
           }
