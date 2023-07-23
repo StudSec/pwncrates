@@ -157,3 +157,10 @@ form {
   line-height: 52.5px;
   pointer-events: none;
 }
+
+.chart-container {
+  width: 80%;
+  height: 80%;
+  margin: auto;
+  
+}
