@@ -5,7 +5,51 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.location.pathname.startsWith('/scoreboard')) {
         manageScoreboard();
     }
+
+    const profileChartCtx = document.getElementById('profile_chart');
+    if (profileChartCtx != null) drawProfileChart(profileChartCtx)
 });
+
+function drawProfileChart(ctx) {
+    //Get the user id from path
+    const userId = document.getElementById("user-id").textContent;
+    fetch("https://" + window.location.hostname + "/api/user/solves/" + userId)
+    .then((response) => response.json()) //2
+    .then((data) => {
+      console.log(data);
+      new Chart(ctx, {
+          type: 'line',
+          data: {
+            datasets: [{
+                label: 'Score',
+                data: data
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              },
+              x: {
+                type: "time",
+                time: {
+                    unit: 'minute',
+                    displayFormats: {
+                        minute: 'yyyy-mm-dd'
+                    },
+                },
+                ticks: {
+                    autoSkip: true,
+                    maxTicksLimit: 20
+                },
+                parsing: false
+              }
+            }
+          }
+        });
+    });
+
+}
 
 function updateUniversity(update_url) {
     fetch(update_url, {
