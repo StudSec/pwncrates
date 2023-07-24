@@ -82,6 +82,20 @@ def get_user_solves(user_id):
     cursor.close()
     return results
 
+def get_user_scores(user_id):
+    cursor = conn.execute('SELECT S.challenge_id, C.name, S.solved_time, C.points FROM solves S, Challenges C WHERE '
+                          'S.user_id = ? AND C.id = S.challenge_id ORDER BY S.solved_time DESC;', (user_id,))
+    score = 0
+    results = []
+    solves = cursor.fetchall()
+    solves.reverse()
+    for solve_data in solves:
+        #Chart js for some god forsaken reason is using miliseconds for their timestamp
+        score += int(solve_data[3])
+        results.append([solve_data[2]*1000, score])
+    cursor.close()
+    return results
+
 
 def get_challenge_solves(challenge_id):
     cursor = conn.execute('SELECT U.name, S.solved_time FROM solves S, users U  '

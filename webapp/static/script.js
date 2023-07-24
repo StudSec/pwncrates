@@ -16,7 +16,6 @@ function drawProfileChart(ctx) {
     fetch("https://" + window.location.hostname + "/api/user/solves/" + userId)
     .then((response) => response.json()) //2
     .then((data) => {
-      console.log(data);
       new Chart(ctx, {
           type: 'line',
           data: {
@@ -33,7 +32,7 @@ function drawProfileChart(ctx) {
               x: {
                 type: "time",
                 time: {
-                    unit: 'minute',
+                    unit: 'day',
                     displayFormats: {
                         minute: 'yyyy-mm-dd'
                     },

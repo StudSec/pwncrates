@@ -119,15 +119,7 @@ def api_discord_id(user_id):
 
 @app.route('/api/user/solves/<user_id>')
 def api_get_user(user_id):
-    user_data = db.get_user_solves(user_id=user_id)
-    totalscore = 0
-    result = []
-    user_data.reverse()
-    for x in user_data:
-        totalscore += int(x[3])
-        time = datetime.datetime.strptime(x[2], "%Y-%m-%d %H:%M:%S").timestamp()
-        #Chart js for some god forsaken reason is using miliseconds for their timestamp
-        result.append([int(time)*1000, totalscore])
-    return Response(json.dumps(result),
+    user_data = db.get_user_scores(user_id=user_id)
+    return Response(json.dumps(user_data),
                     mimetype="application/json")
 
