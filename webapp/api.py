@@ -12,6 +12,7 @@ from flask import request
 from flask import Response
 import requests
 import json
+import datetime
 # General API file
 
 # Read and eval config file
@@ -115,3 +116,10 @@ def api_discord_id(user_id):
 
     return Response(json.dumps(ret),
                     mimetype="application/json")
+
+@app.route('/api/user/solves/<user_id>')
+def api_get_user(user_id):
+    user_data = db.get_user_scores(user_id=user_id)
+    return Response(json.dumps(user_data),
+                    mimetype="application/json")
+

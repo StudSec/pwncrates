@@ -4,6 +4,7 @@
 {% block content %}
     <div class="container mt-0">
         <h1 class="text-center mb-0">#{{ rank[0] }} - {{ current_user.username }}</h1>
+        <h1 id="user-id" style="display: none;">{{current_user.id}}</h1>
          {% if self_profile %}
         <form action="{{url_for('api_update_profile')}}" method="POST">
           <div class="form-group text-center mb-0">
@@ -19,6 +20,11 @@
         <h6 class="text-center mb-0">{{ current_user.university }}</h6>
         {% endif %}
 
+        <div class="chart-container">
+            <canvas id="profile_chart"></canvas>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
         <table class="table table-striped mt-5">
             <thead class="table-header">
                 <tr>

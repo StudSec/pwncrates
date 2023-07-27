@@ -138,7 +138,7 @@ def solves(challenge_id):
 
 @app.route('/scoreboard')
 def scoreboard():
-    return render_template("scoreboard.html", users=db.get_scoreboard(), universities=db.get_universities())
+    return render_template("scoreboard.html", users=db.get_scoreboard(), universities=db.get_scoreboard_universities())
 
 
 @app.errorhandler(404)
