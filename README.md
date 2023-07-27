@@ -109,19 +109,11 @@ the file is as follows
 For more information see
 https://git-scm.com/docs/git-credential-store
 
-## TODO - backend
-- Discord nonce (https://discord.com/developers/docs/topics/oauth2#state-and-security)
-- Discord account linking after creation
-- Add CSP headers
-- Confusion after oauth callback -> navigation is required before top bar updates
-- Hide users?
-
 ## TODO - frontend
 #### General
 - Move Javascript to script.js
 - Improve homescreen
 - Add favicon
-- Check mobile style
 - Make stylized login page
 - Make stylized register page
 
@@ -135,10 +127,4 @@ https://git-scm.com/docs/git-credential-store
 
 #### Writeups
 - Change writeup submission text/form
-
-#### Scoreboard
-- Migrate in-line javascript to script.js in scoreboard.html
-
-## TODO - Challenges
-- Add links to easy challenges -> make it easier to get started
 
