@@ -23,6 +23,25 @@ main {
     padding: 15px;
 }
 
+/* Don't show challenge categories or the challenges within by default*/
+.challenge-category,
+.challenge {
+  display: none;
+}
+
+/* Show challenge-categories with one of these classes */
+.show-all,
+.show-easy,
+.show-medium,
+.show-hard,
+/* Show correctly filtered challenges within a shown category */
+.show-all .challenge,
+.show-easy .challenge.easy,
+.show-medium .challenge.medium,
+.show-hard .challenge.hard {
+  display: block;
+}
+
 /* Custom css for 'code blocks' used in connection strings */
 .code-block {
   background-color: #f0f0f0;
