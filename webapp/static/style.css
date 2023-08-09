@@ -17,6 +17,11 @@ main {
     margin: 0;
 }
 
+/* Disable BS button focus border */
+.accordion-button:focus {
+  box-shadow: none;
+}
+
 /* Custom css for the category cards in the challenge category overview*/
 .challenge-card {
     width: 300px;
@@ -128,6 +133,21 @@ button {
 .solves_link {
   color: black;
   text-decoration: none;
+  border-color: #cfe2ff!important
+}
+
+.solves_link:hover {
+  transition: color .15s;
+  background-color: #EBF3F5;
+}
+
+.accordion-button:not(.collapsed) .solves_link {
+  border-color: darkgrey!important
+}
+
+.accordion-button:not(.collapsed) .solves_link:hover {
+  transition: color .15s;
+  background-color: #949d9e;
 }
 
 form {
