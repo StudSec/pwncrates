@@ -83,7 +83,7 @@ async function handleChallengeSubmission(event) {
     //find challenge assosiated with sumbit
     let challengeId = form.getAttribute("challenge");
 
-    let challenge = document.querySelector(`.challenge[id=${challengeId}]`);
+    let challenge = document.querySelector(`.challenge[id=\"${challengeId}\"]`);
     let inputField = form.children[0].children[0];
     let solvesText = challenge.getElementsByClassName("solves-count")[0];
     let challengeName = challenge.getElementsByClassName("challenge-name")[0];

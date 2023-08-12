@@ -18,18 +18,18 @@
     <h4>{{ name }}</h4>
     <p>{{ subcategory_description }}</p>
     {% for challenge_id, name, description, points, url, challenge_solves, handout, difficulty in challenges %}
-      <div class="accordion-item border challenge {{difficulty}}" id="{{challenge_id}}">
+      <div class="accordion-item border challenge {{difficulty}}" id="{{ challenge_id }}">
         <div class="accordion-header">
           <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#{{challenge_id}}-info" aria-controls="{{challenge_id}}-info">
             <div class="d-flex flex-row justify-content-between w-100">
               <div>
                 <h4 class="mb-0 challenge-name {% if challenge_id in solves %}solved{% endif %}">[{{points}}] {{name}}</h4>
               </div>
-              <a href="/solves/{{challenge_id}}" class="solves_link py-1 px-2 me-3 rounded border"><h4 class="mb-0">{{challenge_solves}} solves</h4></a>
+              <a href="/solves/{{challenge_id}}" class="solves_link py-1 px-2 me-3 rounded border"><h4 class="mb-0 solves-count">{{challenge_solves}} solves</h4></a>
             </div>
           </button>
         </div>
-        <div id="{{challenge_id}}-info" class="accordion-collapse collapse">
+        <div id="{{ challenge_id }}-info" class="accordion-collapse collapse">
           <div class="accordion-body">
                 <p>
                     {{description | safe}}
@@ -51,7 +51,7 @@
                 <form onSubmit="handleChallengeSubmission(event)" challenge="{{challenge_id}}" style="{% if challenge_id in solves %}display: none;{% endif %}"
                       method="POST" action="/api/challenges/submit/{{challenge_id}}">
                     <div class="input-group mb-3">
-                        <input type="text" name="flag" class="form-control" autocomplete="off" placeholder="Submit flag" id="{{challenge_id}}">
+                        <input type="text" name="flag" class="form-control" autocomplete="off" placeholder="Submit flag">
                         <button class="btn btn-primary" type="submit" id="button-addon2">Submit</button>
                     </div>
                 </form>
