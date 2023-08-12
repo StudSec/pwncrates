@@ -17,10 +17,34 @@ main {
     margin: 0;
 }
 
+/* Disable BS button focus border */
+.accordion-button:focus {
+  box-shadow: none;
+}
+
 /* Custom css for the category cards in the challenge category overview*/
 .challenge-card {
     width: 300px;
     padding: 15px;
+}
+
+/* Don't show challenge categories or the challenges within by default*/
+.challenge-category,
+.challenge {
+  display: none;
+}
+
+/* Show challenge-categories with one of these classes */
+.show-all,
+.show-easy,
+.show-medium,
+.show-hard,
+/* Show correctly filtered challenges within a shown category */
+.show-all .challenge,
+.show-easy .challenge.easy,
+.show-medium .challenge.medium,
+.show-hard .challenge.hard {
+  display: block;
 }
 
 /* Custom css for 'code blocks' used in connection strings */
@@ -109,6 +133,21 @@ button {
 .solves_link {
   color: black;
   text-decoration: none;
+  border-color: #cfe2ff!important
+}
+
+.solves_link:hover {
+  transition: color .15s;
+  background-color: #EBF3F5;
+}
+
+.accordion-button:not(.collapsed) .solves_link {
+  border-color: darkgrey!important
+}
+
+.accordion-button:not(.collapsed) .solves_link:hover {
+  transition: color .15s;
+  background-color: #949d9e;
 }
 
 form {

@@ -1,7 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let challenges = document.getElementById('challenge_submission')
-    if (challenges != null) manageChallanges(challenges);
-
     if (window.location.pathname.startsWith('/scoreboard')) {
         manageScoreboard();
     }
@@ -58,103 +55,70 @@ function updateUniversity(update_url) {
     });
 }
 
-function manageChallanges(challenge_container) {
+function showSelectedDifficulty() {
+    const challengeCategories = document.querySelectorAll('.challenge-category');
 
-    //Make solves work properly
-    const solves_links = document.querySelectorAll(".solves_link");
-    for (let solves_link of solves_links) {
-        solves_link.addEventListener('mouseenter', (e) => {
-            let accordionButton = solves_link.closest(".accordion-button");
-            accordionButton.setAttribute('data-bs-toggle', '');
-        });
-        solves_link.addEventListener('mouseleave', (e) => {
-            let accordionButton = solves_link.closest(".accordion-button");
-            accordionButton.setAttribute('data-bs-toggle', 'collapse');
-        });
-    }
+    const difficultyFilter = document.getElementById('difficulty-filter');
+    const selectedDifficulty = difficultyFilter.options[difficultyFilter.selectedIndex].value;
 
-    //find all of the challenges in a page
-    let challenges = [];
-    for (let accordion of challenge_container.children) {
-        Array.from(accordion.children).forEach(x => {if (x.className == "accordion-item") challenges.push(x)});
-    }
-
-    //Assign difficulty filters
-    let difficultyFilter = document.getElementById('difficulty-filter');
-    challenges.forEach(challenge => {
-        difficultyFilter.addEventListener('change', () => {
-            challenge.style.display = '';
-            
-            let difficulty = difficultyFilter.value;
-            if (challenge.getAttribute("difficulty")) {
-                switch (difficulty) {
-                    case 'easy':
-                        if (challenge.getAttribute("difficulty") != "easy") {
-                            challenge.style.display = 'none';
-                        }
-                        break;
-                    case 'medium':
-                        if (challenge.getAttribute("difficulty") != "medium") {
-                            challenge.style.display = 'none';
-                        }
-                        break;
-                    case 'hard':
-                        if (challenge.getAttribute("difficulty") != "hard") {
-                            challenge.style.display = 'none';
-                        }
-                        break;  
-                    default: 
-                        challenge.style.display = '';
-                }
-            };
-        });
-    });
-
-    //allow submissions
-    document.addEventListener('submit', async function (handleSubmit) {
-        handleSubmit.preventDefault();
-        let form = handleSubmit.target;
-        let url = form.action;
-
-        //find challenge assosiated with sumbit
-        let challengeId = form.getAttribute("challenge");
-        let challenge = challenges.find(x => x.id == challengeId);
-        let inputField = form.children[0].children[0];
-        let solvesText = challenge.getElementsByClassName("solves-count")[0];
-        let challengeName = challenge.getElementsByClassName("challenge-name")[0];
-        
-        try {
-            let response = await fetch(url, {
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json, text/html',
-                },
-                body: 'flag=' + inputField.value,
-            });
-            response.json().then(post => {
-                if (post.status === 'OK') {
-                    inputField.style.backgroundColor = 'lightgreen';
-                    setTimeout(function(){
-                        form.style.display = 'none';
-                        document.getElementById('solved').style.display = 'block';
-                    }, 2000);
-                    var num = solvesText.textContent.split(' ')[0];
-                    solvesText.textContent = solvesText.textContent.replace(num, num * 1 + 1);
-                    challengeName.classList.add("solved");
-                }
-                else {
-                    inputField.style.backgroundColor = '#ff4040';
-                    setTimeout(function(){
-                        inputField.style.backgroundColor = 'white';
-                    }, 2000);
-                }     
-            });   
-        } catch (error) {
-            console.log(error)
+    challengeCategories.forEach((category) => category.classList.remove('show-easy', 'show-medium', 'show-hard', 'show-all'));
+    if (selectedDifficulty === 'all') {
+        challengeCategories.forEach((category) => category.classList.add('show-all'));
+    } else {
+        for (let category of challengeCategories) {
+            if (Array.from(category.querySelectorAll('.challenge')).find(
+                    el => el.classList.contains(selectedDifficulty))
+                ) {
+                category.classList.add(`show-${selectedDifficulty}`)
+            }
         }
-    });
+    }
+}
+
+async function handleChallengeSubmission(event) {
+    event.preventDefault();
+    let form = event.target;
+    let url = form.action;
+
+    //find challenge assosiated with sumbit
+    let challengeId = form.getAttribute("challenge");
+
+    let challenge = document.querySelector(`.challenge[id=${challengeId}]`);
+    let inputField = form.children[0].children[0];
+    let solvesText = challenge.getElementsByClassName("solves-count")[0];
+    let challengeName = challenge.getElementsByClassName("challenge-name")[0];
+    
+    try {
+        let response = await fetch(url, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json, text/html',
+            },
+            body: 'flag=' + inputField.value,
+        });
+        response.json().then(post => {
+            if (post.status === 'OK') {
+                inputField.style.backgroundColor = 'lightgreen';
+                setTimeout(function(){
+                    form.style.display = 'none';
+                    document.getElementById('solved').style.display = 'block';
+                }, 2000);
+                var num = solvesText.textContent.split(' ')[0];
+                solvesText.textContent = solvesText.textContent.replace(num, num * 1 + 1);
+                challengeName.classList.add("solved");
+            }
+            else {
+                inputField.style.backgroundColor = '#ff4040';
+                setTimeout(function(){
+                    inputField.style.backgroundColor = 'white';
+                }, 2000);
+            }     
+        });   
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 function manageScoreboard() {
