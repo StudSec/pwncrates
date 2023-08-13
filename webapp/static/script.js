@@ -103,7 +103,7 @@ async function handleChallengeSubmission(event) {
                 inputField.style.backgroundColor = 'lightgreen';
                 setTimeout(function(){
                     form.style.display = 'none';
-                    document.getElementById('solved').style.display = 'block';
+                    document.getElementById(challengeId + '-solved').style.display = 'block';
                 }, 2000);
                 var num = solvesText.textContent.split(' ')[0];
                 solvesText.textContent = solvesText.textContent.replace(num, num * 1 + 1);

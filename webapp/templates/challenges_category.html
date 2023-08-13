@@ -46,7 +46,7 @@
                 {% endif %}
 
                 {% if current_user.is_authenticated %}
-                <p id="solved" style="{% if challenge_id not in solves %}display: none;{% endif %}">
+                <p id="{{challenge_id}}-solved" style="{% if challenge_id not in solves %}display: none;{% endif %}">
                     Solved! <a href="{{ url_for('writeups', challenge_id=challenge_id ) }}">View writeups</a>
                 </p>
                 <form onSubmit="handleChallengeSubmission(event)" challenge="{{challenge_id}}" style="{% if challenge_id in solves %}display: none;{% endif %}"
