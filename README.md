@@ -94,6 +94,7 @@ pages/contributing.md
 pages/rules.md
 writeups/
 .git-credentials
+config.json
 ```
 
 Challenges should contain a git repository named `Challenges` which contains
@@ -124,7 +125,3 @@ https://git-scm.com/docs/git-credential-store
 - Change transition flag successfully submitted -> view writeups
 - Mark solved challenges
 - Set challenge images
-
-#### Writeups
-- Change writeup submission text/form
-

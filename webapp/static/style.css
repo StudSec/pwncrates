@@ -78,6 +78,10 @@ button {
   color: #1464bc;
 }
 
+.list-group-item.active {
+    background-color: #1c8adb !important;
+}
+
 .navbar.navbar-expand-lg.navbar-dark.bg-dark.fixed-top {
   background-color: #1c8adb !important;
 }
