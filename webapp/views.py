@@ -45,9 +45,8 @@ def public_profile(user_id):
 
     if not user:
         return render_template("404.html")
-    
 
-    self_profile = current_user.is_authenticated and user.id == current_user.id
+    self_profile = current_user.is_authenticated and user.id == int(current_user.id)
     universities = []
     if self_profile:
         universities = db.get_universities()
