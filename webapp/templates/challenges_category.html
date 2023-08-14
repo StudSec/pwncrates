@@ -20,10 +20,10 @@
     {% for challenge_id, name, description, points, url, challenge_solves, handout, difficulty in challenges %}
       <div class="accordion-item border challenge {{difficulty}}" id="{{ challenge_id }}">
         <div class="accordion-header">
-          <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#{{challenge_id}}-info" aria-controls="{{challenge_id}}-info">
+          <button class="accordion-button collapsed {% if challenge_id in solves %}solved{% endif %}" data-bs-toggle="collapse" data-bs-target="#{{challenge_id}}-info" aria-controls="{{challenge_id}}-info">
             <div class="d-flex flex-row justify-content-between w-100">
               <div>
-                <h4 class="mb-0 challenge-name {% if challenge_id in solves %}solved{% endif %}">[{{points}}] {{name}}</h4>
+                <h4 class="mb-0 challenge-name">[{{points}}] {{name}}</h4>
               </div>
               <a href="/solves/{{challenge_id}}" class="solves_link py-1 px-2 me-3 rounded border"><h4 class="mb-0 solves-count">{{challenge_solves}} solves</h4></a>
             </div>

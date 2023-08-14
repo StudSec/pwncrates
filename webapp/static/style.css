@@ -167,7 +167,7 @@ form {
 }
 
 .solved {
-  text-decoration: line-through;
+  background-color: lightgreen!important;
 }
 
 .filter select {

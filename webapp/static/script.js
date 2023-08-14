@@ -86,7 +86,7 @@ async function handleChallengeSubmission(event) {
     let challenge = document.querySelector(`.challenge[id=\"${challengeId}\"]`);
     let inputField = form.children[0].children[0];
     let solvesText = challenge.getElementsByClassName("solves-count")[0];
-    let challengeName = challenge.getElementsByClassName("challenge-name")[0];
+    let challengeName = challenge.getElementsByClassName("accordion-button")[0];
     
     try {
         let response = await fetch(url, {
