@@ -112,11 +112,10 @@ https://git-scm.com/docs/git-credential-store
 
 ## TODO - frontend
 #### General
-- Move Javascript to script.js
+- Move Javascript to script.js -> in preperation for CSP
 - Improve homescreen
 - Add favicon
-- Make stylized login page
-- Make stylized register page
+- Make stylized login/register page
 
 #### Challenges
 - Set challenge images
