@@ -10,9 +10,11 @@ import webapp.database as db
 
 class User(UserMixin):
     def __init__(self, user_id, username):
+        db_info = db.get_user(user_id=user_id)
         self.id = user_id
         self.username = username
-        self.university = db.get_user(user_id=user_id)["university_name"]
+        self.university = db_info["university_name"]
+        self.discord_id = db_info["discord_id"]
         self.authenticated = True
 
     @staticmethod

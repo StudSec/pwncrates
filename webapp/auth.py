@@ -8,6 +8,7 @@ import sys
 
 from flask_login import LoginManager, login_user, login_required, logout_user
 from flask import request, render_template, redirect, url_for, flash
+from flask_login import current_user
 from webapp.models import User
 import webapp.database as db
 from webapp import app
@@ -162,7 +163,6 @@ def logout():
     return redirect(url_for('home'))
 
 
-# Generate the oauth url + redirect
 @app.route('/discord/oauth')
 def discord_oauth():
     base_url = "https://discord.com/oauth2/authorize"
@@ -211,11 +211,20 @@ def discord_oauth_callback():
     email = user_data.get("email")
     name = user_data.get("username")
 
+    existing_email = db.get_email_from_discord_id(discord_id)
     stored_info = db.get_user(email=email)
 
-    if not stored_info:
+    if not stored_info and not existing_email and not current_user.id:
         db.register_user(name, "", email)
         db.update_discord_id(discord_id, email)
+
+    elif not existing_email and current_user.id:
+        stored_info = db.get_user(user_id=current_user.id)
+
+        if stored_info["discord_id"] != discord_id:
+            db.update_discord_id(discord_id, existing_email)
+
+        return redirect(url_for('profile'))
 
     elif stored_info["discord_id"] != discord_id:
         db.update_discord_id(discord_id, email)

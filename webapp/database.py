@@ -249,13 +249,13 @@ def get_user_information(user_id):
     return results[0]
 
 
-def get_discord_id_by_email(email):
-    cursor = conn.execute('SELECT discord_id, id, name FROM users WHERE email = ? LIMIT 1', (email,))
+def get_email_from_discord_id(discord_id):
+    cursor = conn.execute('SELECT email FROM users WHERE discord_id = ? LIMIT 1', (discord_id,))
     results = [user_info for user_info in cursor.fetchall()]
     cursor.close()
 
     if len(results) == 0:
-        return "", "", ""
+        return ""
 
     return results[0]
 
