@@ -49,6 +49,10 @@ def update_challenges_from_git():
             if "Handout" == file.split("/")[2] and file not in updated_challenges:
                 updated_challenges.append(file)
                 create_challenge_handouts(file)
+            if "Writeup.md" == file.split("/")[2]:
+                challenge_id = db.get_challenge_id(file.split("/")[1])
+                subprocess.run(['mkdir', f'writeups/{challenge_id}'])
+                subprocess.run(['cp', file, f'writeups/{challenge_id}/Author.md'])
         except IndexError:
             pass
         except FileNotFoundError as error:

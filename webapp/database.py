@@ -188,6 +188,14 @@ def get_challenge_name(challenge_id):
     return results
 
 
+def get_challenge_id(challenge_name):
+    cursor = conn.execute('SELECT id FROM challenges WHERE name = ?', (challenge_name,))
+    challenge_id = cursor.fetchone()[0]
+    cursor.close()
+
+    return challenge_id
+
+
 # User functions
 def get_user(user_id=None, email=None):
     if user_id:
@@ -361,7 +369,7 @@ def update_or_create_challenge(path, folder=get_challenge_path()):
     conn.commit()
 
     cursor.execute('SELECT id FROM challenges WHERE name = ?', (name,))
-    challenge_id = cursor.fetchone()
+    challenge_id = cursor.fetchone()[0]
 
     cursor.close()
     return challenge_id
