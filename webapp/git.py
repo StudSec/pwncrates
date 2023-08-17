@@ -51,7 +51,7 @@ def update_challenges_from_git():
                 create_challenge_handouts(file)
             if "Writeup.md" == file.split("/")[2]:
                 challenge_id = db.get_challenge_id(file.split("/")[1])
-                subprocess.run(['mkdir', f'writeups/{challenge_id}'])
+                subprocess.run(['mkdir', f'writeups/{challenge_id}'], stderr=subprocess.DEVNULL)
                 subprocess.run(['cp', f"./{challenge_path}/" + file, f'writeups/{challenge_id}/Author.md'])
         except IndexError:
             pass
