@@ -116,6 +116,7 @@ https://git-scm.com/docs/git-credential-store
 - Improve homescreen
 - Add favicon
 - Make stylized login/register page
+- change writeup submission behavior -> refresh instead of redirect
 
 #### Challenges
 - Set challenge images

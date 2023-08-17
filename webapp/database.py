@@ -360,7 +360,7 @@ def update_or_create_challenge(path, folder=get_challenge_path()):
 
     conn.commit()
 
-    cursor.execute('SELECT id FROM challenges WHERE name = ?', challenge_data["name"])
+    cursor.execute('SELECT id FROM challenges WHERE name = ?', (name,))
     challenge_id = cursor.fetchone()
 
     cursor.close()
