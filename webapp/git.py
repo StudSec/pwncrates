@@ -86,6 +86,7 @@ def init_git():
                 if os.path.exists(f"./{challenge_path}/" + challenge[:-9] + "Handout"):
                     create_challenge_handouts(challenge)
                 if os.path.exists(f"./{challenge_path}/" + challenge[:-9] + "Writeup.md"):
+                    subprocess.run(['mkdir', f'writeups/{challenge_id}'])
                     subprocess.run(['cp', f"./{challenge_path}/" + challenge[:-9] + "Writeup.md",
                                     f'writeups/{challenge_id}/Author.md'])
 
