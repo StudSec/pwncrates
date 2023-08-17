@@ -84,17 +84,22 @@ def challenges(category=None):
 
 # Writeups page, contains an overview of all available writeups if no specific one is specified.
 @app.route('/writeups/<int:challenge_id>')
-@app.route('/writeups/<int:challenge_id>/<int:writeup_id>')
+@app.route('/writeups/<int:challenge_id>/<writeup_id>')
 @login_required
 def writeups(challenge_id, writeup_id=None):
     if challenge_id not in [solve[0] for solve in db.get_user_solves(current_user.id)]:
         return "Unauthorized"
 
-    if not writeup_id:
+    if writeup_id == "author":
+        return render_markdown(f"./writeups/{challenge_id}/Author.md")
+
+    if not writeup_id or not writeup_id.isdigit():
         return render_template("writeups_overview.html",
                                challenge_id=challenge_id,
                                challenge_name=db.get_challenge_name(challenge_id),
-                               writeups=db.get_writeups(challenge_id))
+                               writeups=db.get_writeups(challenge_id),
+                               official_writeup=os.path.exists(f"./writeups/{challenge_id}/Author.md"))
+
     file_name = db.get_writeup_file(challenge_id, writeup_id)
 
     if len(file_name) != 1:

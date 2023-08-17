@@ -359,7 +359,12 @@ def update_or_create_challenge(path, folder=get_challenge_path()):
                     challenge_data["subcategory"], challenge_data["flag"], challenge_data["url"], name))
 
     conn.commit()
+
+    cursor.execute('SELECT id FROM challenges WHERE name = ?', challenge_data["name"])
+    challenge_id = cursor.fetchone()
+
     cursor.close()
+    return challenge_id
 
 
 def update_or_create_category(path, folder=get_challenge_path()):

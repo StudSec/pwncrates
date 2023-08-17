@@ -14,6 +14,11 @@
                     </form>
                 </div>
             </li>
+        {% if official_writeup %}
+            <li class="list-group-item">
+                  <a href="{{ url_for('writeups', challenge_id=challenge_id, writeup_id='author') }}">Author solution</a>
+              </li>
+        {% endif %}
         {% for author, writeup_id in writeups %}
               <li class="list-group-item">
                   <a href="{{ url_for('writeups', challenge_id=challenge_id, writeup_id=writeup_id) }}">{{ author }}</a>

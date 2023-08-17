@@ -81,10 +81,14 @@ def init_git():
             if challenge.endswith("README.md"):
                 challenge = challenge.replace("%20", " ").replace("./", "")
                 # We have to account for url encoding, fortunately the only case for this is the space character
-                db.update_or_create_challenge(challenge)
+                challenge_id = db.update_or_create_challenge(challenge)
 
                 if os.path.exists(f"./{challenge_path}/" + challenge[:-9] + "Handout"):
                     create_challenge_handouts(challenge)
+                if os.path.exists(f"./{challenge_path}/" + challenge[:-9] + "Writeup.md"):
+                    subprocess.run(['cp', f"./{challenge_path}/" + challenge[:-9] + "Writeup.md",
+                                    f'writeups/{challenge_id}/Author.md'])
+
             else:
                 print("Invalid challenge:", challenge)
 
