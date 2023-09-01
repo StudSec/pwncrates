@@ -297,7 +297,7 @@ def create_or_update_writeup(challenge_id, user_id, file_name):
 
 
 def submit_flag(challenge_id, flag, user_id):
-    cursor = conn.execute('SELECT DISTINCT flag FROM challenges WHERE id = ? AND flag = ?;', (challenge_id, flag))
+    cursor = conn.execute('SELECT DISTINCT flag FROM challenges WHERE id = ? AND ((flag = ?) OR (flag_caseinsensitive = 1 AND lower(flag) = ?)) ;', (challenge_id, flag, flag.lower()))
 
     if cursor.fetchone():
         cursor = conn.execute('SELECT id FROM solves WHERE challenge_id = ? AND user_id = ?;', (challenge_id, user_id))
@@ -331,6 +331,7 @@ def update_user_university(user_id, university_id):
 def initialize_database():
     with open('init.sql', 'r') as f:
         sql_code = f.read()
+    
     conn.executescript(sql_code)
     conn.commit()
 
@@ -354,17 +355,20 @@ def update_or_create_challenge(path, folder=get_challenge_path()):
     difficulty = difficulties[challenge_data["difficulty"].lower()]
     cursor = conn.cursor()
 
+    if "flag_caseinsensitive" not in challenge_data.keys():
+        challenge_data["flag_caseinsensitive"] = False
+
     cursor.execute('INSERT OR IGNORE INTO challenges '
-                   '(name, description, points, category, difficulty, subcategory, flag, url) '
-                   'values (?, ?, ?, ?, ?, ?, ?, ?);'
+                   '(name, description, points, category, difficulty, subcategory, flag, flag_caseinsensitive, url) '
+                   'values (?, ?, ?, ?, ?, ?, ?, ?, ?);'
                    , (name, challenge_data["description"], challenge_data["points"], category,
-                      difficulty, challenge_data["subcategory"], challenge_data["flag"], challenge_data["url"]
+                      difficulty, challenge_data["subcategory"], challenge_data["flag"], bool(challenge_data["flag_caseinsensitive"]), challenge_data["url"]
                       ))
 
     cursor.execute('UPDATE challenges SET description = ?, points = ?, category = ?, difficulty = ?, '
-                   'subcategory = ?, flag = ?, url = ? WHERE name = ?',
+                   'subcategory = ?, flag = ?, flag_caseinsensitive = ?, url = ? WHERE name = ?',
                    (challenge_data["description"], challenge_data["points"], category, difficulty,
-                    challenge_data["subcategory"], challenge_data["flag"], challenge_data["url"], name))
+                    challenge_data["subcategory"], challenge_data["flag"], bool(challenge_data["flag_caseinsensitive"]), challenge_data["url"], name))
 
     conn.commit()
 
