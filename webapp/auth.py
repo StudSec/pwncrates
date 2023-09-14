@@ -214,11 +214,11 @@ def discord_oauth_callback():
     existing_email = db.get_email_from_discord_id(discord_id)
     stored_info = db.get_user(email=email)
 
-    if not stored_info and not existing_email and not current_user.id:
+    if not stored_info and not existing_email and not current_user.is_authenticated:
         db.register_user(name, "", email)
         db.update_discord_id(discord_id, email)
 
-    elif not existing_email and current_user.id:
+    elif not existing_email and current_user.is_authenticated:
         stored_info = db.get_user(user_id=current_user.id)
 
         if stored_info["discord_id"] != discord_id:
