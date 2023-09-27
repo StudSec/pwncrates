@@ -5,6 +5,7 @@
     <title>{% block title %}{% endblock %}</title>
     {% block html_head %}{% endblock %}
     {% include "header.html" %}
+    <link rel="icon" href="{{ url_for('static', filename='studsec_logo_icon.png') }}">
 </head>
     <body class="d-flex flex-column h-100">
         <header>
