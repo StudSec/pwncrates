@@ -71,9 +71,9 @@ Please include the following when submitting a challenge:
 If the challenge is hosted it should be put in a Docker container, we can do this for you if you're not familiar
 with docker, but please keep it in mind.
 
-Try to keep the file size to a minimum, we are on a Storm budget :)
+Try to keep the file size to a minimum, we are on a STORM budget :)
 
-You can send your submissions to any of our staff (not Storm) members in discord.
+You can send your submissions to any of our staff (not STORM) members in discord.
 
 ### Fixes in existing challenges
 If you have found an unintended in a challenge you can submit a fix or ask Staff/the challenge creator to do so
