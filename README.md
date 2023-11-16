@@ -114,7 +114,6 @@ https://git-scm.com/docs/git-credential-store
 #### General
 - Move Javascript to script.js -> in preperation for CSP
 - Improve homescreen
-- Add favicon
 - Make stylized login/register page
 - change writeup submission behavior -> refresh instead of redirect
 
