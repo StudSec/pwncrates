@@ -53,6 +53,8 @@ def update_challenges_from_git():
                 challenge_id = db.get_challenge_id(file.split("/")[1])
                 subprocess.run(['mkdir', f'writeups/{challenge_id}'], stderr=subprocess.DEVNULL)
                 subprocess.run(['cp', f"./{challenge_path}/" + file, f'writeups/{challenge_id}/Author.md'])
+            if "Banner.png" == file.split("/")[1]:
+                subprocess.run(['cp', f"./{challenge_path}/{file}", f"./static/banners/{file.split('/')[0]}.png"])
         except IndexError:
             pass
         except FileNotFoundError as error:
@@ -93,7 +95,6 @@ def init_git():
                     subprocess.run(['mkdir', f'writeups/{challenge_id}'])
                     subprocess.run(['cp', f"./{challenge_path}/" + challenge[:-9] + "Writeup.md",
                                     f'writeups/{challenge_id}/Author.md'])
-
             else:
                 print("Invalid challenge:", challenge)
 
@@ -102,6 +103,8 @@ def init_git():
                      if os.path.isdir(f"./{challenge_path}/{x}")]:
         if os.path.exists(f"./{challenge_path}/{category}/README.md"):
             db.update_or_create_category(f"./{challenge_path}/{category}/README.md", folder="")
+        if os.path.exists(f"./{challenge_path}/{category}/Banner.png"):
+            subprocess.run(['cp', f"./{challenge_path}/{category}/Banner.png", f"./static/banners/{category}.png"])
 
 
 def update_git_loop():
