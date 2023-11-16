@@ -80,6 +80,8 @@ def init_git():
     subprocess.run(['git', '--no-pager', 'config', 'credential.helper', 'store'], cwd=challenge_path,
                    stdout=subprocess.DEVNULL)
 
+    git_update()
+
     print("Importing challenges...")
     with open(f"./{challenge_path}/README.md") as f:
         matches = re.findall(r"]\((.*?)\)", f.read())
@@ -92,7 +94,7 @@ def init_git():
                 if os.path.exists(f"./{challenge_path}/" + challenge[:-9] + "Handout"):
                     create_challenge_handouts(challenge)
                 if os.path.exists(f"./{challenge_path}/" + challenge[:-9] + "Writeup.md"):
-                    subprocess.run(['mkdir', f'writeups/{challenge_id}'])
+                    subprocess.run(['mkdir', f'writeups/{challenge_id}'], stderr=subprocess.DEVNULL)
                     subprocess.run(['cp', f"./{challenge_path}/" + challenge[:-9] + "Writeup.md",
                                     f'writeups/{challenge_id}/Author.md'])
             else:
