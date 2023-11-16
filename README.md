@@ -11,7 +11,6 @@ docker-compose up
 ```
 
 #### The longer (manual) version:
-
 Firstly, you need to include the challenges in `data/challenges`
 The repository should have the name `Challenges`.
 
@@ -78,15 +77,15 @@ sudo docker exec -it pwncrates-pwncrates-1 bash
 
 As a general design principle, try to keep all data within the data folder.
 This means any configs, database data, user data, should reside in that. If 
-a user would like to backup the entire application it should be a simple as
+a user would like to back up the entire application it should be a simple as
 backing up the data folder.
 
 If you'd like to manually look at the database you can explore the `.db` file
-in data. One tool for this is https://inloop.github.io/sqlite-viewer/
+in `./data/db/`. One tool for this is https://inloop.github.io/sqlite-viewer/
 
 ## Data
 The `data` folder contains all data for pwncrates. It should contain the
-following setup
+following
 ```commandline
 challenges/
 db/pwncrates.db
@@ -97,11 +96,6 @@ writeups/
 config.json
 ```
 
-Challenges should contain a git repository named `Challenges` which contains
-the CTF challenges. 
-
-TODO: Explain challenge folder setup
-
 The .git-credentials file should contain git credentials. The format of
 the file is as follows
 ```commandline
@@ -110,11 +104,41 @@ the file is as follows
 For more information see
 https://git-scm.com/docs/git-credential-store
 
+#### Challenges
+Challenges should contain a git repository named `Challenges` which contains
+the CTF challenges. This repository should contain the following, see https://github.com/StudSec/Challenges-Examples for
+an example.
+```commandline
+.
+| - challenge_category/
+|   | - challenge_name
+|   |   | - README.md
+|   |   \ - Handout/
+|   |       \- File
+|   | - other_challenge
+|   |        | - README.md
+|   | - Banner.png
+|   \ - README.md
+\ - README.md    
+```
+The README's are broken down as follows
+```md
+## master README
+This contains links to all challenges, it acts as an index to the repository.
+
+## Category README
+This contains a description of the category, in addition to all the subcategories (and their descriptions)
+
+## Challenge README
+This contains the challenge description and a table containing connection info, flag, point count, etc
+```
+The Handout is optional, if present all files within the folder will be zipped and this zip will be provided as
+a challenge handout.
+
+The Banner.png contains the banner for each category, if this is not present a fallback image provider will be used.
+
 ## TODO - frontend
 #### General
 - Move Javascript to script.js -> in preperation for CSP
 - Improve homescreen
 - change writeup submission behavior -> refresh instead of redirect
-
-#### Challenges
-- Set challenge images
