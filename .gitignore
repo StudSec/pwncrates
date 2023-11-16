@@ -8,6 +8,8 @@ data/writeups/*
 data/config.json
 backup.sql
 
+webapp/static/banners/*.png
+
 # Pycharm
 .idea/
 
