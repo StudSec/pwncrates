@@ -2,17 +2,44 @@
 {% block title %}pwncrates - Register{% endblock %}
 
 {% block content %}
-  <h1>Register</h1>
-    {% if error %}
-      <p>{{ error }}</p>
-    {% endif %}
-    <form method="post" action="{{ url_for('register') }}">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required><br>
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required><br>
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required><br>
-      <button class="btn btn-secondary btn-lg btn-block" type="submit">Register</button>
-    </form>
+<div class="container mt-5">
+<div class="row justify-content-center">
+    <div class="col-md-10">
+    <div class="card shadow">
+          <div class="card-body">
+              <h3 class="card-title text-center">Register</h3>
+              {% with messages = get_flashed_messages() %}
+              {% if messages %}
+              <div class="text-center">
+                <p class="text-danger">
+                {% for message in messages %}
+                  {{ message }}
+                {% endfor %}
+                </p>
+              </div>
+              {% endif %}
+              {% endwith %}
+              <form method="post" action="{{ url_for('register') }}" autocomplete="off">
+                <div class="mb-3">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" class="form-control" required><br>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email">Email:</label>
+                    <input type="text" id="email" name="email" class="form-control" required><br>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" class="form-control" required><br>
+                </div>
+
+                <button class="btn btn-primary" type="submit">Register</button>
+            </form>
+          </div>
+    </div>
+    </div>
+</div>
+</div>
 {% endblock %}

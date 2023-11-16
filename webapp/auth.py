@@ -80,17 +80,20 @@ def register():
             email = request.form["email"]
 
             if db.get_user(email=email):
-                return render_template('register.html', error='Email already taken')
+                flash("Email already taken")
+                return render_template('register.html')
 
             if not re.match(r'^[\w\.+-]+@[\w\.-]+\.\w+$', email):
-                return render_template('register.html', error='Invalid email')
+                flash('Invalid email')
+                return render_template('register.html')
 
             code = os.urandom(16).hex()
             db.insert_link(email, "confirmation", code)
             db.register_user(username, bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii'), email)
 
             if mail.confirm_email(email, f"https://{config['hostname']}{url_for('confirm_email')}?code={code}"):
-                return render_template('register.html', error='Failed to send confirmation email')
+                flash('Failed to send confirmation email')
+                return render_template('register.html')
         except KeyError:
             return "Missing parameters"
 
