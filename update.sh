@@ -12,6 +12,7 @@ if [[ "$LOCAL" == "$REMOTE" ]]; then
 fi
 
 # Fetch the updates and reset to the latest commit
+git reset --hard origin/master
 git pull origin main
 
 # Execute the deployment command
