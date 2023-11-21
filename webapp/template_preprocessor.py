@@ -5,6 +5,26 @@ Global variables are variables used by the base template, or its includes.
 """
 from webapp import app
 from flask import url_for
+import json
+
+
+# Read and eval config file
+with open("config.json", "r") as f:
+    config = json.loads(f.read())
+
+
+@app.after_request
+def add_security_headers(resp):
+    bootstrap_js_url = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    bootstrap_css_url = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+    resp.headers['Content-Security-Policy'] = ("default-src 'none'; "
+                                               f"script-src {config['hostname'] + '/static/script.js'} "
+                                               f"{bootstrap_js_url}; "
+                                               f"style-src {config['hostname'] + '/static/style.css'} "
+                                               f"{bootstrap_css_url}; "
+                                               "base-uri 'self'; "
+                                               "img-src *;")
+    return resp
 
 
 @app.context_processor

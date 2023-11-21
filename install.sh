@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo '{'                             >> data/config.json
-echo '  "hostname": "",'             >> data/config.json
+echo '  "hostname": "127.0.0.1",'    >> data/config.json
 echo '  "oauth_client_id": "",'      >> data/config.json
 echo '  "oauth_client_secret": "",'  >> data/config.json
 echo '  "oauth_redirect_uri": "",'   >> data/config.json
