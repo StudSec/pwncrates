@@ -4,7 +4,7 @@
 {% block content %}
 <div class="d-flex flex-row justify-content-start mb-5">
   <div class="filter w-100">
-      <select id="difficulty-filter" name="difficulty-filter" autocomplete="off" onChange="showSelectedDifficulty()">
+      <select id="difficulty-filter" name="difficulty-filter" autocomplete="off">
           <option value="all">All</option>
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
@@ -46,10 +46,10 @@
                 {% endif %}
 
                 {% if current_user.is_authenticated %}
-                <p id="{{challenge_id}}-solved" style="{% if challenge_id not in solves %}display: none;{% endif %}">
+                <p id="{{challenge_id}}-solved" class="{% if challenge_id not in solves %}d-none{% endif %}">
                     Solved! <a href="{{ url_for('writeups', challenge_id=challenge_id ) }}">View writeups</a>
                 </p>
-                <form onSubmit="handleChallengeSubmission(event)" challenge="{{challenge_id}}" style="{% if challenge_id in solves %}display: none;{% endif %}"
+                <form challenge="{{challenge_id}}" class="{% if challenge_id in solves %}d-none{% endif %}"
                       method="POST" action="/api/challenges/submit/{{challenge_id}}">
                     <div class="input-group mb-3">
                         <input type="text" name="flag" class="form-control" autocomplete="off" placeholder="Submit flag">

@@ -33,23 +33,5 @@
                 {% endfor %}
             </tbody>
         </table>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const universityFilter = document.getElementById('university-filter');
-                const tableRows = document.querySelectorAll('tbody tr');
-
-                universityFilter.addEventListener('change', () => {
-                    const filterValue = universityFilter.value.trim().toLowerCase();
-                    tableRows.forEach(row => {
-                        const universityId = row.querySelector('.university-id').getAttribute("university").trim().toLowerCase();
-                        if (filterValue === '' || universityId === filterValue) {
-                            row.style.display = '';
-                        } else {
-                            row.style.display = 'none';
-                        }
-                    });
-                });
-            });
-        </script>
     </div>
 {% endblock %}

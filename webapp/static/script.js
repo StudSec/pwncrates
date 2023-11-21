@@ -1,6 +1,37 @@
 document.addEventListener('DOMContentLoaded', () => {
-    if (window.location.pathname.startsWith('/scoreboard')) {
+    if (window.location.pathname == '/scoreboard' ) {
+        const universityFilter = document.getElementById('university-filter');
+        const tableRows = document.querySelectorAll('tbody tr');
+
+        universityFilter.addEventListener('change', () => {
+            const filterValue = universityFilter.value.trim().toLowerCase();
+            tableRows.forEach(row => {
+                const universityId = row.querySelector('.university-id').getAttribute("university").trim().toLowerCase();
+                if (filterValue === '' || universityId === filterValue) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
         manageScoreboard();
+    }
+
+    if (window.location.pathname == '/challenges') {
+        for (img of document.querySelectorAll("img")) {
+            img.addEventListener('error', function () { this.src='https://picsum.photos/536/354' });
+        }
+    }
+
+    if (window.location.pathname.startsWith('/challenges/')) {
+        document.getElementById("difficulty-filter").addEventListener('change', function () { showSelectedDifficulty() });
+        for (form of document.querySelectorAll("form")) {
+            form.addEventListener('submit', handleChallengeSubmission);
+        }
+    }
+
+    if (window.location.pathname == "/profile") {
+        document.getElementById("university").addEventListener('change', function () { updateUniversity('/api/profile/update') });
     }
 
     const profileChartCtx = document.getElementById('profile_chart');
@@ -80,7 +111,7 @@ async function handleChallengeSubmission(event) {
     let form = event.target;
     let url = form.action;
 
-    //find challenge assosiated with sumbit
+    // Find challenge associated with submit
     let challengeId = form.getAttribute("challenge");
 
     let challenge = document.querySelector(`.challenge[id=\"${challengeId}\"]`);
