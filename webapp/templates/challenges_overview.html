@@ -7,7 +7,7 @@
         <div class="challenge-card">
         <a href="{{ url_for('challenges') + '/' + category }}" class="card card-block stretched-link text-decoration-none h-100">
             <div class="card h-100">
-              <img src="{{ url_for('static', filename='banners/' + category + '.png') }}" onerror="this.src='https://picsum.photos/536/354'" class="card-img-top">
+              <img src="{{ url_for('static', filename='banners/' + category + '.png') }}" class="card-img-top">
               <div class="card-body">
                 <h5 class="card-title text-center mb-0">{{ category }}</h5>
                 <p class="card-text">

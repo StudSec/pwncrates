@@ -4,13 +4,12 @@
 {% block content %}
     <div class="container mt-0">
         <h1 class="text-center mb-0">#{{ rank[0] }} - {{ current_user.username }}</h1>
-        <h1 id="user-id" style="display: none;">{{current_user.id}}</h1>
+        <h1 id="user-id" class="d-none">{{current_user.id}}</h1>
          {% if self_profile %}
         <div class="d-flex justify-content-center text-center">
         <form action="{{url_for('api_update_profile')}}" method="POST">
           <div class="form-group mb-0">
-            <select class="" id="university" name="university"
-                    onchange="updateUniversity('{{ url_for('api_update_profile') }}')">
+            <select class="" id="university" name="university">
               {% for university_id, university_name in universities %}
                     <option value="{{ university_id }}"
                             {% if current_user.university == university_name %}
