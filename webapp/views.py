@@ -5,7 +5,7 @@ import os
 import sys
 
 from webapp import app
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 from flask_login import current_user, login_required
 import webapp.database as db
 from webapp.helpers import render_markdown
@@ -15,7 +15,7 @@ import random
 
 @app.route('/')
 def home():
-    return render_template("home.html")
+    return redirect(url_for("challenges"))
 
 
 @app.route('/rules')

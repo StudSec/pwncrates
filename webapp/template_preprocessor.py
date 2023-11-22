@@ -38,7 +38,6 @@ def add_security_headers(resp):
 def inject_globals():
     return dict(name="StudSec",
                 routes={
-                    "Home": url_for("home"),
                     "Rules": url_for("rules"),
                     "Getting started": url_for("getting_started"),
                     "Challenges": url_for("challenges"),
