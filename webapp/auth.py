@@ -5,6 +5,7 @@ This includes authentication to the API endpoint, this allows us to easily modif
 """
 import os
 import sys
+import time
 
 from flask_login import LoginManager, login_user, login_required, logout_user
 from flask import request, render_template, redirect, url_for, flash
@@ -59,6 +60,7 @@ def login():
                 user = User(db.get_user(email=request.form["email"])["id"],
                             db.get_user(email=request.form["email"])["username"])
                 login_user(user)
+                time.sleep(0.1)  # Prevent a race condition, where the page loads but the user is not processed yet
                 return redirect(url_for('challenges'))
         except KeyError:
             pass
@@ -235,6 +237,7 @@ def discord_oauth_callback():
     stored_info = db.get_user(email=email)
     user = User(stored_info["id"], stored_info["username"])
     login_user(user)
+    time.sleep(0.1)  # Prevent a race condition, where the page loads but the user is not processed yet
 
     return redirect(url_for('challenges'))
 
