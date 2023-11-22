@@ -52,7 +52,7 @@ The file will need to exist with the above structure regardless. Currently, ther
 verification. However, the file will accept empty/ dummy values (but will of course not work).
 
 The `hostname` field should contain the servers ip address/dns name, it is used to generate links for password 
-resets/account verifications.
+resets/account verifications and, importantly, the CSP. If the frontend is not working this is likely the issue.
 
 #### Migrating from ctfd
 You can use the migration script in `./scripts/` to migrate a ctfd database to pwncrates. However, this has minimal
@@ -137,8 +137,3 @@ a challenge handout.
 
 The Banner.png contains the banner for each category, if this is not present a fallback image provider will be used.
 
-## TODO - frontend
-#### General
-- Move Javascript to script.js -> in preperation for CSP
-- Improve homescreen
-- change writeup submission behavior -> refresh instead of redirect
