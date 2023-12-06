@@ -61,8 +61,10 @@ def api_submit_challenge(challenge_id):
             return Response(json.dumps({"status": status}),
                             mimetype="application/json")
 
+        # This could be done cleaner, its meant to prevent users from using discords mention feature.
+        username = db.get_user(user_id=current_user.id)['username'].replace("@", "")
         data = {
-            "content": f"{db.get_user(user_id=current_user.id)['username']} solved {db.get_challenge_name(challenge_id)}!"
+            "content": f"{username} solved {db.get_challenge_name(challenge_id)}!"
         }
         if config["webhook_url"].startswith("http"):
             requests.post(config["webhook_url"], json=data)
