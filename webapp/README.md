@@ -17,7 +17,7 @@ as `main.py`)
 ```python
 from webapp import app
 
-# Same function definition as above
+# Same function defenition as above
 ```
 
 Don't forget to add the file to the import statement in `__init__.py`
@@ -38,7 +38,7 @@ variables differ per file they may be defined as follows within the extending fi
 ```
 This example is from `home.html`, which defines the title as "pwncrates - Home"
 
-For more global variables you can add them to the dictionary in `inject_globals`
+For more global variables you can add them to the dictonary in `inject_globals`
 in `template_preprocessor.py`
 ```python
 @app.context_processor
@@ -49,13 +49,13 @@ def inject_globals():
 
 #### Docker
 The webapp runs within docker, as part of this all files within this directory
-are added within the container. If you'd like to avoid that (for security,
+are added within the container. If you'd like to avoid that (for security
 optimizations or whatever) you can add the file path to `.dockerignore`.
 
 #### Git
 Git is used for the challenges to fetch & update. This lets CTF creators
 update a git repository and automatically propagate the changes. To 
-accommodate for this a few design decisions have been implemented.
+accomodate for this a few design decisions have been implemented.
 
 The challenge repository should be put in `data/challenges`, upon startup
 this folder will be mounted as read only and the first git repository (for 
@@ -64,5 +64,5 @@ be copied within the docker folder. This is done to prevent out-of-container
 attacks, where malicious code gets added to git hooks.
 
 The challenge repository is expected to have a main README.md, which contains
-links to all the challenges. And each challenge is expected to have its
+links to all of the challenges. And each challenge is expected to have its
 own README, with the flag, point count, name and description.

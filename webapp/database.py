@@ -12,6 +12,7 @@ import os
 
 import sys
 
+
 # Lookup functions
 def get_email_from_link(link_type, code):
     assert link_type == "confirmation" or link_type == "reset"
@@ -82,6 +83,7 @@ def get_user_solves(user_id):
     cursor.close()
     return results
 
+
 def get_user_scores(user_id):
     cursor = conn.execute('SELECT S.challenge_id, C.name, S.solved_time, C.points FROM solves S, Challenges C WHERE '
                           'S.user_id = ? AND C.id = S.challenge_id ORDER BY S.solved_time DESC;', (user_id,))
@@ -90,7 +92,7 @@ def get_user_scores(user_id):
     solves = cursor.fetchall()
     solves.reverse()
     for solve_data in solves:
-        #Chart js for some god forsaken reason is using miliseconds for their timestamp
+        # Chart js for some god forsaken reason is using miliseconds for their timestamp
         score += int(solve_data[3])
         results.append([solve_data[2]*1000, score])
     cursor.close()
@@ -132,6 +134,7 @@ def get_universities():
     cursor.close()
 
     return results
+
 
 def get_scoreboard_universities():
     cursor = conn.execute('SELECT distinct A.id, A.name FROM users U left join universities A on U.university_id = A.id')
@@ -270,7 +273,8 @@ def get_email_from_discord_id(discord_id):
 
 # Actions
 def register_user(user_name, password, email):
-    cursor = conn.execute('INSERT INTO users (name, password, email) VALUES (?, ?, ?)', (user_name, password, email))
+    cursor = conn.execute('INSERT INTO users (name, password, email) VALUES (?, ?, ?)',
+                          (user_name, password, email))
     conn.commit()
     cursor.close()
     return
@@ -297,10 +301,13 @@ def create_or_update_writeup(challenge_id, user_id, file_name):
 
 
 def submit_flag(challenge_id, flag, user_id):
-    cursor = conn.execute('SELECT DISTINCT flag FROM challenges WHERE id = ? AND flag = ?;', (challenge_id, flag))
+    cursor = conn.execute('SELECT DISTINCT flag FROM challenges WHERE id = ? AND ((flag = ?) OR '
+                          '(flag_case_insensitive = 1 AND lower(flag) = ?)) ;',
+                          (challenge_id, flag, flag.lower()))
 
     if cursor.fetchone():
-        cursor = conn.execute('SELECT id FROM solves WHERE challenge_id = ? AND user_id = ?;', (challenge_id, user_id))
+        cursor = conn.execute('SELECT id FROM solves WHERE challenge_id = ? AND user_id = ?;',
+                              (challenge_id, user_id))
         if cursor.fetchone():
             ret = "Already solved"
         else:
@@ -329,10 +336,37 @@ def update_user_university(user_id, university_id):
 
 
 def initialize_database():
-    with open('init.sql', 'r') as f:
+    with open('database/init.sql', 'r') as f:
         sql_code = f.read()
+    
     conn.executescript(sql_code)
     conn.commit()
+
+
+def update_database():
+    cursor = conn.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='pwncrates'")
+    result = cursor.fetchone()
+    if not result:
+        database_version = 0.0
+    else:
+        cursor.execute("SELECT version FROM pwncrates")
+        database_version = float(cursor.fetchone()[0])
+
+    files = [x for x in os.listdir("database/") if x.startswith("migration") and
+             float(x.split("-")[1]) == database_version]
+
+    while len(files) != 0:
+        with open(f"database/{files[0]}") as f:
+            conn.executescript(f.read())
+        conn.commit()
+        cursor.execute("SELECT version FROM pwncrates")
+        database_version = float(cursor.fetchone()[0])
+        assert (database_version == float(files[0].split("-")[2].split(".sql")[0]))
+        files = [x for x in os.listdir("database/") if
+                 x.startswith("migration") and float(x.split("-")[1]) == database_version]
+
+    cursor.close()
 
 
 def update_or_create_challenge(path, folder=get_challenge_path()):
@@ -354,17 +388,22 @@ def update_or_create_challenge(path, folder=get_challenge_path()):
     difficulty = difficulties[challenge_data["difficulty"].lower()]
     cursor = conn.cursor()
 
+    if "case_insensitive" not in challenge_data.keys():
+        challenge_data["case_insensitive"] = False
+
     cursor.execute('INSERT OR IGNORE INTO challenges '
-                   '(name, description, points, category, difficulty, subcategory, flag, url) '
-                   'values (?, ?, ?, ?, ?, ?, ?, ?);'
+                   '(name, description, points, category, difficulty, subcategory, flag, flag_case_insensitive, url) '
+                   'values (?, ?, ?, ?, ?, ?, ?, ?, ?);'
                    , (name, challenge_data["description"], challenge_data["points"], category,
-                      difficulty, challenge_data["subcategory"], challenge_data["flag"], challenge_data["url"]
+                      difficulty, challenge_data["subcategory"], challenge_data["flag"],
+                      bool(challenge_data["case_insensitive"]), challenge_data["url"]
                       ))
 
     cursor.execute('UPDATE challenges SET description = ?, points = ?, category = ?, difficulty = ?, '
-                   'subcategory = ?, flag = ?, url = ? WHERE name = ?',
+                   'subcategory = ?, flag = ?, flag_case_insensitive = ?, url = ? WHERE name = ?',
                    (challenge_data["description"], challenge_data["points"], category, difficulty,
-                    challenge_data["subcategory"], challenge_data["flag"], challenge_data["url"], name))
+                    challenge_data["subcategory"], challenge_data["flag"], bool(challenge_data["case_insensitive"]),
+                    challenge_data["url"], name))
 
     conn.commit()
 
@@ -382,14 +421,15 @@ def update_or_create_category(path, folder=get_challenge_path()):
     for category in categories:
         cursor.execute('INSERT OR IGNORE INTO categories (name, description, parent) values (?, ?, ?);',
                        (category, categories[category], parent))
-        cursor.execute('UPDATE categories SET description = ? WHERE name = ?', (categories[category], category))
+        cursor.execute('UPDATE categories SET description = ? WHERE name = ?',
+                       (categories[category], category))
 
     conn.commit()
     cursor.close()
 
 
 def insert_link(email, link_type, code):
-    assert(link_type == "confirmation" or link_type == "reset")
+    assert (link_type == "confirmation" or link_type == "reset")
 
     cursor = conn.cursor()
     cursor.execute("INSERT INTO links (email, type, code) VALUES (?, ?, ?);", (email, link_type, code))
@@ -397,7 +437,7 @@ def insert_link(email, link_type, code):
 
 
 def remove_link(link_type, code):
-    assert(link_type == "confirmation" or link_type == "reset")
+    assert (link_type == "confirmation" or link_type == "reset")
 
     cursor = conn.cursor()
     cursor.execute("DELETE FROM links WHERE type = ? AND code = ?;", (link_type, code))
@@ -413,3 +453,4 @@ def remove_link(link_type, code):
 conn = sqlite3.connect('./db/pwncrates.db', check_same_thread=False)
 if os.path.getsize("./db/pwncrates.db") == 0:
     initialize_database()
+update_database()
