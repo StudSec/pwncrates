@@ -66,3 +66,19 @@ attacks, where malicious code gets added to git hooks.
 The challenge repository is expected to have a main README.md, which contains
 links to all the challenges. And each challenge is expected to have its
 own README, with the flag, point count, name and description.
+
+#### Database
+For changes to the database, we use a migration system. These migrations can be found in `webapp/database`,
+and follow the naming convention `migration-old_version-new_version.sql`. Keep in mind the script will
+only be run on databases of the exact version `old_version`, so not higher or lower. Upon script
+completion the database is expected to be `new_version`.
+
+Keep in mind that gaps will not be accounted for, `0.0-1.0` and `1.5-2.0` will leave the database at
+`1.0` until a `1.0-1.5` script is present.
+
+The exact version increments are arbitrary, for a rough guideline:
+- Changes or fixes that do not modify the intended functionality of the database should be a minor increment (1.1 -> 1.2)
+- New or drastically changed functionality should be a major increment (1.0 -> 2.0)
+
+Please document all changes in `CHANGELOG.md`, this makes it easier to keep track of the current
+database state.

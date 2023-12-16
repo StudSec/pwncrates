@@ -31,7 +31,6 @@ CREATE TABLE challenges (
     difficulty INTEGER,
     subcategory VARCHAR(64),
     flag VARCHAR(128),
-    flag_caseinsensitive BOOLEAN,
     url VARCHAR(128) DEFAULT NULL
 );
 
