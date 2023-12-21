@@ -110,10 +110,11 @@ def get_challenge_solves(challenge_id):
 
 
 def get_scoreboard():
-    cursor = conn.execute('SELECT U.id, U.name, U.university_id, A.name, IFNULL(SUM(C.points), 0) AS total_points '
+    cursor = conn.execute('SELECT U.id, U.name, U.university_id, A.name, IFNULL(SUM(C.points), 0) AS total_points,  '
+                          'MAX(S.solved_time) AS latest_solve_time '
                           'FROM universities A, users U LEFT JOIN solves S ON U.id = S.user_id '
                           'LEFT JOIN challenges C ON S.challenge_id = C.id WHERE A.id = U.university_id'
-                          ' GROUP BY U.id ORDER BY total_points DESC;')
+                          ' GROUP BY U.id ORDER BY total_points DESC, latest_solve_time ASC;')
     results = [user for user in cursor.fetchall()]
     cursor.close()
 
