@@ -114,8 +114,8 @@ def update_git_loop():
         try:
             update_challenges_from_git()
             time.sleep(60)
-        except Exception as e:
-            print("Error updating git:", e)
+        except Exception as error:
+            print("Error updating git:", error)
 
 
 try:

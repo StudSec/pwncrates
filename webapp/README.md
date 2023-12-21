@@ -1,6 +1,17 @@
 # Webapp
 This folder contains all files directly related to the webapp.
 
+When developing, use the following docker-compose command, this will start the application in debug mode
+without nginx.
+```commandline
+docker-compose --profile debug up
+```
+
+NOTE: This is an insecure configuration by design, do not expose it to external networks, by default it only
+binds to localhost (127.0.0.1).
+
+From here you can access the application at http://127.0.0.1/ as normal.
+
 ## Development
 #### Flask
 The webapp is written in Flask, to add new routes you can define a new function

@@ -8,11 +8,34 @@ services:
       - ./data/pages:/webapp/pages:ro
       - ./data/writeups:/webapp/writeups
       - ./data/db:/webapp/db
-      - ./data/challenges/:/tmp/challenges
+      - ./data/challenges/:/tmp/challenges:ro
       - ./data/.git-credentials:/root/.git-credentials:ro
       - ./webapp/templates/:/webapp/templates:ro
       - ./webapp/static/:/webapp/static
       - ./data/config.json:/webapp/config.json:ro
+    profiles:
+      - ''  # Default if not profile is specified.
+
+  pwncrates-dev:
+    build:
+      context: ./webapp/
+      dockerfile: Dockerfile.dev
+    environment:
+      - FLASK_APP=main
+    volumes:
+      - ./data/pages:/webapp/pages:ro
+      - ./data/writeups:/webapp/writeups
+      - ./data/db:/webapp/db
+      - ./data/challenges/:/tmp/challenges:ro
+      - ./data/.git-credentials:/root/.git-credentials:ro
+      - ./webapp/templates/:/webapp/templates:ro
+      - ./webapp/static/:/webapp/static
+      - ./data/config.json:/webapp/config.json:ro
+    profiles:
+      - 'debug' # Can be specified with --profile debug
+    ports:
+      - "127.0.0.1:80:5000"
+
   nginx:
     image: nginx
     volumes:
@@ -23,3 +46,5 @@ services:
       - "443:443"
     depends_on:
       - pwncrates
+    profiles:
+      - ''  # Default if not profile is specified.
