@@ -60,7 +60,7 @@ def login():
                 user = User(db.get_user(email=request.form["email"])["id"],
                             db.get_user(email=request.form["email"])["username"])
                 login_user(user)
-                time.sleep(0.1)  # Prevent a race condition, where the page loads but the user is not processed yet
+                time.sleep(0.5)  # Prevent a race condition, where the page loads but the user is not processed yet
                 return redirect(url_for('challenges'))
         except KeyError:
             pass
@@ -237,7 +237,7 @@ def discord_oauth_callback():
     stored_info = db.get_user(email=email)
     user = User(stored_info["id"], stored_info["username"])
     login_user(user)
-    time.sleep(0.1)  # Prevent a race condition, where the page loads but the user is not processed yet
+    time.sleep(0.5)  # Prevent a race condition, where the page loads but the user is not processed yet
 
     return redirect(url_for('challenges'))
 
