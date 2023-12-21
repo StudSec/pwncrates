@@ -66,7 +66,7 @@ optimizations or whatever) you can add the file path to `.dockerignore`.
 #### Git
 Git is used for the challenges to fetch & update. This lets CTF creators
 update a git repository and automatically propagate the changes. To 
-accomodate for this a few design decisions have been implemented.
+accommodate for this a few design decisions have been implemented.
 
 The challenge repository should be put in `data/challenges`, upon startup
 this folder will be mounted as read only and the first git repository (for 
@@ -75,5 +75,5 @@ be copied within the docker folder. This is done to prevent out-of-container
 attacks, where malicious code gets added to git hooks.
 
 The challenge repository is expected to have a main README.md, which contains
-links to all of the challenges. And each challenge is expected to have its
+links to all the challenges. And each challenge is expected to have its
 own README, with the flag, point count, name and description.

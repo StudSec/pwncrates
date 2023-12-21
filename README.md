@@ -69,14 +69,14 @@ instance. For that you may use the following three commands.
 ```commandline
 docker-compose down
 docker-compose build
-docker-compose up
+docker-compose --profile debug up
 ```
 
 You might also want to directly interact with the docker container for
 debugging purposes. For this you can use the following command to start a
 shell within the container
 ```commandline
-sudo docker exec -it pwncrates-pwncrates-1 bash
+sudo docker exec -it pwncrates-pwncrates-dev-1 bash
 ```
 
 As a general design principle, try to keep all data within the data folder.
@@ -141,3 +141,23 @@ a challenge handout.
 
 The Banner.png contains the banner for each category, if this is not present a fallback image provider will be used.
 
+The challenge README's are structured as follows:
+```md
+## Challenge Name (for example fuzzy lobster)
+This part contains an unofficial description. It won't be displayed to the players.
+
+## Description
+Example description
+
+## Challenge information
+| Difficulty            | Easy                    |
+|-----------------------|-------------------------|
+| points                | 25                      |
+| subcategory           | Intro                   |
+| flag                  | CTF{Example_Flag}       |
+| url                   | challs.example.com:7100 |
+| case_insensitive      | True                    |
+```
+
+In this the final two table entries are optional, when present `case_insensitive` will verify flags
+without regarding the casing (Eg `Hi == hi`). 
