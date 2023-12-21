@@ -9,6 +9,10 @@ A CTF framework with a focus on education.
 ./install.sh
 docker-compose up
 ```
+_Note: some docker-compose versions require the profile to be explicitly set, in this case run:_
+```commandline
+docker-compose --profile "" up
+```
 
 #### The longer (manual) version:
 Firstly, you need to include the challenges in `data/challenges`
