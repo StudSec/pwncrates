@@ -61,8 +61,6 @@ def parse_markdown_challenge(path):
         # directed otherwise.
         ret["case_insensitive"] = True
 
-    print(ret["case_insensitive"])
-
     return ret
 
 
