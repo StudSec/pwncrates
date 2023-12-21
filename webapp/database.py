@@ -389,9 +389,6 @@ def update_or_create_challenge(path, folder=get_challenge_path()):
     difficulty = difficulties[challenge_data["difficulty"].lower()]
     cursor = conn.cursor()
 
-    if "case_insensitive" not in challenge_data.keys():
-        challenge_data["case_insensitive"] = False
-
     cursor.execute('INSERT OR IGNORE INTO challenges '
                    '(name, description, points, category, difficulty, subcategory, flag, flag_case_insensitive, url) '
                    'values (?, ?, ?, ?, ?, ?, ?, ?, ?);'

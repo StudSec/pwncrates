@@ -54,6 +54,15 @@ def parse_markdown_challenge(path):
         print(f"{path} doesn't contain all required challenge information, skipping")
         return {}
 
+    if "case_insensitive" not in ret.keys():
+        ret["case_insensitive"] = False
+    elif "false" not in ret["case_insensitive"].lower():
+        # If the flag is present, we will assume it was intended to be case-insensitive unless explicitly
+        # directed otherwise.
+        ret["case_insensitive"] = True
+
+    print(ret["case_insensitive"])
+
     return ret
 
 
