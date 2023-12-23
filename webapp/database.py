@@ -168,7 +168,7 @@ def get_categories():
 
 
 def get_writeups(challenge_id):
-    cursor = conn.execute('SELECT U.name, W.id FROM writeups AS W, users AS U '
+    cursor = conn.execute('SELECT U.name, U.id FROM writeups AS W, users AS U '
                           'WHERE W.challenge_id = ? AND W.user_id = U.id;', (challenge_id,))
     results = [(name, writeup_id) for name, writeup_id in cursor.fetchall()]
     cursor.close()
