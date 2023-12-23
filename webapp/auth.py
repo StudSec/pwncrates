@@ -8,7 +8,7 @@ import sys
 import time
 
 from flask_login import LoginManager, login_user, login_required, logout_user
-from flask import request, render_template, redirect, url_for, flash
+from flask import request, render_template, redirect, url_for, flash, session
 from flask_login import current_user
 from webapp.models import User
 import webapp.database as db
@@ -174,12 +174,24 @@ def discord_oauth():
     client_id = config["oauth_client_id"]
     redirect_uri = parse.quote_plus(config["oauth_redirect_uri"])
     scope = "identify%20email"
-    return redirect(f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope={scope}")
+    session["discord_state"] = os.urandom(16).hex()
+    return redirect(f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope={scope}&"
+                    f"state={session['discord_state']}")
 
 
 @app.route('/discord/oauth_callback')
 def discord_oauth_callback():
+    # TODO: check state
+    state = request.args.get("state")
     code = request.args.get('code')
+
+    if not state or state != session["discord_state"]:
+        flash("Invalid OAuth flow.")
+        session.pop("discord_state", None)
+        return redirect(url_for("login"))
+    else:
+        session.pop("discord_state", None)
+
     if not code:
         return redirect(url_for("login"))
 
