@@ -132,28 +132,33 @@ def upload_writeups(challenge_id):
         return "No file included!"
 
     file = request.files['file']
-    print(file.read(), file=sys.stderr)
-    if file.read() == b'':
+    file_contents = file.read()
+
+    try:
+        file_contents = file_contents.decode('utf-8')
+    except UnicodeEncodeError:
+        return "Invalid data!"
+
+    if len(file_contents) == 0:
         db.remove_writeup(challenge_id, current_user.id)
+        filename = db.get_writeup_file(challenge_id, current_user.id)
+        if filename:
+            os.remove(f'writeups/{str(challenge_id)}/{filename}.md')
         return 'Writeup deleted!'
 
     filename = db.get_writeup_file(challenge_id, current_user.id)
-    old_filename = filename
     if not filename:
         filename = hex(random.getrandbits(128))[2:]
+        while f"{filename}.md" in os.listdir(f"writeups/{str(challenge_id)}"):
+            filename = hex(random.getrandbits(128))[2:]
 
     if not os.path.exists(f"writeups/{str(challenge_id)}"):
         os.makedirs(f"writeups/{str(challenge_id)}")
 
-    while f"{filename}.md" in os.listdir(f"writeups/{str(challenge_id)}"):
-        filename = hex(random.getrandbits(128))[2:]
-
     if file:
         db.create_or_update_writeup(challenge_id, current_user.id, filename)
-        file.save(f'writeups/{str(challenge_id)}/{filename}.md')
-
-        if old_filename and old_filename != filename:
-            os.remove(f'writeups/{str(challenge_id)}/{old_filename}.md')
+        with open(f'writeups/{str(challenge_id)}/{filename}.md', "w") as f:
+            f.write(file_contents)
 
         return f'OK - /writeups/{challenge_id}/{current_user.id}'
     else:
