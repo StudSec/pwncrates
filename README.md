@@ -21,7 +21,7 @@ The repository should have the name `Challenges`.
 For example
 ```commandline
 git clone https://github.com/StudSec/Challenges-Examples.git 
-mv Challenges-Examples data/challenges/
+mv Challenges-Examples data/challenges/Challenges
 ```
 
 *Note: the git repository will automatically be updated
@@ -118,16 +118,16 @@ an example.
 |   | - challenge_name
 |   |   | - README.md
 |   |   \ - Handout/
-|   |       \- File
+|   |       \ - File
 |   | - other_challenge
-|   |        | - README.md
+|   |        \ - README.md
 |   | - Banner.png
 |   \ - README.md
 \ - README.md    
 ```
 The README's are broken down as follows
 ```md
-## master README
+## Master README
 This contains links to all challenges, it acts as an index to the repository.
 
 ## Category README
