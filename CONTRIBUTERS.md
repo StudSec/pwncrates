@@ -5,7 +5,7 @@ pwncrates is developed and maintained by the StudSec student community at the Vr
 Several people have contributed to pwncrates over the projects lifetime, special thanks to:
 - Aidan Stephenson
 - TheLunarPrincess
-- Tad
+- Tadas Majorovas
 
 ## Design
 The minimalistic design and appearance of pwncrates was largely inspired by [CyptoHack](https://cryptohack.org/) and
