@@ -94,11 +94,16 @@ def writeups(challenge_id, writeup_id=None):
         return render_markdown(f"./writeups/{challenge_id}/Author.md")
 
     if writeup_id == "editor":
-        # TODO: writeup text -> swap or existing writeup
+        existing_file = db.get_writeup_file(challenge_id, current_user.id)
+        if existing_file:
+            with open(f'writeups/{str(challenge_id)}/{existing_file}.md') as f:
+                writeup_text = f.read()
+        else:
+            writeup_text = ""
         return render_template("writeup_editor.html",
                                challenge_id=challenge_id,
                                challenge_name=db.get_challenge_name(challenge_id),
-                               writeup_text="")
+                               writeup_text=writeup_text)
 
     if not writeup_id or not writeup_id.isdigit():
         return render_template("writeups_overview.html",
@@ -108,10 +113,8 @@ def writeups(challenge_id, writeup_id=None):
                                official_writeup=os.path.exists(f"./writeups/{challenge_id}/Author.md"))
 
     file_name = db.get_writeup_file(challenge_id, writeup_id)
-    print(file_name, file=sys.stderr)
-    print("test", file=sys.stderr)
+
     if not file_name:
-        print(file_name, file=sys.stderr)
         return render_template("404.html")
 
     assert file_name[0].isalnum()
@@ -129,8 +132,10 @@ def upload_writeups(challenge_id):
         return "No file included!"
 
     file = request.files['file']
-    if file == "":
+    print(file.read(), file=sys.stderr)
+    if file.read() == b'':
         db.remove_writeup(challenge_id, current_user.id)
+        return 'Writeup deleted!'
 
     filename = db.get_writeup_file(challenge_id, current_user.id)
     old_filename = filename
