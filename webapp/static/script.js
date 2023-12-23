@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+    /*
+     * Code specific to the scoreboard page
+     */
     if (window.location.pathname == '/scoreboard' ) {
         const universityFilter = document.getElementById('university-filter');
         const tableRows = document.querySelectorAll('tbody tr');
@@ -17,12 +20,18 @@ document.addEventListener('DOMContentLoaded', () => {
         manageScoreboard();
     }
 
+    /*
+     * Code specific to the challenge overview page
+     */
     if (window.location.pathname == '/challenges') {
         for (img of document.querySelectorAll("img")) {
             img.addEventListener('error', function () { this.src='https://picsum.photos/536/354' });
         }
     }
 
+    /*
+     * Code specific to the challenge category page
+     */
     if (window.location.pathname.startsWith('/challenges/')) {
         document.getElementById("difficulty-filter").addEventListener('change', function () { showSelectedDifficulty() });
         for (form of document.querySelectorAll("form")) {
@@ -30,12 +39,79 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /*
+     * Code specific to the player profile page
+     */
     if (window.location.pathname == "/profile") {
-        document.getElementById("university").addEventListener('change', function () { updateUniversity('/api/profile/update') });
+        document.getElementById("university").addEventListener('change', function () {
+            fetch('/api/profile/update', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'university=' + encodeURIComponent(document.getElementById('university').value)
+            });
+        });
+    }
+    if (window.location.pathname.startsWith("/profile")) {
+        const profileChartCtx = document.getElementById('profile_chart');
+        if (profileChartCtx != null) drawProfileChart(profileChartCtx);
     }
 
-    const profileChartCtx = document.getElementById('profile_chart');
-    if (profileChartCtx != null) drawProfileChart(profileChartCtx)
+    /*
+     * Code specific to the writeup editor.
+     */
+    if (window.location.pathname.split("/").at(-1) == "editor") {
+        document.getElementById("ack-button").addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById("editor-warning-message").textContent = "";
+            document.getElementById("submit-writeup").classList.remove("btn-danger");
+            document.getElementById("submit-writeup").classList.add("btn-light");
+            document.getElementById("submit-writeup").textContent = "Done";
+            document.getElementById("ack-button").classList.add("invisible");
+        });
+
+        document.getElementById("submit-writeup").addEventListener('click', function(event) {
+            event.preventDefault();
+            writeup_data = document.getElementById("writeup-editor").value;
+            console.log(writeup_data);
+
+            if (writeup_data == "" && !document.getElementById("submit-writeup").classList.contains("btn-danger")) {
+                document.getElementById("editor-warning-message").textContent = "Your about to delete this writeup, are you sure?";
+                document.getElementById("submit-writeup").classList.add("btn-danger");
+                document.getElementById("submit-writeup").classList.remove("btn-light");
+                document.getElementById("submit-writeup").textContent = "Upload anyway";
+                document.getElementById("ack-button").classList.remove("invisible");
+                return;
+            }
+
+            const formData = new FormData();
+            const fileBlob = new Blob([writeup_data], { type: 'text/plain' });
+            formData.append('file', fileBlob, "file");
+
+            fetch(document.getElementById("submit-writeup").href, {
+                method: 'POST',
+                body: formData
+            }).then((response) => response.text()).then((text) => {
+                if (writeup_data == "") {
+                    current_location = document.location.pathname;
+                    document.location = current_location.substring(0, current_location.length - 7);
+                } else {
+                    document.location = text.substring(5);
+                }
+            });
+        });
+
+        document.getElementById("writeup-editor").addEventListener('input', function() {
+            element = document.getElementById("writeup-editor");
+            element.style.height = 'auto';
+            element.style.height = (element.scrollHeight) + 'px';
+        });
+
+
+        // Trigger this once to set the initial size.
+        element = document.getElementById("writeup-editor");
+        element.style.height = 'auto';
+        element.style.height = (element.scrollHeight) + 'px';
+    }
 });
 
 function drawProfileChart(ctx) {
@@ -48,8 +124,7 @@ function drawProfileChart(ctx) {
           type: 'line',
           data: {
             datasets: [{
-                label: 'Score',
-                data: data
+                label: 'Score', data: data
             }]
           },
           options: {
@@ -66,8 +141,7 @@ function drawProfileChart(ctx) {
                     },
                 },
                 ticks: {
-                    autoSkip: true,
-                    maxTicksLimit: 20
+                    autoSkip: true, maxTicksLimit: 20
                 },
                 parsing: false
               }
@@ -75,16 +149,8 @@ function drawProfileChart(ctx) {
           }
         });
     });
-
 }
 
-function updateUniversity(update_url) {
-    fetch(update_url, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: 'university=' + encodeURIComponent(document.getElementById('university').value)
-    });
-}
 
 function showSelectedDifficulty() {
     const challengeCategories = document.querySelectorAll('.challenge-category');
@@ -105,6 +171,7 @@ function showSelectedDifficulty() {
         }
     }
 }
+
 
 async function handleChallengeSubmission(event) {
     event.preventDefault();

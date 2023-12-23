@@ -93,6 +93,13 @@ def writeups(challenge_id, writeup_id=None):
     if writeup_id == "author":
         return render_markdown(f"./writeups/{challenge_id}/Author.md")
 
+    if writeup_id == "editor":
+        # TODO: writeup text -> swap or existing writeup
+        return render_template("writeup_editor.html",
+                               challenge_id=challenge_id,
+                               challenge_name=db.get_challenge_name(challenge_id),
+                               writeup_text="")
+
     if not writeup_id or not writeup_id.isdigit():
         return render_template("writeups_overview.html",
                                challenge_id=challenge_id,
@@ -101,13 +108,15 @@ def writeups(challenge_id, writeup_id=None):
                                official_writeup=os.path.exists(f"./writeups/{challenge_id}/Author.md"))
 
     file_name = db.get_writeup_file(challenge_id, writeup_id)
-
-    if len(file_name) != 1:
+    print(file_name, file=sys.stderr)
+    print("test", file=sys.stderr)
+    if not file_name:
+        print(file_name, file=sys.stderr)
         return render_template("404.html")
 
-    assert(file_name[0].isalnum())
+    assert file_name[0].isalnum()
 
-    return render_markdown(f"./writeups/{challenge_id}/{file_name[0]}.md")
+    return render_markdown(f"./writeups/{challenge_id}/{file_name}.md")
 
 
 @app.route('/writeups/<int:challenge_id>', methods=["POST"])
@@ -116,9 +125,17 @@ def upload_writeups(challenge_id):
     if challenge_id not in [solve[0] for solve in db.get_user_solves(current_user.id)]:
         return "Unauthorized"
 
-    file = request.files['file']
+    if 'file' not in request.files.keys():
+        return "No file included!"
 
-    filename = hex(random.getrandbits(128))[2:]
+    file = request.files['file']
+    if file == "":
+        db.remove_writeup(challenge_id, current_user.id)
+
+    filename = db.get_writeup_file(challenge_id, current_user.id)
+    old_filename = filename
+    if not filename:
+        filename = hex(random.getrandbits(128))[2:]
 
     if not os.path.exists(f"writeups/{str(challenge_id)}"):
         os.makedirs(f"writeups/{str(challenge_id)}")
@@ -129,7 +146,11 @@ def upload_writeups(challenge_id):
     if file:
         db.create_or_update_writeup(challenge_id, current_user.id, filename)
         file.save(f'writeups/{str(challenge_id)}/{filename}.md')
-        return 'OK'
+
+        if old_filename and old_filename != filename:
+            os.remove(f'writeups/{str(challenge_id)}/{old_filename}.md')
+
+        return f'OK - /writeups/{challenge_id}/{current_user.id}'
     else:
         return 'No file uploaded!'
 

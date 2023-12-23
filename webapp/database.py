@@ -51,19 +51,20 @@ def get_challenges(category, difficulty="hard"):
                           'AND A.subcategory = B.name AND B.parent = A.category',
                           (category, difficulty))
     results = {}
-    for (category_description, user_id, name, description, points, subcategory, url, solves, difficulty) in cursor.fetchall():
+    for (category_description, user_id, name, description, points, subcategory, url, solves,
+         difficulty) in cursor.fetchall():
         handout_file = get_handout_name(category, name)
         if subcategory in results.keys():
             results[subcategory][1].append((
                 user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves,
                 handout_file if os.path.exists("static/handouts/" + handout_file) else "",
-                list(difficulties.keys())[difficulty-1]
+                list(difficulties.keys())[difficulty - 1]
             ))
         else:
             results[subcategory] = (category_description, [(
                 user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves,
                 handout_file if os.path.exists("static/handouts/" + handout_file) else "",
-                list(difficulties.keys())[difficulty-1]
+                list(difficulties.keys())[difficulty - 1]
             )])
     cursor.close()
 
@@ -94,7 +95,7 @@ def get_user_scores(user_id):
     for solve_data in solves:
         # Chart js for some god forsaken reason is using miliseconds for their timestamp
         score += int(solve_data[3])
-        results.append([solve_data[2]*1000, score])
+        results.append([solve_data[2] * 1000, score])
     cursor.close()
     return results
 
@@ -138,7 +139,8 @@ def get_universities():
 
 
 def get_scoreboard_universities():
-    cursor = conn.execute('SELECT distinct A.id, A.name FROM users U left join universities A on U.university_id = A.id')
+    cursor = conn.execute(
+        'SELECT distinct A.id, A.name FROM users U left join universities A on U.university_id = A.id')
     results = [university_id for university_id in cursor.fetchall()]
     cursor.close()
     return results
@@ -216,7 +218,7 @@ def get_user(user_id=None, email=None):
                 "university_name": user_info[3],
                 "discord_id": user_info[4],
                 "password": user_info[5],
-             } for user_info in cursor.fetchall()
+            } for user_info in cursor.fetchall()
         ]
         cursor.close()
 
@@ -289,16 +291,34 @@ def change_user_password(email, password):
 
 
 def create_or_update_writeup(challenge_id, user_id, file_name):
-    cursor = conn.cursor()
-
-    cursor = cursor.execute('INSERT OR IGNORE INTO writeups (challenge_id, user_id, file_name) VALUES (?, ?, ?);',
-                            (challenge_id, user_id, file_name))
+    cursor = conn.execute('INSERT OR IGNORE INTO writeups (challenge_id, user_id, file_name) VALUES (?, ?, ?);',
+                          (challenge_id, user_id, file_name))
     cursor = cursor.execute('UPDATE writeups SET file_name = ? WHERE challenge_id = ? AND user_id = ?;',
                             (file_name, challenge_id, user_id))
-
     conn.commit()
     cursor.close()
     return
+
+
+def remove_writeup(challenge_id, user_id):
+    cursor = conn.execute('DELETE FROM writeups WHERE challenge_id = ? AND user_id = ?',
+                          (challenge_id, user_id))
+    conn.commit()
+    cursor.close()
+    return
+
+
+def get_writeup_file(challenge_id, user_id):
+    cursor = conn.execute('SELECT file_name FROM writeups WHERE challenge_id = ? AND user_id = ?;',
+                          (challenge_id, user_id))
+
+    ret = cursor.fetchone()
+    cursor.close()
+
+    if ret and len(ret) != 0:
+        return ret[0]
+    else:
+        return None
 
 
 def submit_flag(challenge_id, flag, user_id):
@@ -339,7 +359,7 @@ def update_user_university(user_id, university_id):
 def initialize_database():
     with open('database/init.sql', 'r') as f:
         sql_code = f.read()
-    
+
     conn.executescript(sql_code)
     conn.commit()
 

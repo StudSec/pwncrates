@@ -124,6 +124,7 @@ def api_discord_id(user_id):
     return Response(json.dumps(ret),
                     mimetype="application/json")
 
+
 @app.route('/api/user/solves/<user_id>')
 def api_get_user(user_id):
     user_data = db.get_user_scores(user_id=user_id)
