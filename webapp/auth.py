@@ -181,7 +181,6 @@ def discord_oauth():
 
 @app.route('/discord/oauth_callback')
 def discord_oauth_callback():
-    # TODO: check state
     state = request.args.get("state")
     code = request.args.get('code')
 
