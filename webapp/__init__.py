@@ -13,6 +13,7 @@ app.config['SESSION_COOKIE_SECURE'] = True
 # done in Strict.
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
+# https://flask.palletsprojects.com/en/3.0.x/deploying/proxy_fix/
 app.wsgi_app = ProxyFix(
     app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
 )
