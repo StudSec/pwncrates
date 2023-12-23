@@ -184,7 +184,7 @@ def discord_oauth_callback():
     state = request.args.get("state")
     code = request.args.get('code')
 
-    if not state or state != session["discord_state"]:
+    if not state or "discord_state" not in session.keys() or state != session["discord_state"]:
         flash("Invalid OAuth flow.")
         session.pop("discord_state", None)
         return redirect(url_for("login"))
