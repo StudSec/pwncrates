@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo '{'                             >> data/config.json
 echo '  "hostname": "127.0.0.1",'    >> data/config.json
@@ -12,7 +12,7 @@ echo '  "SMTP_PASS": "",'            >> data/config.json
 echo '  "webhook_url": ""'           >> data/config.json
 echo '}'                             >> data/config.json
 
-read -p "Populate with test? (y/n): " response
+read -p "Populate with test data? (y/n): " response
 
 mkdir data/ssl 2>/dev/null
 mkdir data/db 2>/dev/null
@@ -23,7 +23,7 @@ if [[ $response == "y" ]]; then
   mv key.pem data/ssl/
   mv cert.pem data/ssl/
   git clone https://github.com/StudSec/Challenges-Examples.git
-  mv Challenges-Examples data/challenges/Challenges
+  mv Challenges-Examples data/challenges/Challenges 2>/dev/null
   echo "Test data populated!"
 else
   echo "Make sure to put your data in the following directories:"
