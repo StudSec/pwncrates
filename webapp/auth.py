@@ -65,10 +65,10 @@ def login():
         except KeyError:
             pass
         flash('Invalid credentials')
-        return render_template('login.html')
+        return render_template('login.html', discord_oauth_enabled=len(config["oauth_client_secret"]))
 
     else:
-        return render_template('login.html')
+        return render_template('login.html', discord_oauth_enabled=len(config["oauth_client_secret"]))
 
 
 # Register page
@@ -170,6 +170,8 @@ def logout():
 
 @app.route('/discord/oauth')
 def discord_oauth():
+    if not config["oauth_client_secret"]:
+        return redirect(url_for(login))
     base_url = "https://discord.com/oauth2/authorize"
     client_id = config["oauth_client_id"]
     redirect_uri = parse.quote_plus(config["oauth_redirect_uri"])
