@@ -50,8 +50,12 @@ def parse_markdown_challenge(path):
                 ret[key] = line.split("|")[2].strip()
     except ValueError:
         pass
+
+    if "subcategory" not in ret.keys():
+        ret["subcategory"] = ""
+
     if not all(x in ret.keys() for x in ["description", "flag", "points", "subcategory", "difficulty"]):
-        print(f"{path} doesn't contain all required challenge information, skipping")
+        print(f"{path} doesn't contain all required challenge information, skipping", file=sys.stderr)
         return {}
 
     if "case_insensitive" not in ret.keys():

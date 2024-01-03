@@ -48,7 +48,7 @@ def get_challenges(category, difficulty="hard"):
                           '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id) AS solve_count, '
                           'A.difficulty FROM challenges A, categories B  '
                           'WHERE A.category = ? AND A.difficulty <= ? '
-                          'AND A.subcategory = B.name AND B.parent = A.category',
+                          'AND A.subcategory = B.name AND B.parent = A.category ORDER BY A.points ASC',
                           (category, difficulty))
     results = {}
     for (category_description, user_id, name, description, points, subcategory, url, solves,
@@ -202,6 +202,19 @@ def get_challenge_id(challenge_name):
     return challenge_id
 
 
+def get_writeup_file(challenge_id, user_id):
+    cursor = conn.execute('SELECT file_name FROM writeups WHERE challenge_id = ? AND user_id = ?;',
+                          (challenge_id, user_id))
+
+    ret = cursor.fetchone()
+    cursor.close()
+
+    if ret and len(ret) != 0:
+        return ret[0]
+    else:
+        return None
+
+
 # User functions
 def get_user(user_id=None, email=None):
     if user_id:
@@ -272,19 +285,6 @@ def get_email_from_discord_id(discord_id):
         return ""
 
     return results[0]
-
-
-def get_writeup_file(challenge_id, user_id):
-    cursor = conn.execute('SELECT file_name FROM writeups WHERE challenge_id = ? AND user_id = ?;',
-                          (challenge_id, user_id))
-
-    ret = cursor.fetchone()
-    cursor.close()
-
-    if ret and len(ret) != 0:
-        return ret[0]
-    else:
-        return None
 
 
 # Actions
