@@ -6,17 +6,28 @@ import os.path
 from webapp.helpers import *
 import webapp.database as db
 import threading
+import json
 import time
 import sys
 import re
 import os
+
+# Read and eval config file
+with open("config.json", "r") as f:
+    config = json.loads(f.read())
+
+
+if "git_branch" in config.keys() and config["git_branch"]:
+    git_branch = config["git_branch"]
+else:
+    git_branch = "main"
 
 
 def git_files_changed():
     challenge_path = get_challenge_path()
     subprocess.run(['git', '--no-pager', 'fetch'], cwd=challenge_path,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    diff_output = subprocess.run(['git', '--no-pager', 'diff', '--name-only', 'main', 'origin/main'],
+    diff_output = subprocess.run(['git', '--no-pager', 'diff', '--name-only', f'{git_branch}', f'origin/{git_branch}'],
                                  stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, cwd=challenge_path)
     changed_files = diff_output.stdout.decode().split("\n")
 
@@ -64,7 +75,7 @@ def update_challenges_from_git():
 def git_update():
     challenge_path = get_challenge_path()
     # Rebase on origin, the reason we do this is to avoid conflicts when (accidentally) writing files
-    subprocess.run(['git', 'checkout', 'main'], cwd=challenge_path, stdout=subprocess.DEVNULL,
+    subprocess.run(['git', 'checkout', f'{git_branch}'], cwd=challenge_path, stdout=subprocess.DEVNULL,
                    stderr=subprocess.DEVNULL)
     subprocess.run(['git', '--no-pager', 'reset', '--hard', 'HEAD'], cwd=challenge_path,
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
