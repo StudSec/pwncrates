@@ -100,7 +100,7 @@ def register():
                     return render_template('register.html')
             else:
                 flash('Registered')
-                return render_template(url_for('login'))
+                return redirect(url_for('login'))
         except KeyError:
             return "Missing parameters"
 
