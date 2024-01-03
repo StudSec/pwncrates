@@ -89,13 +89,15 @@ def register():
                 flash('Invalid email')
                 return render_template('register.html')
 
-            code = os.urandom(16).hex()
-            db.insert_link(email, "confirmation", code)
-            db.register_user(username, bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii'), email)
+            # If no email server is set, we don't require a confirmation email.
+            if config["SMTP_HOST"]:
+                code = os.urandom(16).hex()
+                db.insert_link(email, "confirmation", code)
+                db.register_user(username, bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii'), email)
 
-            if mail.confirm_email(email, f"https://{config['hostname']}{url_for('confirm_email')}?code={code}"):
-                flash('Failed to send confirmation email')
-                return render_template('register.html')
+                if mail.confirm_email(email, f"https://{config['hostname']}{url_for('confirm_email')}?code={code}"):
+                    flash('Failed to send confirmation email')
+                    return render_template('register.html')
         except KeyError:
             return "Missing parameters"
 

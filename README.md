@@ -58,6 +58,8 @@ verification. However, the file will accept empty/ dummy values (but will of cou
 The `hostname` field should contain the servers ip address/dns name, it is used to generate links for password 
 resets/account verifications and, importantly, the CSP. If the frontend is not working this is likely the issue.
 
+Note, if no SMTP host is specified email confirmations are disabled and all newly registered accounts will be activated.
+
 #### Migrating from ctfd
 You can use the migration script in `./scripts/` to migrate a ctfd database to pwncrates. However, this has minimal
 support, it will automate a lot for you, but it's not a "run and forget" solution. It expects a mysql dump/backup file
