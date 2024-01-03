@@ -98,6 +98,9 @@ def register():
                 if mail.confirm_email(email, f"https://{config['hostname']}{url_for('confirm_email')}?code={code}"):
                     flash('Failed to send confirmation email')
                     return render_template('register.html')
+            else:
+                flash('Registered')
+                return render_template(url_for('login'))
         except KeyError:
             return "Missing parameters"
 
