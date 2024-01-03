@@ -439,8 +439,8 @@ def update_or_create_category(path, folder=get_challenge_path()):
     for category in categories:
         cursor.execute('INSERT OR IGNORE INTO categories (name, description, parent) values (?, ?, ?);',
                        (category, categories[category], parent))
-        cursor.execute('UPDATE categories SET description = ? WHERE name = ?',
-                       (categories[category], category))
+        cursor.execute('UPDATE categories SET description = ? WHERE name = ? AND parent = ?',
+                       (categories[category], category, parent))
 
     conn.commit()
     cursor.close()
