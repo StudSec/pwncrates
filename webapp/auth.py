@@ -100,6 +100,7 @@ def register():
                     return render_template('register.html')
             else:
                 flash('Registered')
+                db.register_user(username, bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii'), email)
                 return redirect(url_for('login'))
         except KeyError:
             return "Missing parameters"
