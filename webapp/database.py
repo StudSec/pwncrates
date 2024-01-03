@@ -274,6 +274,19 @@ def get_email_from_discord_id(discord_id):
     return results[0]
 
 
+def get_writeup_file(challenge_id, user_id):
+    cursor = conn.execute('SELECT file_name FROM writeups WHERE challenge_id = ? AND user_id = ?;',
+                          (challenge_id, user_id))
+
+    ret = cursor.fetchone()
+    cursor.close()
+
+    if ret and len(ret) != 0:
+        return ret[0]
+    else:
+        return None
+
+
 # Actions
 def register_user(user_name, password, email):
     cursor = conn.execute('INSERT INTO users (name, password, email) VALUES (?, ?, ?)',
@@ -306,19 +319,6 @@ def remove_writeup(challenge_id, user_id):
     conn.commit()
     cursor.close()
     return
-
-
-def get_writeup_file(challenge_id, user_id):
-    cursor = conn.execute('SELECT file_name FROM writeups WHERE challenge_id = ? AND user_id = ?;',
-                          (challenge_id, user_id))
-
-    ret = cursor.fetchone()
-    cursor.close()
-
-    if ret and len(ret) != 0:
-        return ret[0]
-    else:
-        return None
 
 
 def submit_flag(challenge_id, flag, user_id):
