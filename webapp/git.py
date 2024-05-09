@@ -5,10 +5,10 @@ import os.path
 
 from webapp.helpers import *
 import webapp.database as db
+from webapp import app
 import threading
 import json
 import time
-import sys
 import re
 import os
 
@@ -69,7 +69,8 @@ def update_challenges_from_git():
         except IndexError:
             pass
         except FileNotFoundError as error:
-            print(f"Error parsing {file}:", error, file=sys.stderr)
+            app.logger.error(f"Error parsing {file}:")
+            app.logger.error(error, exc_info=True)
 
 
 def git_update():
@@ -93,7 +94,7 @@ def init_git():
 
     git_update()
 
-    print("Importing challenges...")
+    app.logger.info("Importing challenges...")
     with open(f"./{challenge_path}/README.md") as f:
         matches = re.findall(r"]\((.*?)\)", f.read())
         for challenge in matches:
@@ -109,9 +110,9 @@ def init_git():
                     subprocess.run(['cp', f"./{challenge_path}/" + challenge[:-9] + "Writeup.md",
                                     f'writeups/{challenge_id}/Author.md'])
             else:
-                print("Invalid challenge:", challenge)
+                app.logger.warning(f"Invalid challenge: {challenge}")
 
-    print("Importing categories...")
+    app.logger.info("Importing categories...")
     for category in [x for x in os.listdir(f"./{challenge_path}/")
                      if os.path.isdir(f"./{challenge_path}/{x}")]:
         if os.path.exists(f"./{challenge_path}/{category}/README.md"):
@@ -126,14 +127,16 @@ def update_git_loop():
             update_challenges_from_git()
             time.sleep(60)
         except Exception as error:
-            print("Error updating git:", error)
+            app.logger.error("Error updating git:")
+            app.logger.error(error, exc_info=True)
 
 
 try:
     init_git()
     update_challenges_from_git()
 except Exception as e:
-    print("Error initializing git:", e, file=sys.stderr)
+    app.logger.error("Error initializing git:")
+    app.logger.error(e, exc_info=True)
 
 thread = threading.Thread(target=update_git_loop)
 thread.daemon = True

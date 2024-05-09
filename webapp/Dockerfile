@@ -15,4 +15,4 @@ RUN pip install -r requirements.txt
 COPY . .
 
 WORKDIR /
-ENTRYPOINT gunicorn -w 1 'webapp:app' --chdir webapp -b 0.0.0.0
+ENTRYPOINT gunicorn --workers 1 'webapp:app' --chdir webapp -b 0.0.0.0 --log-level warning

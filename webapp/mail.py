@@ -1,6 +1,6 @@
-import sys
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from webapp import app
 import smtplib
 import json
 
@@ -12,7 +12,7 @@ with open("config.json", "r") as f:
 try:
     int(config["SMTP_PORT"])
 except ValueError:
-    print("SMTP port must be integer")
+    logging.error("SMTP port must be integer")
 
 
 def send_email(to_email, subject, message):
@@ -29,7 +29,8 @@ def send_email(to_email, subject, message):
         server.quit()
 
     except Exception as e:
-        print("Error sending email: ", e, file=sys.stderr)
+        app.logger.error("Error sending email: ")
+        app.logger.error(e, exc_info=True)
         return "Failed to send email"
 
     return None
