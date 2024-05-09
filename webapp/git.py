@@ -16,11 +16,36 @@ import os
 with open("config.json", "r") as f:
     config = json.loads(f.read())
 
-
 if "git_branch" in config.keys() and config["git_branch"]:
     git_branch = config["git_branch"]
 else:
     git_branch = "main"
+
+challenge_lock_file = "challenge_git.lock"
+
+
+def acquire_challenge_lock():
+    try:
+        with open(challenge_lock_file, "r") as file:
+            data = file.read()
+            timestamp = data.split(" ")[0]
+            pid = int(data.split(" ")[1])
+        # Check if a minute has passed or the same thread wants access (again)
+        if int(time.time()) - int(timestamp) > 60 or pid == os.getpid():
+            lock_data = f"{int(time.time())} {os.getpid()}"
+            with open(challenge_lock_file, "w") as file:
+                file.write(lock_data)
+            time.sleep(1)  # Prevent race conditions, this way only the most recent worker will update the repo.
+            with open(challenge_lock_file, "r") as file:
+                current_lock_data = file.read()
+            if lock_data == current_lock_data:
+                return True
+        return False
+    except (IndexError, FileNotFoundError, ValueError):
+        # Lockfile malformed or doesn't exist. Make file and try again
+        with open(challenge_lock_file, "w") as file:
+            file.write(f"{int(time.time())} {os.getpid()}")
+        return acquire_challenge_lock()
 
 
 def git_files_changed():
@@ -53,7 +78,8 @@ def update_challenges_from_git():
 
                 # Could be the challenge wasn't yet imported, update handout if it doesn't already exist
                 if os.path.exists(f"./{challenge_path}" + file[:-9] + "Handouts") and \
-                        not os.path.exists(f"static/handouts/{get_handout_name(file.split('/')[0], file.split('/')[1])}"):
+                        not os.path.exists(
+                            f"static/handouts/{get_handout_name(file.split('/')[0], file.split('/')[1])}"):
                     updated_challenges.append(file)
                     create_challenge_handouts(file)
 
@@ -92,6 +118,9 @@ def init_git():
     subprocess.run(['git', '--no-pager', 'config', 'credential.helper', 'store'], cwd=challenge_path,
                    stdout=subprocess.DEVNULL)
 
+    if not acquire_challenge_lock():
+        return
+
     git_update()
 
     app.logger.info("Importing challenges...")
@@ -124,8 +153,10 @@ def init_git():
 def update_git_loop():
     while True:
         try:
-            update_challenges_from_git()
             time.sleep(60)
+            if acquire_challenge_lock():
+                app.logger.info(f"{os.getpid()} starting git challenge update cycle.")
+                update_challenges_from_git()
         except Exception as error:
             app.logger.error("Error updating git:")
             app.logger.error(error, exc_info=True)

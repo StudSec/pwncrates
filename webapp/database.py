@@ -5,12 +5,11 @@ Sticking to this convention allows us to easily modify or switch the database wi
 """
 from datetime import datetime
 from webapp.helpers import *
+from webapp import app
 import cmarkgfm
 import sqlite3
 import time
 import os
-
-import sys
 
 
 # Lookup functions
@@ -467,8 +466,12 @@ def remove_link(link_type, code):
         return ""
 
 
-# Is this unsafe with regards to multithreading?
-conn = sqlite3.connect('./db/pwncrates.db', check_same_thread=False)
+if app.debug:
+    app.logger.warning("App is running in debug mode, SQLite3 thread checks turned off")
+    conn = sqlite3.connect('./db/pwncrates.db', check_same_thread=False)
+else:
+    conn = sqlite3.connect('./db/pwncrates.db')
+
 if os.path.getsize("./db/pwncrates.db") == 0:
     initialize_database()
 update_database()
