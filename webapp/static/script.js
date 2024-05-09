@@ -200,8 +200,8 @@ async function handleChallengeSubmission(event) {
             if (post.status === 'OK') {
                 inputField.style.backgroundColor = 'lightgreen';
                 setTimeout(function(){
-                    form.style.display = 'none';
-                    document.getElementById(challengeId + '-solved').style.display = 'block';
+                    form.classList.add('d-none');
+                    document.getElementById(challengeId + '-solved').classList.remove('d-none');
                 }, 2000);
                 var num = solvesText.textContent.split(' ')[0];
                 solvesText.textContent = solvesText.textContent.replace(num, num * 1 + 1);
