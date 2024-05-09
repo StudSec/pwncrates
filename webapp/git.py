@@ -155,7 +155,6 @@ def update_git_loop():
         try:
             time.sleep(60)
             if acquire_challenge_lock():
-                app.logger.info(f"{os.getpid()} starting git challenge update cycle.")
                 update_challenges_from_git()
         except Exception as error:
             app.logger.error("Error updating git:")
