@@ -396,6 +396,9 @@ def update_or_create_challenge(path, folder=get_challenge_path()):
     # Specify path to start in git directory
     challenge_data = parse_markdown_challenge(folder + path)
 
+    if "title" in challenge_data:
+        name = challenge_data["title"]
+        
     if challenge_data == {}:
         return
 
