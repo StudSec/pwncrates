@@ -1,11 +1,15 @@
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask
+import json
 import logging
 import os
 
 
+with open("config.json") as f:
+    config = json.load(f)
+
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+app.secret_key = config["secret_key"]
 app.config['SESSION_COOKIE_SECURE'] = True
 # We have to put this at lax instead of secure to support Discord OAuth
 # Should we drop support for the "state" parameter in the OAuth flow this can go back on strict

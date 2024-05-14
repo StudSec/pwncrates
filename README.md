@@ -48,7 +48,8 @@ The file needs to be structured as follows:
     "SMTP_PORT": 587,
     "SMTP_USER": "",
     "SMTP_PASS": "",
-    "webhook_url": ""
+    "webhook_url": "",
+    "secret_key": "..."
 }
 ```
 
