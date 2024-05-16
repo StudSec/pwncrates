@@ -10,6 +10,7 @@ import webapp.database as db
 from webapp import app
 from flask import request
 from flask import Response
+from base64 import b64encode
 import requests
 import json
 import datetime
@@ -18,7 +19,6 @@ import datetime
 # Read and eval config file
 with open("config.json", "r") as f:
     config = json.loads(f.read())
-
 
 @app.route('/api/challenges/categories')
 def api_get_categories():
@@ -50,6 +50,63 @@ def api_get_challenges(category):
 
     return Response(json.dumps(ret),
                     mimetype="application/json")
+
+@app.route('/api/challenge/start/<challenge_id>', methods=["POST"])
+@login_required
+def api_start_challenge(challenge_id):
+    challenge_id = str(challenge_id)
+    if not challenge_id.isnumeric():
+        return {"error": "invalid challenge id"}
+
+    docker_name = db.get_docker_service_name(challenge_id)
+    if docker_name is None:
+        return {"error": "challenge has no service"}
+    
+    instancer_url = app.config["INSTANCER_URL"]
+    if instancer_url == "":
+        return {"error": "instancer_url not defined"}
+
+    user = b64encode(db.get_user(user_id=current_user.id)['username'].encode()).decode()
+    response = requests.get(f"{instancer_url}/start/{user}/{challenge_id}")
+    return response.text
+
+@app.route('/api/challenge/stop/<challenge_id>', methods=["POST"])
+@login_required
+def api_stop_challenge(challenge_id):
+    challenge_id = str(challenge_id)
+    if not challenge_id.isnumeric():
+        return {"error": "invalid challenge id"}
+
+    docker_name = db.get_docker_service_name(challenge_id)
+    if docker_name is None:
+        return {"error": "challenge has no service"}
+    
+    instancer_url = app.config["INSTANCER_URL"]
+    if instancer_url == "":
+        return {"error": "instancer_url not defined"}
+
+    user = b64encode(db.get_user(user_id=current_user.id)['username'].encode()).decode()
+    response = requests.get(f"{instancer_url}/stop/{user}/{challenge_id}")
+    return response.text
+
+@app.route('/api/challenge/status/<challenge_id>', methods=["POST"])
+@login_required
+def api_status_challenge(challenge_id):
+    challenge_id = str(challenge_id)
+    if not challenge_id.isnumeric():
+        return {"error": "invalid challenge id"}
+
+    docker_name = db.get_docker_service_name(challenge_id)
+    if docker_name is None:
+        return {"error": "challenge has no service"}
+    
+    instancer_url = app.config["INSTANCER_URL"]
+    if instancer_url == "":
+        return {"error": "instancer_url not defined"}
+
+    user = b64encode(db.get_user(user_id=current_user.id)['username'].encode()).decode()
+    response = requests.get(f"{instancer_url}/status/{user}/{challenge_id}")
+    return response.text
 
 
 @app.route('/api/challenges/submit/<challenge_id>', methods=["POST"])

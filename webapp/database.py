@@ -284,6 +284,14 @@ def get_email_from_discord_id(discord_id):
 
     return results[0]
 
+def get_docker_service_name(challenge_id):
+    cursor = conn.execute('SELECT docker_name FROM challenges WHERE id=? LIMIT 1', (challenge_id,))
+    result = cursor.fetchone()
+    if result is None:
+        return None
+    else:
+        return result[0]
+
 
 # Actions
 def register_user(user_name, password, email):
