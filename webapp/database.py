@@ -45,23 +45,22 @@ def get_challenges(category, difficulty="hard"):
 
     cursor = conn.execute('SELECT B.description, A.id, A.name, A.description, A.points, A.subcategory, A.url, '
                           '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id) AS solve_count, '
-                          'A.difficulty FROM challenges A, categories B  '
+                          'A.docker_name, A.difficulty FROM challenges A, categories B  '
                           'WHERE A.category = ? AND A.difficulty <= ? '
                           'AND A.subcategory = B.name AND B.parent = A.category ORDER BY A.points ASC',
                           (category, difficulty))
     results = {}
-    for (category_description, user_id, name, description, points, subcategory, url, solves,
-         difficulty) in cursor.fetchall():
+    for (category_description, user_id, name, description, points, subcategory, url, solves, docker_name, difficulty) in cursor.fetchall():
         handout_file = get_handout_name(category, name)
         if subcategory in results.keys():
             results[subcategory][1].append((
-                user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves,
+                user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves, docker_name,
                 handout_file if os.path.exists("static/handouts/" + handout_file) else "",
                 list(difficulties.keys())[difficulty - 1]
             ))
         else:
             results[subcategory] = (category_description, [(
-                user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves,
+                user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves, docker_name,
                 handout_file if os.path.exists("static/handouts/" + handout_file) else "",
                 list(difficulties.keys())[difficulty - 1]
             )])
@@ -368,23 +367,23 @@ def update_database():
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='pwncrates'")
     result = cursor.fetchone()
     if not result:
-        database_version = 0.0
+        database_version = "0.0"
     else:
         cursor.execute("SELECT version FROM pwncrates")
-        database_version = float(cursor.fetchone()[0])
+        database_version = str(cursor.fetchone()[0])
 
     files = [x for x in os.listdir("database/") if x.startswith("migration") and
-             float(x.split("-")[1]) == database_version]
+             str(x.split("-")[1]) == database_version]
 
     while len(files) != 0:
         with open(f"database/{files[0]}") as f:
             conn.executescript(f.read())
         conn.commit()
         cursor.execute("SELECT version FROM pwncrates")
-        database_version = float(cursor.fetchone()[0])
-        assert (database_version == float(files[0].split("-")[2].split(".sql")[0]))
+        database_version = str(cursor.fetchone()[0])
+        assert (database_version == str(files[0].split("-")[2].split(".sql")[0]))
         files = [x for x in os.listdir("database/") if
-                 x.startswith("migration") and float(x.split("-")[1]) == database_version]
+                 x.startswith("migration") and str(x.split("-")[1]) == database_version]
 
     cursor.close()
 
@@ -409,18 +408,18 @@ def update_or_create_challenge(path, folder=get_challenge_path()):
     cursor = conn.cursor()
 
     cursor.execute('INSERT OR IGNORE INTO challenges '
-                   '(name, description, points, category, difficulty, subcategory, flag, flag_case_insensitive, url) '
-                   'values (?, ?, ?, ?, ?, ?, ?, ?, ?);'
+                   '(name, description, points, category, difficulty, subcategory, flag, flag_case_insensitive, url, docker_name) '
+                   'values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
                    , (name, challenge_data["description"], challenge_data["points"], category,
                       difficulty, challenge_data["subcategory"], challenge_data["flag"],
-                      bool(challenge_data["case_insensitive"]), challenge_data["url"]
+                      bool(challenge_data["case_insensitive"]), challenge_data["url"], challenge_data["docker_name"]
                       ))
 
     cursor.execute('UPDATE challenges SET description = ?, points = ?, category = ?, difficulty = ?, '
-                   'subcategory = ?, flag = ?, flag_case_insensitive = ?, url = ? WHERE name = ?',
+                   'subcategory = ?, flag = ?, flag_case_insensitive = ?, url = ?, docker_name = ? WHERE name = ?',
                    (challenge_data["description"], challenge_data["points"], category, difficulty,
                     challenge_data["subcategory"], challenge_data["flag"], bool(challenge_data["case_insensitive"]),
-                    challenge_data["url"], name))
+                    challenge_data["url"], challenge_data["docker_name"], name))
 
     conn.commit()
 

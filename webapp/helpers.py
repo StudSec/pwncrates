@@ -65,6 +65,9 @@ def parse_markdown_challenge(path):
         # directed otherwise.
         ret["case_insensitive"] = True
 
+    if "docker_name" not in ret.keys():
+        ret["docker_name"] = ""
+
     return ret
 
 

@@ -41,7 +41,8 @@ def api_get_challenges(category):
                     "points": challenge[3],
                     "url": challenge[4],
                     "solves": challenge[5],
-                    "handout": challenge[6]
+                    "docker_name": challenge[6],
+                    "handout": challenge[7]
                 }
                 for challenge in subcategory[2]
             ]
