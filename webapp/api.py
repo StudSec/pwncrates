@@ -10,7 +10,7 @@ import webapp.database as db
 from webapp import app
 from flask import request
 from flask import Response
-from base64 import b64encode
+from base64 import b16encode
 import requests
 import json
 import datetime
@@ -66,8 +66,8 @@ def api_start_challenge(challenge_id):
     if instancer_url == "":
         return {"error": "instancer_url not defined"}
 
-    user = b64encode(db.get_user(user_id=current_user.id)['username'].encode()).decode()
-    response = requests.get(f"{instancer_url}/start/{user}/{challenge_id}")
+    user = b16encode(db.get_user(user_id=current_user.id)['username'].encode()).decode().lower()
+    response = requests.get(f"{instancer_url}/start/{user}/{docker_name}")
     return response.text
 
 @app.route('/api/challenge/stop/<challenge_id>', methods=["POST"])
@@ -85,8 +85,8 @@ def api_stop_challenge(challenge_id):
     if instancer_url == "":
         return {"error": "instancer_url not defined"}
 
-    user = b64encode(db.get_user(user_id=current_user.id)['username'].encode()).decode()
-    response = requests.get(f"{instancer_url}/stop/{user}/{challenge_id}")
+    user = b16encode(db.get_user(user_id=current_user.id)['username'].encode()).decode().lower()
+    response = requests.get(f"{instancer_url}/stop/{user}/{docker_name}")
     return response.text
 
 @app.route('/api/challenge/status/<challenge_id>', methods=["POST"])
@@ -104,8 +104,8 @@ def api_status_challenge(challenge_id):
     if instancer_url == "":
         return {"error": "instancer_url not defined"}
 
-    user = b64encode(db.get_user(user_id=current_user.id)['username'].encode()).decode()
-    response = requests.get(f"{instancer_url}/status/{user}/{challenge_id}")
+    user = b16encode(db.get_user(user_id=current_user.id)['username'].encode()).decode().lower()
+    response = requests.get(f"{instancer_url}/status/{user}/{docker_name}")
     return response.text
 
 
