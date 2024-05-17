@@ -30,6 +30,7 @@ login_manager.init_app(app)
 with open("config.json", "r") as f:
     config = json.loads(f.read())
 
+REGISTRATION_ENABLED = config.get("registration_enabled", True)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -74,7 +75,7 @@ def login():
 # Register page
 @app.route('/register', methods=["GET", "POST"])
 def register():
-    if request.method == "POST":
+    if request.method == "POST" and REGISTRATION_ENABLED:
         try:
             # We check that the parameters are set before performing any actions
             username = request.form["username"]
@@ -107,8 +108,10 @@ def register():
 
         flash('Registered, confirmation email sent.')
         return redirect(url_for('login'))
-
     else:
+        if not REGISTRATION_ENABLED:
+            flash("Registration is disabled.")
+            return redirect(url_for('login'))
         return render_template('register.html')
 
 
@@ -239,6 +242,9 @@ def discord_oauth_callback():
     stored_info = db.get_user(email=email)
 
     if not stored_info and not existing_email and not current_user.is_authenticated:
+        if not REGISTRATION_ENABLED:
+            flash('Registration is disabled.')
+            return redirect(url_for('login'))
         db.register_user(name, "", email)
         db.update_discord_id(discord_id, email)
 
