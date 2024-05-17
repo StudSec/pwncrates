@@ -113,7 +113,7 @@ def git_update():
 
 def init_git():
     # Copy challenge directory from Read Only volume to local
-    subprocess.run(['cp', '-r', f'/tmp/challenges/', '.'])
+    subprocess.run(['cp', '-r', f'/tmp/challenges/', '.'], stdout=subprocess.DEVNULL)
     challenge_path = get_challenge_path()
     subprocess.run(['git', '--no-pager', 'config', 'credential.helper', 'store'], cwd=challenge_path,
                    stdout=subprocess.DEVNULL)
