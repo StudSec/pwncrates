@@ -6,6 +6,7 @@ An API route is used either by external applications (for example the StudBot), 
 import sys
 
 from flask_login import login_required, current_user
+from requests.auth import HTTPBasicAuth
 import webapp.database as db
 from webapp import app
 from flask import request
@@ -19,6 +20,7 @@ import datetime
 # Read and eval config file
 with open("config.json", "r") as f:
     config = json.loads(f.read())
+
 
 @app.route('/api/challenges/categories')
 def api_get_categories():
@@ -51,6 +53,7 @@ def api_get_challenges(category):
     return Response(json.dumps(ret),
                     mimetype="application/json")
 
+
 @app.route('/api/challenge/start/<challenge_id>', methods=["POST"])
 @login_required
 def api_start_challenge(challenge_id):
@@ -63,12 +66,15 @@ def api_start_challenge(challenge_id):
         return {"error": "challenge has no service"}
     
     instancer_url = app.config["INSTANCER_URL"]
+    instancer_username = config.get("instancer_username", "")
+    instancer_password = config.get("instancer_password", "")
     if instancer_url == "":
         return {"error": "instancer_url not defined"}
 
     user = b16encode(db.get_user(user_id=current_user.id)['username'].encode()).decode().lower()
-    response = requests.get(f"{instancer_url}/start/{user}/{docker_name}")
+    response = requests.get(f"{instancer_url}/start/{user}/{docker_name}", auth=HTTPBasicAuth(instancer_username, instancer_password))
     return response.text
+
 
 @app.route('/api/challenge/stop/<challenge_id>', methods=["POST"])
 @login_required
@@ -82,11 +88,13 @@ def api_stop_challenge(challenge_id):
         return {"error": "challenge has no service"}
     
     instancer_url = app.config["INSTANCER_URL"]
+    instancer_username = config.get("instancer_username", "")
+    instancer_password = config.get("instancer_password", "")
     if instancer_url == "":
         return {"error": "instancer_url not defined"}
 
     user = b16encode(db.get_user(user_id=current_user.id)['username'].encode()).decode().lower()
-    response = requests.get(f"{instancer_url}/stop/{user}/{docker_name}")
+    response = requests.get(f"{instancer_url}/stop/{user}/{docker_name}", auth=HTTPBasicAuth(instancer_username, instancer_password))
     return response.text
 
 @app.route('/api/challenge/status/<challenge_id>', methods=["POST"])
@@ -101,11 +109,13 @@ def api_status_challenge(challenge_id):
         return {"error": "challenge has no service"}
     
     instancer_url = app.config["INSTANCER_URL"]
+    instancer_username = config.get("instancer_username", "")
+    instancer_password = config.get("instancer_password", "")
     if instancer_url == "":
         return {"error": "instancer_url not defined"}
 
     user = b16encode(db.get_user(user_id=current_user.id)['username'].encode()).decode().lower()
-    response = requests.get(f"{instancer_url}/status/{user}/{docker_name}")
+    response = requests.get(f"{instancer_url}/status/{user}/{docker_name}", auth=HTTPBasicAuth(instancer_username, instancer_password))
     return response.text
 
 
