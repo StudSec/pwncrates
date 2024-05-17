@@ -10,6 +10,7 @@ with open("config.json") as f:
 
 app = Flask(__name__)
 app.secret_key = config["secret_key"]
+app.config["INSTANCER_URL"] = config.get("instancer_url", "")
 app.config['SESSION_COOKIE_SECURE'] = True
 # We have to put this at lax instead of secure to support Discord OAuth
 # Should we drop support for the "state" parameter in the OAuth flow this can go back on strict

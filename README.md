@@ -49,7 +49,8 @@ The file needs to be structured as follows:
     "SMTP_USER": "",
     "SMTP_PASS": "",
     "webhook_url": "",
-    "secret_key": "..."
+    "secret_key": "...",
+    "instancer_url": "..."
 }
 ```
 
