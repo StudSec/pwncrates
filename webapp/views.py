@@ -10,7 +10,7 @@ from flask_login import current_user, login_required
 import webapp.database as db
 from webapp.helpers import render_markdown
 from webapp.models import User
-from time_window import ctf_has_started
+from webapp.time_window import ctf_has_started
 import random
 
 

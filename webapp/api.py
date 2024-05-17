@@ -12,10 +12,9 @@ from webapp import app
 from flask import request
 from flask import Response
 from base64 import b16encode
-from time_window import ctf_has_started
+from webapp.time_window import ctf_has_started
 import requests
 import json
-import datetime
 # General API file
 
 # Read and eval config file

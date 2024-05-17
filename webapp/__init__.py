@@ -35,5 +35,5 @@ if "gunicorn" in os.environ.get("SERVER_SOFTWARE", ""):
 else:
     app.logger.setLevel(logging.DEBUG)
 
-from webapp import views, api, auth, template_preprocessor, database, git, mail
+from webapp import views, api, auth, template_preprocessor, database, git, mail, time_window
 
