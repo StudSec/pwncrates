@@ -6,6 +6,7 @@ webapp/static/handouts/*.zip
 data/ssl/*.pem
 data/writeups/*
 data/config.json
+data/instancer
 backup.sql
 
 webapp/static/banners/*.png
