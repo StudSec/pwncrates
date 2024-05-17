@@ -11,6 +11,7 @@ echo '  "SMTP_PORT": 587,'           >> data/config.json
 echo '  "SMTP_USER": "",'            >> data/config.json
 echo '  "SMTP_PASS": "",'            >> data/config.json
 echo '  "webhook_url": "",'          >> data/config.json
+echo '  "challenges_behind_login": 0,' >> data/config.json
 echo '  "secret_key": "'$(openssl rand -hex 24)'",' >> data/config.json
 echo '  "instancer_url": ""',        >> data/config.json
 echo '  "instancer_username": ""',   >> data/config.json
