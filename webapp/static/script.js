@@ -40,10 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.querySelectorAll("button").forEach((button) => {
           if (button.id.startsWith("start_service")) { 
-            id = button.id.split('_')[2]
+            var id = button.id.split('_')[2]
             button.addEventListener("click", (_) => startService(id))
           } else if (button.id.startsWith("stop_service")) {
-            id = button.id.split('_')[2]
+            var id = button.id.split('_')[2]
             button.addEventListener("click", (_) => stopService(id))
             refreshService(id);
           }
