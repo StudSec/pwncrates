@@ -256,7 +256,7 @@ async function startService(id) {
     var response = await fetch("/api/challenge/start/" + id, {method: "POST", cache: "no-cache"});
     var state = await response.json();
     state = state[0];
-    display.innerText = state;
+    display.innerHTML = state;
   }
 
   start();
@@ -279,7 +279,7 @@ async function stopService(id) {
     var response = await fetch("/api/challenge/stop/" + id, {method: "POST", cache: "no-cache"});
     var state = await response.json();
     state = state[0]
-    display.innerText = state;
+    display.innerHTML = state;
   }
 
   stop();
@@ -310,10 +310,10 @@ async function refreshService(id) {
     var challengeUrl = json["port"].split(":")
     var newUrl = url.replaceAll("{IP}", challengeUrl[0]);
     var newUrl = newUrl.replaceAll("{PORT}", challengeUrl[1]);
-    display.innerText = newUrl;
+    display.innerHTML = newUrl;
   } else {
     stopButton.setAttribute("disabled", "disabled");
     startButton.removeAttribute("disabled");
-    display.innerText = json["state"]
+    display.innerHTML = json["state"]
   }
 }
