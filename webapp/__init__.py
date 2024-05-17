@@ -12,6 +12,8 @@ app = Flask(__name__)
 app.secret_key = config["secret_key"]
 app.config["INSTANCER_URL"] = config.get("instancer_url", "")
 app.config['SESSION_COOKIE_SECURE'] = True
+app.config['START_TIME'] = int(config.get("start_time", 0))
+app.config['END_TIME'] = int(config.get("end_time", 0))
 # We have to put this at lax instead of secure to support Discord OAuth
 # Should we drop support for the "state" parameter in the OAuth flow this can go back on strict
 # However, as it stands we set the state parameter, navigate to Discord and navigate back to check if the
@@ -33,5 +35,5 @@ if "gunicorn" in os.environ.get("SERVER_SOFTWARE", ""):
 else:
     app.logger.setLevel(logging.DEBUG)
 
-from webapp import views, api, auth, template_preprocessor, database, git, mail
+from webapp import views, api, auth, template_preprocessor, database, git, mail, time_window
 
