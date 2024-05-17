@@ -479,6 +479,10 @@ if app.debug:
 else:
     conn = sqlite3.connect('./db/pwncrates.db')
 
-if os.path.getsize("./db/pwncrates.db") == 0:
-    initialize_database()
-update_database()
+try:
+    if os.path.getsize("./db/pwncrates.db") == 0:
+        initialize_database()
+    update_database()
+except sqlite3.OperationalError:
+    # Here we assume a different worker beat us to it, though we should find a better solution.
+    pass
