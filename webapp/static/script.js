@@ -248,16 +248,15 @@ function manageScoreboard() {
 }
 
 async function startService(id) {
-  startButton = document.getElementById("start_service_" + id)
-  stopButton = document.getElementById("stop_service_" + id)
-  display = document.getElementById("status_display_" + id)
+  var startButton = document.getElementById("start_service_" + id)
+  var display = document.getElementById("status_display_" + id)
 
   async function start() {
     startButton.setAttribute("disabled", "disabled");
-    stopButton.removeAttribute("disabled");
-    response = await fetch("/api/challenge/start/" + id, {method: "POST", cache: "no-cache"});
-    state = await response.json();
-    display.innerText = state[0];
+    var response = await fetch("/api/challenge/start/" + id, {method: "POST", cache: "no-cache"});
+    var state = await response.json();
+    state = state[0];
+    display.innerText = state;
   }
 
   start();
@@ -272,21 +271,20 @@ async function startService(id) {
 }
 
 async function stopService(id) {
-  startButton = document.getElementById("start_service_" + id)
-  stopButton = document.getElementById("stop_service_" + id)
-  display = document.getElementById("status_display_" + id)
+  var stopButton = document.getElementById("stop_service_" + id)
+  var display = document.getElementById("status_display_" + id)
 
   async function stop() {
     stopButton.setAttribute("disabled", "disabled");
-    startButton.removeAttribute("disabled");
-    response = await fetch("/api/challenge/stop/" + id, {method: "POST", cache: "no-cache"});
-    state = await response.json();
-    display.innerText = state[0];
+    var response = await fetch("/api/challenge/stop/" + id, {method: "POST", cache: "no-cache"});
+    var state = await response.json();
+    state = state[0]
+    display.innerText = state;
   }
 
   stop();
   var interval = setInterval(async function () {
-    if (display.innerText == "not running") {
+    if (display.innerText == "not running" || display.innerText == "stopped") {
       clearInterval(interval);
       await refreshService(id);
     } else {
@@ -296,22 +294,22 @@ async function stopService(id) {
 }
 
 async function refreshService(id) {
-  response = await fetch("/api/challenge/status/" + id, {method: "POST", cache: "no-cache"});
-  json = await response.json();
+  var response = await fetch("/api/challenge/status/" + id, {method: "POST", cache: "no-cache"});
+  var json = await response.json();
 
-  startButton = document.getElementById("start_service_" + id)
-  stopButton = document.getElementById("stop_service_" + id)
-  url = document.getElementById("url_service_" + id).innerText
-  display = document.getElementById("status_display_" + id)
+  var startButton = document.getElementById("start_service_" + id)
+  var stopButton = document.getElementById("stop_service_" + id)
+  var url = document.getElementById("url_service_" + id).innerText
+  var display = document.getElementById("status_display_" + id)
 
-  state = json["state"]
+  var state = json["state"]
   if (state == "running") {
     startButton.setAttribute("disabled", "disabled");
     stopButton.removeAttribute("disabled");
 
-    challengeUrl = json["port"].split(":")
-    newUrl = url.replaceAll("{IP}", challengeUrl[0]);
-    newUrl = newUrl.replaceAll("{PORT}", challengeUrl[1]);
+    var challengeUrl = json["port"].split(":")
+    var newUrl = url.replaceAll("{IP}", challengeUrl[0]);
+    var newUrl = newUrl.replaceAll("{PORT}", challengeUrl[1]);
     display.innerText = newUrl;
   } else {
     stopButton.setAttribute("disabled", "disabled");
