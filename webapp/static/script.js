@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
           } else if (button.id.startsWith("stop_service")) {
             id = button.id.split('_')[2]
             button.addEventListener("click", (_) => stopService(id))
+            refreshService(id);
           }
         })
     }
