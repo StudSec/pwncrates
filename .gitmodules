@@ -1,3 +1,3 @@
 [submodule "deps/instancer"]
 	path = deps/instancer
-	url = git@github.com:StudSec/Instancer.git
+	url = https://github.com/StudSec/Instancer.git
