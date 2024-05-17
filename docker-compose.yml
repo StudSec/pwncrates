@@ -14,8 +14,6 @@ services:
       - ./data/config.json:/webapp/config.json:ro
     profiles:
       - ''  # Default if not profile is specified.
-    links:
-      - instancer
 
   pwncrates-dev:
     build:
@@ -34,18 +32,8 @@ services:
       - ./data/config.json:/webapp/config.json:ro
     profiles:
       - 'debug' # Can be specified with --profile debug
-    links:
-      - instancer
     ports:
       - "127.0.0.1:80:5000"
-
-  instancer:
-    build:
-      context: ./deps/instancer
-    volumes:
-      - ./data/challenges/Challenges/:/challenges
-      - ./data/instancer/keys/:/app/keys
-      - ./data/instancer/config.toml:/app/config.toml
 
   nginx:
     image: nginx
