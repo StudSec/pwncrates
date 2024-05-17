@@ -37,6 +37,16 @@ document.addEventListener('DOMContentLoaded', () => {
         for (form of document.querySelectorAll("form")) {
             form.addEventListener('submit', handleChallengeSubmission);
         }
+
+        document.querySelectorAll("button").forEach((button) => {
+          if (button.id.startsWith("start_service")) { 
+            id = button.id.split('_')[2]
+            button.addEventListener("click", (_) => startService(id))
+          } else if (button.id.startsWith("stop_service")) {
+            id = button.id.split('_')[2]
+            button.addEventListener("click", (_) => stopService(id))
+          }
+        })
     }
 
     /*
@@ -234,4 +244,77 @@ function manageScoreboard() {
             }
         });
     });
+}
+
+async function startService(id) {
+  startButton = document.getElementById("start_service_" + id)
+  stopButton = document.getElementById("stop_service_" + id)
+  display = document.getElementById("status_display_" + id)
+
+  async function start() {
+    startButton.setAttribute("disabled", "disabled");
+    stopButton.removeAttribute("disabled");
+    response = await fetch("/api/challenge/start/" + id, {method: "POST", cache: "no-cache"});
+    state = await response.json();
+    display.innerText = state[0];
+  }
+
+  start();
+  var interval = setInterval(async function () {
+    if (display.innerText == "running") {
+      clearInterval(interval);
+      await refreshService(id);
+    } else {
+      await start()
+    }
+  }, 2000);
+}
+
+async function stopService(id) {
+  startButton = document.getElementById("start_service_" + id)
+  stopButton = document.getElementById("stop_service_" + id)
+  display = document.getElementById("status_display_" + id)
+
+  async function stop() {
+    stopButton.setAttribute("disabled", "disabled");
+    startButton.removeAttribute("disabled");
+    response = await fetch("/api/challenge/stop/" + id, {method: "POST", cache: "no-cache"});
+    state = await response.json();
+    display.innerText = state[0];
+  }
+
+  stop();
+  var interval = setInterval(async function () {
+    if (display.innerText == "not running") {
+      clearInterval(interval);
+      await refreshService(id);
+    } else {
+      await stop()
+    }
+  }, 2000);
+}
+
+async function refreshService(id) {
+  response = await fetch("/api/challenge/status/" + id, {method: "POST", cache: "no-cache"});
+  json = await response.json();
+
+  startButton = document.getElementById("start_service_" + id)
+  stopButton = document.getElementById("stop_service_" + id)
+  url = document.getElementById("url_service_" + id).innerText
+  display = document.getElementById("status_display_" + id)
+
+  state = json["state"]
+  if (state == "running") {
+    startButton.setAttribute("disabled", "disabled");
+    stopButton.removeAttribute("disabled");
+
+    challengeUrl = json["port"].split(":")
+    newUrl = url.replaceAll("{IP}", challengeUrl[0]);
+    newUrl = newUrl.replaceAll("{PORT}", challengeUrl[1]);
+    display.innerText = newUrl;
+  } else {
+    stopButton.setAttribute("disabled", "disabled");
+    startButton.removeAttribute("disabled");
+    display.innerText = json["state"]
+  }
 }

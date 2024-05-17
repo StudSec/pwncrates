@@ -47,7 +47,12 @@
 
                 {% if docker_name != "" %}
                 <br>
-                Docker name: {{ docker_name }}
+                <button type="button" class="btn btn-success" id="start_service_{{challenge_id}}">Start</button>
+                <button type="button" class="btn btn-danger" id="stop_service_{{challenge_id}}" disabled>Stop</button>
+                <p class="d-none" id="url_service_{{challenge_id}}">{{url}}</p>
+                <div class="code-block"><p id="status_display_{{challenge_id}}">
+                    retrieving status...
+                </p></div>
                 <br>
                 {% endif %}
 
