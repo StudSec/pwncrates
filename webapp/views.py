@@ -10,6 +10,7 @@ from flask_login import current_user, login_required
 import webapp.database as db
 from webapp.helpers import render_markdown
 from webapp.models import User
+from time_window import ctf_has_started
 import random
 
 
@@ -66,6 +67,7 @@ def public_profile(user_id):
 # General category page, contains an overview of the categories if no category is specified
 @app.route('/challenges')
 @app.route('/challenges/<category>')
+@ctf_has_started
 def challenges(category=None):
     if not category:
         return render_template("challenges_overview.html", categories=db.get_categories())
@@ -166,6 +168,7 @@ def upload_writeups(challenge_id):
 
 
 @app.route('/solves/<int:challenge_id>')
+@ctf_has_started
 def solves(challenge_id):
     return render_template("solves.html", users=db.get_challenge_solves(challenge_id),
                            challenge_name=db.get_challenge_name(challenge_id))
