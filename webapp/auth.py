@@ -8,7 +8,7 @@ import sys
 import time
 
 from flask_login import LoginManager, login_user, login_required, logout_user
-from flask import request, render_template, redirect, url_for, flash, session
+from flask import g, request, render_template, redirect, url_for, flash, session
 from flask_login import current_user
 from webapp.models import User
 import webapp.database as db
@@ -17,6 +17,7 @@ import requests
 from . import mail
 import json
 import re
+from functools import wraps
 
 from urllib import parse
 
@@ -31,10 +32,20 @@ with open("config.json", "r") as f:
     config = json.loads(f.read())
 
 
+CHALLENGES_PROTECTED = bool(config.get("challenges_behind_login", False))
+# Challenges can optionally only be available for logged in users
+def challenge_protector(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if CHALLENGES_PROTECTED and not current_user.is_authenticated:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.get(user_id)
-
 
 # Login page
 @app.route('/login', methods=["GET", "POST"])

@@ -55,7 +55,8 @@ The file needs to be structured as follows:
     "instancer_password": "...",
     "start_time": 0,
     "end_time": 0,
-    "utc_offset": 2
+    "utc_offset": 2,
+    "challenges_behind_login": 0
 }
 ```
 

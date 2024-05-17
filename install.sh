@@ -18,7 +18,8 @@ echo '  "instancer_password": ""',   >> data/config.json
 echo '  "instancer_url": ""',        >> data/config.json
 echo '  "start_time": 0',            >> data/config.json
 echo '  "end_time": 0',              >> data/config.json
-echo '  "utc_offset": 2'             >> data/config.json
+echo '  "utc_offset": 2',            >> data/config.json
+echo '  "challenges_behind_login":0' >> data/config.json
 echo '}'                             >> data/config.json
 
 read -p "Populate with test data? (y/n): " response
