@@ -12,9 +12,9 @@ from webapp import app
 from flask import request
 from flask import Response
 from base64 import b16encode
+from webapp.time_window import ctf_has_started
 import requests
 import json
-import datetime
 # General API file
 
 # Read and eval config file
@@ -23,12 +23,14 @@ with open("config.json", "r") as f:
 
 
 @app.route('/api/challenges/categories')
+@ctf_has_started
 def api_get_categories():
     return Response(json.dumps(db.get_categories()),
                     mimetype="application/json")
 
 
 @app.route('/api/challenges/<category>')
+@ctf_has_started
 def api_get_challenges(category):
     ret = {}
 
@@ -55,6 +57,7 @@ def api_get_challenges(category):
 
 
 @app.route('/api/challenge/start/<challenge_id>', methods=["POST"])
+@ctf_has_started
 @login_required
 def api_start_challenge(challenge_id):
     challenge_id = str(challenge_id)
@@ -77,6 +80,7 @@ def api_start_challenge(challenge_id):
 
 
 @app.route('/api/challenge/stop/<challenge_id>', methods=["POST"])
+@ctf_has_started
 @login_required
 def api_stop_challenge(challenge_id):
     challenge_id = str(challenge_id)
@@ -98,6 +102,7 @@ def api_stop_challenge(challenge_id):
     return response.text
 
 @app.route('/api/challenge/status/<challenge_id>', methods=["POST"])
+@ctf_has_started
 @login_required
 def api_status_challenge(challenge_id):
     challenge_id = str(challenge_id)
@@ -120,6 +125,7 @@ def api_status_challenge(challenge_id):
 
 
 @app.route('/api/challenges/submit/<challenge_id>', methods=["POST"])
+@ctf_has_started
 @login_required
 def api_submit_challenge(challenge_id):
     try:
@@ -194,6 +200,7 @@ def api_discord_id(user_id):
 
 
 @app.route('/api/user/solves/<user_id>')
+@ctf_has_started
 def api_get_user(user_id):
     user_data = db.get_user_scores(user_id=user_id)
     return Response(json.dumps(user_data),

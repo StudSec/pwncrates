@@ -52,7 +52,10 @@ The file needs to be structured as follows:
     "secret_key": "...",
     "instancer_url": "...",
     "instancer_username": "...",
-    "instancer_password": "..."
+    "instancer_password": "...",
+    "start_time": 0,
+    "end_time": 0,
+    "utc_offset": 2
 }
 ```
 
