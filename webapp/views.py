@@ -2,7 +2,6 @@
 This file handles all non-API and non-auth routes
 """
 import os
-import sys
 
 from webapp import app
 from flask import render_template, request, redirect, url_for
@@ -10,7 +9,8 @@ from flask_login import current_user, login_required
 import webapp.database as db
 from webapp.helpers import render_markdown
 from webapp.models import User
-from webapp.time_window import ctf_has_started
+from webapp.time_window import ctf_is_now, ctf_has_started, START_TIME, TIMEZONE
+from datetime import datetime, timezone, timedelta
 import random
 
 
@@ -23,6 +23,13 @@ def home():
 def rules():
     return render_markdown("./pages/rules.md", title="Rules")
 
+@app.route('/soon')
+def soon():
+    if ctf_is_now():
+        return redirect(url_for("challenges"))
+    else:
+        start = datetime.fromtimestamp(START_TIME, timezone.utc).astimezone(timezone(timedelta(hours=TIMEZONE)))
+        return render_template("soon.html", start_time=start.isoformat(' '))
 
 @app.route('/getting-started')
 def getting_started():
