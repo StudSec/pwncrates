@@ -9,6 +9,7 @@ from flask_login import login_required, current_user
 from requests.auth import HTTPBasicAuth
 import webapp.database as db
 from webapp import app
+from webapp.auth import challenge_protector
 from flask import request
 from flask import Response
 from base64 import b16encode
@@ -24,6 +25,7 @@ with open("config.json", "r") as f:
 
 @app.route('/api/challenges/categories')
 @ctf_has_started
+@challenge_protector
 def api_get_categories():
     return Response(json.dumps(db.get_categories()),
                     mimetype="application/json")
@@ -31,6 +33,7 @@ def api_get_categories():
 
 @app.route('/api/challenges/<category>')
 @ctf_has_started
+@challenge_protector
 def api_get_challenges(category):
     ret = {}
 
@@ -201,6 +204,7 @@ def api_discord_id(user_id):
 
 @app.route('/api/user/solves/<user_id>')
 @ctf_has_started
+@challenge_protector
 def api_get_user(user_id):
     user_data = db.get_user_scores(user_id=user_id)
     return Response(json.dumps(user_data),

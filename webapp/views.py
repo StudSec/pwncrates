@@ -11,6 +11,7 @@ from webapp.helpers import render_markdown
 from webapp.models import User
 from webapp.time_window import ctf_is_now, ctf_has_started, START_TIME, TIMEZONE
 from datetime import datetime, timezone, timedelta
+from webapp.auth import challenge_protector
 import random
 
 
@@ -75,6 +76,7 @@ def public_profile(user_id):
 @app.route('/challenges')
 @app.route('/challenges/<category>')
 @ctf_has_started
+@challenge_protector
 def challenges(category=None):
     if not category:
         return render_template("challenges_overview.html", categories=db.get_categories())
@@ -176,6 +178,7 @@ def upload_writeups(challenge_id):
 
 @app.route('/solves/<int:challenge_id>')
 @ctf_has_started
+@challenge_protector
 def solves(challenge_id):
     return render_template("solves.html", users=db.get_challenge_solves(challenge_id),
                            challenge_name=db.get_challenge_name(challenge_id))
