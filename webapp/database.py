@@ -59,7 +59,7 @@ def get_challenges(category, difficulty="hard"):
                 list(difficulties.keys())[difficulty - 1]
             ))
         else:
-            results[subcategory] = (category_description, [(
+            results[subcategory] = (cmarkgfm.github_flavored_markdown_to_html(category_description), [(
                 user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves, docker_name,
                 handout_file if os.path.exists("static/handouts/" + handout_file) else "",
                 list(difficulties.keys())[difficulty - 1]
