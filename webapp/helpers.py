@@ -54,9 +54,8 @@ def parse_markdown_challenge(path):
     if "subcategory" not in ret.keys():
         ret["subcategory"] = ""
 
-    if not all(x in ret.keys() for x in ["description", "flag", "points", "subcategory", "difficulty"]):
-        print(f"{path} doesn't contain all required challenge information, skipping", file=sys.stderr)
-        return {}
+    if "docker_name" not in ret.keys():
+        ret["docker_name"] = ""
 
     if "case_insensitive" not in ret.keys():
         ret["case_insensitive"] = False
@@ -64,6 +63,10 @@ def parse_markdown_challenge(path):
         # If the flag is present, we will assume it was intended to be case-insensitive unless explicitly
         # directed otherwise.
         ret["case_insensitive"] = True
+
+    if not all(x in ret.keys() for x in ["description", "flag", "points", "subcategory", "difficulty"]):
+        print(f"{path} doesn't contain all required challenge information, skipping", file=sys.stderr)
+        return {}
 
     return ret
 

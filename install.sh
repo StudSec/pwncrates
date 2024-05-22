@@ -10,7 +10,17 @@ echo '  "SMTP_HOST": "",'            >> data/config.json
 echo '  "SMTP_PORT": 587,'           >> data/config.json
 echo '  "SMTP_USER": "",'            >> data/config.json
 echo '  "SMTP_PASS": "",'            >> data/config.json
-echo '  "webhook_url": ""'           >> data/config.json
+echo '  "webhook_url": "",'          >> data/config.json
+echo '  "secret_key": "'$(openssl rand -hex 24)'",' >> data/config.json
+echo '  "registration_enabled": 1,', >> data/config.json
+echo '  "instancer_url": ""',        >> data/config.json
+echo '  "instancer_username": ""',   >> data/config.json
+echo '  "instancer_password": ""',   >> data/config.json
+echo '  "instancer_url": ""',        >> data/config.json
+echo '  "start_time": 0',            >> data/config.json
+echo '  "end_time": 0',              >> data/config.json
+echo '  "utc_offset": 2',            >> data/config.json
+echo '  "challenges_behind_login":0' >> data/config.json
 echo '}'                             >> data/config.json
 
 read -p "Populate with test data? (y/n): " response
@@ -19,7 +29,7 @@ mkdir data/ssl 2>/dev/null
 mkdir data/db 2>/dev/null
 
 if [[ $response == "y" ]]; then
-  python3 scripts/test-users.py
+  python3 scripts/populate-users.py
   openssl req -x509 -nodes -newkey rsa:2048 -keyout key.pem -out cert.pem -sha256 -days 365 -subj "/C=GB/ST=London/L=London/O=Alros/OU=IT Department/CN=localhost"
   mv key.pem data/ssl/
   mv cert.pem data/ssl/

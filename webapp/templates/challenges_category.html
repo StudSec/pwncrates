@@ -17,7 +17,7 @@
 <div class="challenge-category accordion accordion-flush show-all">
     <h4>{{ name }}</h4>
     <p>{{ subcategory_description }}</p>
-    {% for challenge_id, name, description, points, url, challenge_solves, handout, difficulty in challenges %}
+    {% for challenge_id, name, description, points, url, challenge_solves, docker_name, handout, difficulty in challenges %}
       <div class="accordion-item border challenge {{difficulty}}" id="{{ challenge_id }}">
         <div class="accordion-header">
           <button class="accordion-button collapsed {% if challenge_id in solves %}solved{% endif %}" data-bs-toggle="collapse" data-bs-target="#{{challenge_id}}-info" aria-controls="{{challenge_id}}-info">
@@ -34,7 +34,7 @@
                 <p>
                     {{description | safe}}
                 </p>
-                {% if url != "Null" %}
+                {% if url != "Null" and docker_name == "" %}
                 <div class="code-block"><p>
                     {{ url }}
                 </p></div>
@@ -43,6 +43,17 @@
 
                 {% if handout != "" %}
                 <a href="{{ url_for('static', filename='handouts/' + handout) }}">Download files</a>
+                {% endif %}
+
+                {% if docker_name != "" %}
+                <br>
+                <button type="button" class="btn btn-success" id="start_service_{{challenge_id}}">Start</button>
+                <button type="button" class="btn btn-danger" id="stop_service_{{challenge_id}}" disabled>Stop</button>
+                <p class="d-none" id="url_service_{{challenge_id}}">{{url}}</p>
+                <div class="code-block"><p id="status_display_{{challenge_id}}">
+                    retrieving status...
+                </p></div>
+                <br>
                 {% endif %}
 
                 {% if current_user.is_authenticated %}

@@ -6,13 +6,16 @@ An API route is used either by external applications (for example the StudBot), 
 import sys
 
 from flask_login import login_required, current_user
+from requests.auth import HTTPBasicAuth
 import webapp.database as db
 from webapp import app
+from webapp.auth import challenge_protector
 from flask import request
 from flask import Response
+from base64 import b16encode
+from webapp.time_window import ctf_has_started
 import requests
 import json
-import datetime
 # General API file
 
 # Read and eval config file
@@ -21,12 +24,16 @@ with open("config.json", "r") as f:
 
 
 @app.route('/api/challenges/categories')
+@ctf_has_started
+@challenge_protector
 def api_get_categories():
     return Response(json.dumps(db.get_categories()),
                     mimetype="application/json")
 
 
 @app.route('/api/challenges/<category>')
+@ctf_has_started
+@challenge_protector
 def api_get_challenges(category):
     ret = {}
 
@@ -41,7 +48,8 @@ def api_get_challenges(category):
                     "points": challenge[3],
                     "url": challenge[4],
                     "solves": challenge[5],
-                    "handout": challenge[6]
+                    "docker_name": challenge[6],
+                    "handout": challenge[7]
                 }
                 for challenge in subcategory[2]
             ]
@@ -51,7 +59,76 @@ def api_get_challenges(category):
                     mimetype="application/json")
 
 
+@app.route('/api/challenge/start/<challenge_id>', methods=["POST"])
+@ctf_has_started
+@login_required
+def api_start_challenge(challenge_id):
+    challenge_id = str(challenge_id)
+    if not challenge_id.isnumeric():
+        return {"error": "invalid challenge id"}
+
+    docker_name = db.get_docker_service_name(challenge_id)
+    if docker_name is None:
+        return {"error": "challenge has no service"}
+    
+    instancer_url = app.config["INSTANCER_URL"]
+    instancer_username = config.get("instancer_username", "")
+    instancer_password = config.get("instancer_password", "")
+    if instancer_url == "":
+        return {"error": "instancer_url not defined"}
+
+    user = b16encode(db.get_user(user_id=current_user.id)['username'].encode()).decode().lower()
+    response = requests.get(f"{instancer_url}/start/{user}/{docker_name}", auth=HTTPBasicAuth(instancer_username, instancer_password))
+    return response.text
+
+
+@app.route('/api/challenge/stop/<challenge_id>', methods=["POST"])
+@ctf_has_started
+@login_required
+def api_stop_challenge(challenge_id):
+    challenge_id = str(challenge_id)
+    if not challenge_id.isnumeric():
+        return {"error": "invalid challenge id"}
+
+    docker_name = db.get_docker_service_name(challenge_id)
+    if docker_name is None:
+        return {"error": "challenge has no service"}
+    
+    instancer_url = app.config["INSTANCER_URL"]
+    instancer_username = config.get("instancer_username", "")
+    instancer_password = config.get("instancer_password", "")
+    if instancer_url == "":
+        return {"error": "instancer_url not defined"}
+
+    user = b16encode(db.get_user(user_id=current_user.id)['username'].encode()).decode().lower()
+    response = requests.get(f"{instancer_url}/stop/{user}/{docker_name}", auth=HTTPBasicAuth(instancer_username, instancer_password))
+    return response.text
+
+@app.route('/api/challenge/status/<challenge_id>', methods=["POST"])
+@ctf_has_started
+@login_required
+def api_status_challenge(challenge_id):
+    challenge_id = str(challenge_id)
+    if not challenge_id.isnumeric():
+        return {"error": "invalid challenge id"}
+
+    docker_name = db.get_docker_service_name(challenge_id)
+    if docker_name is None:
+        return {"error": "challenge has no service"}
+    
+    instancer_url = app.config["INSTANCER_URL"]
+    instancer_username = config.get("instancer_username", "")
+    instancer_password = config.get("instancer_password", "")
+    if instancer_url == "":
+        return {"error": "instancer_url not defined"}
+
+    user = b16encode(db.get_user(user_id=current_user.id)['username'].encode()).decode().lower()
+    response = requests.get(f"{instancer_url}/status/{user}/{docker_name}", auth=HTTPBasicAuth(instancer_username, instancer_password))
+    return response.text
+
+
 @app.route('/api/challenges/submit/<challenge_id>', methods=["POST"])
+@ctf_has_started
 @login_required
 def api_submit_challenge(challenge_id):
     try:
@@ -126,6 +203,8 @@ def api_discord_id(user_id):
 
 
 @app.route('/api/user/solves/<user_id>')
+@ctf_has_started
+@challenge_protector
 def api_get_user(user_id):
     user_data = db.get_user_scores(user_id=user_id)
     return Response(json.dumps(user_data),

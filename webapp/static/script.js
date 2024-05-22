@@ -37,6 +37,17 @@ document.addEventListener('DOMContentLoaded', () => {
         for (form of document.querySelectorAll("form")) {
             form.addEventListener('submit', handleChallengeSubmission);
         }
+
+        document.querySelectorAll("button").forEach((button) => {
+          if (button.id.startsWith("start_service")) { 
+            var id = button.id.split('_')[2]
+            button.addEventListener("click", (_) => startService(id))
+          } else if (button.id.startsWith("stop_service")) {
+            var id = button.id.split('_')[2]
+            button.addEventListener("click", (_) => stopService(id))
+            refreshService(id);
+          }
+        })
     }
 
     /*
@@ -234,4 +245,75 @@ function manageScoreboard() {
             }
         });
     });
+}
+
+async function startService(id) {
+  var startButton = document.getElementById("start_service_" + id)
+  var display = document.getElementById("status_display_" + id)
+
+  async function start() {
+    startButton.setAttribute("disabled", "disabled");
+    var response = await fetch("/api/challenge/start/" + id, {method: "POST", cache: "no-cache"});
+    var state = await response.json();
+    state = state[0];
+    display.innerHTML = state;
+  }
+
+  start();
+  var interval = setInterval(async function () {
+    if (display.innerText == "running") {
+      clearInterval(interval);
+      await refreshService(id);
+    } else {
+      await start()
+    }
+  }, 2000);
+}
+
+async function stopService(id) {
+  var stopButton = document.getElementById("stop_service_" + id)
+  var display = document.getElementById("status_display_" + id)
+
+  async function stop() {
+    stopButton.setAttribute("disabled", "disabled");
+    var response = await fetch("/api/challenge/stop/" + id, {method: "POST", cache: "no-cache"});
+    var state = await response.json();
+    state = state[0]
+    display.innerHTML = state;
+  }
+
+  stop();
+  var interval = setInterval(async function () {
+    if (display.innerText == "not running" || display.innerText == "stopped") {
+      clearInterval(interval);
+      await refreshService(id);
+    } else {
+      await stop()
+    }
+  }, 2000);
+}
+
+async function refreshService(id) {
+  var response = await fetch("/api/challenge/status/" + id, {method: "POST", cache: "no-cache"});
+  var json = await response.json();
+
+  var startButton = document.getElementById("start_service_" + id)
+  var stopButton = document.getElementById("stop_service_" + id)
+  var url = document.getElementById("url_service_" + id).innerText
+  var display = document.getElementById("status_display_" + id)
+
+  var state = json["state"]
+  if (state == "running") {
+    startButton.setAttribute("disabled", "disabled");
+    stopButton.removeAttribute("disabled");
+
+    var challengeUrl = json["port"].split(":")
+    var newUrl = url.replaceAll("{IP}", challengeUrl[0]);
+    var newUrl = newUrl.replaceAll("{PORT}", challengeUrl[1]);
+    display.innerHTML = newUrl;
+  } else {
+    stopButton.setAttribute("disabled", "disabled");
+    startButton.removeAttribute("disabled");
+    display.innerHTML = json["state"]
+  }
 }
