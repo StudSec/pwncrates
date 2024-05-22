@@ -24,6 +24,7 @@ def home():
 def rules():
     return render_markdown("./pages/rules.md", title="Rules")
 
+
 @app.route('/soon')
 def soon():
     if ctf_is_now():
@@ -31,6 +32,7 @@ def soon():
     else:
         start = datetime.fromtimestamp(START_TIME, timezone.utc).astimezone(timezone(timedelta(hours=TIMEZONE)))
         return render_template("soon.html", start_time=start.isoformat(' '))
+
 
 @app.route('/getting-started')
 def getting_started():
@@ -150,6 +152,9 @@ def upload_writeups(challenge_id):
     except UnicodeEncodeError:
         return "Invalid data!"
 
+    if not os.path.exists(f"writeups/{str(challenge_id)}"):
+        os.makedirs(f"writeups/{str(challenge_id)}")
+
     if len(file_contents) == 0:
         db.remove_writeup(challenge_id, current_user.id)
         filename = db.get_writeup_file(challenge_id, current_user.id)
@@ -162,9 +167,6 @@ def upload_writeups(challenge_id):
         filename = hex(random.getrandbits(128))[2:]
         while f"{filename}.md" in os.listdir(f"writeups/{str(challenge_id)}"):
             filename = hex(random.getrandbits(128))[2:]
-
-    if not os.path.exists(f"writeups/{str(challenge_id)}"):
-        os.makedirs(f"writeups/{str(challenge_id)}")
 
     if file:
         db.create_or_update_writeup(challenge_id, current_user.id, filename)
