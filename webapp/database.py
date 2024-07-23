@@ -42,28 +42,39 @@ def get_challenges(category, difficulty="hard"):
     }
     # Translate the difficulty to int
     difficulty = difficulties[difficulty.lower()]
-
+    
     cursor = conn.execute('SELECT B.description, A.id, A.name, A.description, A.points, A.subcategory, A.url, '
-                          '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id) AS solve_count, '
-                          'A.docker_name, A.difficulty FROM challenges A, categories B  '
-                          'WHERE A.category = ? AND A.difficulty <= ? '
-                          'AND A.subcategory = B.name AND B.parent = A.category ORDER BY A.points ASC',
-                          (category, difficulty))
+                      '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id) AS solve_count, '
+                      'A.docker_name, A.difficulty '
+                      'FROM challenges A '
+                      'LEFT JOIN categories B ON A.subcategory = B.name AND B.parent = A.category '
+                      'WHERE A.category = ? AND A.difficulty <= ? '
+                      'ORDER BY A.points ASC',
+                      (category, difficulty))
+
+
     results = {}
+    
     for (category_description, user_id, name, description, points, subcategory, url, solves, docker_name, difficulty) in cursor.fetchall():
-        handout_file = get_handout_name(category, name)
-        if subcategory in results.keys():
-            results[subcategory][1].append((
+            handout_file = get_handout_name(category, name)
+            
+            if not subcategory:
+                subcategory = ""
+            
+            if not category_description:
+                category_description = ""
+            
+            challenge_info = (
                 user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves, docker_name,
                 handout_file if os.path.exists("static/handouts/" + handout_file) else "",
                 list(difficulties.keys())[difficulty - 1]
-            ))
-        else:
-            results[subcategory] = (cmarkgfm.github_flavored_markdown_to_html(category_description), [(
-                user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves, docker_name,
-                handout_file if os.path.exists("static/handouts/" + handout_file) else "",
-                list(difficulties.keys())[difficulty - 1]
-            )])
+            )
+                
+            if subcategory in results.keys():
+                results[subcategory][1].append((challenge_info))
+            else:
+                results[subcategory] = (cmarkgfm.github_flavored_markdown_to_html(category_description), [(challenge_info)])
+
     cursor.close()
 
     ret = []
@@ -71,6 +82,7 @@ def get_challenges(category, difficulty="hard"):
         ret.append((i, results[i][0], results[i][1]))
 
     return ret
+
 
 
 def get_user_solves(user_id):
