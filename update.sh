@@ -11,9 +11,9 @@ if [[ "$LOCAL" == "$REMOTE" ]]; then
   exit 0
 fi
 
-# Fetch the updates and reset to the latest commit
-git reset --hard origin/main
-git pull origin main
+# Reset and fetch any updates
+git checkout release
+git pull origin release
 
 # Execute the deployment command
 docker-compose down --remove-orphans
