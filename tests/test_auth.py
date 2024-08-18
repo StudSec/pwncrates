@@ -41,7 +41,8 @@ def test_register(client, test_input, expected_response_data, expected_redirect)
                          [
                              ({"email": "a@a.a", "password": ""}, "Profile", "/challenges"),
                              ({"email": "a@a.a", "password": "aa"}, "Invalid credentials", ""),
-                             ({"email": "a@a.a"}, "Invalid credentials", "")
+                             ({"email": "a@a.a"}, "Invalid credentials", ""),
+                             ({"email": "a@a.a", "password": "aa"}, "Login", "")
                          ])
 def test_login(client, test_input, expected_response_data, expected_redirect):
     with client:
