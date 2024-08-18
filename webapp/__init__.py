@@ -4,9 +4,13 @@ import json
 import logging
 import os
 
+# Set path to the correct location if called externally (as is done in unit tests)
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 
 with open("config.json") as f:
     config = json.load(f)
+
 
 app = Flask(__name__)
 app.secret_key = config["secret_key"]
@@ -35,5 +39,5 @@ if "gunicorn" in os.environ.get("SERVER_SOFTWARE", ""):
 else:
     app.logger.setLevel(logging.DEBUG)
 
+# Add the other routes
 from webapp import views, api, auth, template_preprocessor, database, git, mail, time_window
-

@@ -473,6 +473,9 @@ def remove_link(link_type, code):
         return ""
 
 
+os.system("mkdir /webapp/db")
+os.system("touch /webapp/db/pwncrates.db")
+
 if app.debug:
     app.logger.warning("App is running in debug mode, SQLite3 thread checks turned off")
     conn = sqlite3.connect('./db/pwncrates.db', check_same_thread=False)

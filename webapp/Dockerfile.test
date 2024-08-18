@@ -1,0 +1,19 @@
+FROM python:3.8-slim-buster
+
+RUN apt-get update && apt-get install git zip --assume-yes
+RUN pip3 install pytest
+
+RUN mkdir -p webapp
+WORKDIR webapp
+
+# Add these earlier to allow for optimizations
+ADD requirements.txt .
+RUN pip install -r requirements.txt
+
+# Add the rest of the files
+COPY . .
+
+# Hack for now, put the tests outside the webapp folder and then import the webapp folder
+WORKDIR /
+
+ENTRYPOINT python -m pytest -vv tests/

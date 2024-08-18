@@ -35,6 +35,28 @@ services:
     ports:
       - "127.0.0.1:80:5000"
 
+  pwncrates-test:
+    build:
+      context: ./webapp/
+      dockerfile: Dockerfile.test
+    environment:
+      - FLASK_APP=main
+    volumes:
+      - ./data/pages:/webapp/pages:ro
+      - ./data/writeups:/webapp/writeups
+# We don't use an existing database for the tests
+#      - ./data/db:/webapp/db
+      - ./data/challenges/:/tmp/challenges:ro
+      - ./data/.git-credentials:/root/.git-credentials:ro
+      - ./webapp/templates/:/webapp/templates:ro
+      - ./webapp/static/:/webapp/static
+      - ./data/config.json:/webapp/config.json:ro
+      - ./tests/:/tests
+    profiles:
+      - 'test' # Can be specified with --profile test
+    ports:
+      - "127.0.0.1:80:5000"
+
   nginx:
     image: nginx
     volumes:
