@@ -224,6 +224,17 @@ def get_writeup_file(challenge_id, user_id):
         return None
 
 
+def is_user_admin(user_id):
+    cursor = conn.execute(
+        'SELECT user_id FROM admins WHERE user_id = ? LIMIT 1', (user_id,))
+    results = cursor.fetchall()
+    cursor.close()
+
+    if len(results) == 0:
+        return False  # User is not an admin
+
+    return True  # User is an admin
+
 # User functions
 def get_user(user_id=None, email=None):
     if user_id:
@@ -240,6 +251,7 @@ def get_user(user_id=None, email=None):
                 "university_name": user_info[3],
                 "discord_id": user_info[4],
                 "password": user_info[5],
+                "admin": is_user_admin(user_id)
             } for user_info in cursor.fetchall()
         ]
         cursor.close()
@@ -262,6 +274,7 @@ def get_user(user_id=None, email=None):
                 "university_name": user_info[3],
                 "discord_id": user_info[4],
                 "password": user_info[5],
+                "admin": is_user_admin(user_id)
             } for user_info in cursor.fetchall()
         ]
         cursor.close()
@@ -271,6 +284,7 @@ def get_user(user_id=None, email=None):
 
         return results[0]
     return ""
+
 
 
 def get_user_information(user_id):
