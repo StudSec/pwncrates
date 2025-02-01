@@ -5,6 +5,7 @@ Global variables are variables used by the base template, or its includes.
 """
 from webapp import app
 from flask import url_for
+from flask_login import current_user
 import json
 
 
@@ -36,12 +37,15 @@ def add_security_headers(resp):
 
 @app.context_processor
 def inject_globals():
-    return dict(name="StudSec",
-                routes={
-                    "Rules": url_for("rules"),
-                    "Getting started": url_for("getting_started"),
-                    "Challenges": url_for("challenges"),
-                    "Contributing": url_for("contributing"),
-                    "Scoreboard": url_for("scoreboard"),
-                    "Admin": url_for("admin")
-                })
+    routes = {
+        "Rules": url_for("rules"),
+        "Getting started": url_for("getting_started"),
+        "Challenges": url_for("challenges"),
+        "Contributing": url_for("contributing"),
+        "Scoreboard": url_for("scoreboard"),
+    }
+    
+    if current_user.is_authenticated and current_user.is_admin:
+        routes["Admin"] = url_for("admin")
+
+    return dict(name="StudSec", routes=routes)
