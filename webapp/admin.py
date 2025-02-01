@@ -46,40 +46,60 @@ def admin():
     """Main admin dashboard view."""
     return render_template(
         "admin.html",
-        users=db.get_scoreboard(),
-        universities=db.get_scoreboard_universities()
+        users=db.get_users(),
+        #universities=db.get_scoreboard_universities()
     )
 
-@admin_bp.route('/admin/hide_user/<int:user_id>', methods=['POST'])
+def validate_user_id(user_id):
+    """Helper function to validate and convert user_id to integer."""
+    try:
+        return int(user_id)
+    except ValueError:
+        flash("Invalid user ID. Please try again.", "danger")
+        return None  # Return None if the conversion fails
+
+@admin_bp.route('/admin/hide_user/<user_id>', methods=['POST'])
 @login_required
 @admin_required
 def admin_hide_user(user_id):
     """Hide a user from the scoreboard."""
-    # db.hide_user(user_id)  # Implement your hide functionality here
+    user_id = validate_user_id(user_id)
+    if user_id is None:
+        return redirect(url_for('admin'))
+
+    db.hide_user(user_id)  # Implement your hide functionality here
     flash(f"User {user_id} hidden from scoreboard.", "success")
     return redirect(url_for('admin'))
 
-@admin_bp.route('/admin/demote_user/<int:user_id>', methods=['POST'])
+@admin_bp.route('/admin/demote_user/<user_id>', methods=['POST'])
 @login_required
 @admin_required
 def admin_demote_user(user_id):
     """Demote an admin to normal user."""
-    if(current_user.id == str(user_id)):
+    user_id = validate_user_id(user_id)
+    if user_id is None:
+        return redirect(url_for('admin'))
+
+    if int(current_user.id) == user_id:
         flash(f"Cannot demote yourself.", "warning")
     else:
-        # db.demote_user(user_id)  # Implement the demotion functionality here
+        db.demote_user(user_id)  # Implement the demotion functionality here
         flash(f"Admin {user_id} demoted to regular user.", "danger")
     return redirect(url_for('admin'))
 
-@admin_bp.route('/admin/promote_user/<int:user_id>', methods=['POST'])
+@admin_bp.route('/admin/promote_user/<user_id>', methods=['POST'])
 @login_required
 @admin_required
 def admin_promote_user(user_id):
     """Promote a user to admin status."""
-    if(current_user.id == str(user_id)):
-        flash(f"You're already admin you silly.", "warning")
+    user_id = validate_user_id(user_id)
+    if user_id is None:
+        return redirect(url_for('admin'))
+
+    if int(current_user.id) == user_id:
+        flash(f"You're already admin, you silly.", "warning")
     else:
-        # db.promote_user(user_id)  # Implement the promotion functionality here
+        db.promote_user(user_id)  # Implement the promotion functionality here
         flash(f"User {user_id} promoted to admin.", "success")
     return redirect(url_for('admin'))
 
