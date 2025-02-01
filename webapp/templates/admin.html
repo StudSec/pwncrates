@@ -39,25 +39,25 @@
             </tr>
         </thead>
         <tbody>
-            {% for user_id, name, university_id, university_name, points, _ in users %}
+            {% for user in users %}
             <tr class="user-row">
-                <td class="rank">{{loop.index}}</td>
+                <td class="rank">{{ loop.index }}</td>
                 <td class="username">
-                    <a href="{{url_for('public_profile', user_id=user_id)}}">{{name | truncate(30)}}</a>
+                    <a href="{{ url_for('public_profile', user_id=user.user_id) }}">{{ user.name | truncate(30) }}</a>
                 </td>
-                <td class="university-id" university="{{university_id}}">{{university_name}}</td>
-                <td class="score">{{points}}</td>
+                <td class="university-id" university="{{ user.university_id }}">{{ user.university_name }}</td>
+                <td class="score">{{ user.points }}</td>
                 <td class="actions">
-                    <form method="POST" action="{{ url_for('admin.admin_hide_user', user_id=user_id) }}" class="d-inline">
+                    <form method="POST" action="{{ url_for('admin.admin_hide_user', user_id=user.user_id) }}" class="d-inline">
                         <button type="submit" class="btn btn-primary btn-sm">Hide</button>
                     </form>
-                    <form method="POST" action="{{ url_for('admin.admin_demote_user', user_id=user_id) }}" class="d-inline">
-                        <button type="submit" class="btn btn-danger btn-sm {% if current_user.id == user_id %}btn-secondary disabled{% endif %}">Demote</button>
+                    <form method="POST" action="{{ url_for('admin.admin_demote_user', user_id=user.user_id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm {% if user.is_admin == 0 %}btn-secondary disabled{% endif %}">Demote</button>
                     </form>
-                    <form method="POST" action="{{ url_for('admin.admin_promote_user', user_id=user_id) }}" class="d-inline">
-                        <button type="submit" class="btn btn-success btn-sm {% if current_user.id == user_id %}btn-secondary disabled{% endif %}">Promote</button>
+                    <form method="POST" action="{{ url_for('admin.admin_promote_user', user_id=user.user_id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-success btn-sm {% if user.is_admin == 1 %}btn-secondary disabled{% endif %}">Promote</button>
                     </form>
-                </td>
+                </td>                
             </tr>
             {% endfor %}
         </tbody>
