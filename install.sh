@@ -1,5 +1,5 @@
 #!/bin/bash
-
+echo '' > data/config.json
 echo '{'                             >> data/config.json
 echo '  "hostname": "127.0.0.1",'    >> data/config.json
 echo '  "oauth_client_id": "",'      >> data/config.json
@@ -12,8 +12,7 @@ echo '  "SMTP_USER": "",'            >> data/config.json
 echo '  "SMTP_PASS": "",'            >> data/config.json
 echo '  "webhook_url": "",'          >> data/config.json
 echo '  "secret_key": "'$(openssl rand -hex 24)'",' >> data/config.json
-echo '  "registration_enabled": 1,', >> data/config.json
-echo '  "instancer_url": ""',        >> data/config.json
+echo '  "registration_enabled": 1,' >> data/config.json
 echo '  "instancer_username": ""',   >> data/config.json
 echo '  "instancer_password": ""',   >> data/config.json
 echo '  "instancer_url": ""',        >> data/config.json
