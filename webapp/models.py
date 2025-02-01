@@ -15,7 +15,7 @@ class User(UserMixin):
         self.username = username
         self.university = db_info["university_name"]
         self.discord_id = db_info["discord_id"]
-        self.admin = True #db_info["admin"]
+        self.admin = db_info["admin"]
         self.authenticated = True
 
     @staticmethod
