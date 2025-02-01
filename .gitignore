@@ -10,6 +10,8 @@ backup.sql
 
 webapp/static/banners/*.png
 
+Challenges-Examples/
+
 # Pycharm
 .idea/
 
