@@ -2,71 +2,82 @@
 {% block title %}pwncrates - Admin Panel{% endblock %}
 
 {% block content %}
-    <div class="container mt-0">
-        <h1 class="text-center mb-0">Admin Dashboard</h1>
-        <h1 id="admin-id" class="d-none">{{ current_user.id }}</h1>
-        
-        <div class="chart-container">
-            <canvas id="admin_chart"></canvas>
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="alert alert-info">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
         </div>
-        
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-        
-        <div class="filter mt-3">
-            <input type="text" id="user-search" placeholder="Search users..." class="form-control">
- </div>
-        
-        <table class="table table-striped mt-5" id="user-table">
-            <thead class="table-header">
-                <tr>
-                    <th class="rank">#</th>
-                    <th class="username">Username</th>
-                    <th class="university-id">University</th>
-                    <th class="score">Score</th>
-                    <th class="actions">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user_id, name, university_id, university_name, points, _ in users %}
-                <tr class="user-row">
-                    <td class="rank">{{loop.index}}</td>
-                    <td class="username">
-                        <a href="{{url_for('public_profile', user_id=user_id)}}">{{name | truncate(30)}}</a>
-                    </td>
-                    <td class="university-id" university="{{university_id}}">{{university_name}}</td>
-                    <td class="score">{{points}}</td>
-                    <td class="actions">
-                        <form  method="POST" class="d-inline">
-                            <button type="submit" class="btn btn-primary btn-sm">Hide</button>
-                        </form>
-                        <form  method="POST" class="d-inline">
-                            <button type="submit" class="btn btn-danger btn-sm">Ban</button>
-                        </form>
-                        <form  method="POST" class="d-inline">
-                            <button type="submit" class="btn btn-success btn-sm">Promote</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    {% endif %}
+{% endwith %}
+
+<div class="container mt-0">
+    <h1 class="text-center mb-0">Admin Dashboard</h1>
+    <h1 id="admin-id" class="d-none">{{ current_user.id }}</h1>
+    
+    <div class="chart-container">
+        <canvas id="admin_chart"></canvas>
     </div>
     
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            document.getElementById("user-search").addEventListener("keyup", filterUsers);
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    
+    <div class="filter mt-3">
+        <input type="text" id="user-search" placeholder="Search users..." class="form-control">
+    </div>
+    
+    <table class="table table-striped mt-5" id="user-table">
+        <thead class="table-header">
+            <tr>
+                <th class="rank">#</th>
+                <th class="username">Username</th>
+                <th class="university-id">University</th>
+                <th class="score">Score</th>
+                <th class="actions">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user_id, name, university_id, university_name, points, _ in users %}
+            <tr class="user-row">
+                <td class="rank">{{loop.index}}</td>
+                <td class="username">
+                    <a href="{{url_for('public_profile', user_id=user_id)}}">{{name | truncate(30)}}</a>
+                </td>
+                <td class="university-id" university="{{university_id}}">{{university_name}}</td>
+                <td class="score">{{points}}</td>
+                <td class="actions">
+                    <form method="POST" action="{{ url_for('admin.admin_hide_user', user_id=user_id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-primary btn-sm">Hide</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin.admin_demote_user', user_id=user_id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm {% if current_user.id == user_id %}btn-secondary disabled{% endif %}">Demote</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin.admin_promote_user', user_id=user_id) }}" class="d-inline">
+                        <button type="submit" class="btn btn-success btn-sm {% if current_user.id == user_id %}btn-secondary disabled{% endif %}">Promote</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("user-search").addEventListener("keyup", filterUsers);
+    });
+
+    function filterUsers() {
+        let input = document.getElementById("user-search").value.toLowerCase();
+        let rows = document.querySelectorAll(".user-row");
+
+        rows.forEach(row => {
+            let username = row.querySelector(".username a").textContent.toLowerCase();
+            row.style.display = username.includes(input) ? "" : "none";
         });
-    
-        function filterUsers() {
-            let input = document.getElementById("user-search").value.toLowerCase();
-            let rows = document.querySelectorAll(".user-row");
-    
-            rows.forEach(row => {
-                let username = row.querySelector(".username a").textContent.toLowerCase();
-                row.style.display = username.includes(input) ? "" : "none";
-            });
-        }
-    </script>
-    
+    }
+</script>
+
 {% endblock %}
