@@ -12,6 +12,50 @@ import time
 import os
 
 
+# Admin functions
+def promote_user(user_id):
+    try:
+        cursor = conn.execute("INSERT INTO admins (user_id) VALUES (?)", (user_id,))
+        conn.commit()
+        cursor.close()
+        
+        # True if updated
+        return cursor.rowcount == 1
+    except Exception as e:
+        # Log the error if necessary
+        print(f"Error promoting user {user_id}: {e}")
+        return False
+
+
+def demote_user(user_id):
+    try:
+        cursor = conn.execute("DELETE FROM admins WHERE user_id = ?", (user_id,))
+        conn.commit()  # Commit the transaction
+        cursor.close()
+        
+        # True if updated
+        return cursor.rowcount == 1
+    except Exception as e:
+        # Log the error if necessary
+        print(f"Error demoting user {user_id}: {e}")
+        return False
+
+
+def hide_user(user_id):
+    # try:
+    #     cursor = conn.execute("", (user_id,))
+    #     conn.commit()  # Commit the transaction
+    #     cursor.close()
+        
+    #     # True if updated
+    #     return cursor.rowcount == 1
+    # except Exception as e:
+    #     # Log the error if necessary
+    #     print(f"Error hiding user {user_id}: {e}")
+    #     return False
+    pass
+
+
 # Lookup functions
 def get_email_from_link(link_type, code):
     assert link_type == "confirmation" or link_type == "reset"
@@ -132,11 +176,34 @@ def get_scoreboard():
 
 
 def get_users():
-    cursor = conn.execute('SELECT name FROM users')
-    results = [name[0] for name in cursor.fetchall()]
+    cursor = conn.execute('''
+        SELECT 
+            U.id, 
+            U.name, 
+            U.university_id, 
+            A.name AS university_name, 
+            CASE 
+                WHEN AD.user_id IS NOT NULL THEN 1 
+                ELSE 0 
+            END AS is_admin
+        FROM 
+            universities A 
+            JOIN users U ON A.id = U.university_id
+            LEFT JOIN admins AD ON U.id = AD.user_id
+    ''')
+    
+    results = [{
+        'user_id': user[0],
+        'name': user[1],
+        'university_id': user[2],
+        'university_name': user[3],
+        'is_admin': bool(user[4])  # Convert 1 or 0 to True or False
+    } for user in cursor.fetchall()]
+    
     cursor.close()
-
     return results
+
+
 
 
 def get_universities():
