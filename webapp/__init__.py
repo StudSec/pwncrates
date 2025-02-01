@@ -40,4 +40,4 @@ else:
     app.logger.setLevel(logging.DEBUG)
 
 # Add the other routes
-from webapp import views, api, auth, template_preprocessor, database, git, mail, time_window
+from webapp import views, api, auth, template_preprocessor, database, git, mail, time_window, admin

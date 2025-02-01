@@ -15,6 +15,7 @@ class User(UserMixin):
         self.username = username
         self.university = db_info["university_name"]
         self.discord_id = db_info["discord_id"]
+        self.admin = True #db_info["admin"]
         self.authenticated = True
 
     @staticmethod
@@ -31,6 +32,10 @@ class User(UserMixin):
     @property
     def is_authenticated(self):
         return self.authenticated
+
+    @property
+    def is_admin(self):
+        return self.admin
 
     def get_user_information(self):
         pass
