@@ -207,3 +207,15 @@ form {
   margin: auto;
   
 }
+
+.danger {
+  color: red
+}
+
+.warning{
+  color: yellow
+}
+
+.success {
+  color: green
+}
