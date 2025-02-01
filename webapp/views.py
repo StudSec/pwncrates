@@ -190,9 +190,7 @@ def solves(challenge_id):
 def scoreboard():
     return render_template("scoreboard.html", users=db.get_scoreboard(), universities=db.get_scoreboard_universities())
 
-@app.route('/admin')
-def admin():
-    return render_template("admin.html", users=db.get_scoreboard(), universities=db.get_scoreboard_universities())
+
 
 
 @app.errorhandler(404)
