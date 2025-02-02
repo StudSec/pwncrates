@@ -15,7 +15,7 @@ import os
 # Admin functions
 def promote_user(user_id):
     try:
-        cursor = conn.execute("INSERT INTO admins (user_id) VALUES (?)", (user_id,))
+        cursor = conn.execute("INSERT OR IGNORE INTO admins (user_id) VALUES (?)", (user_id,))
         conn.commit()
         cursor.close()
         
@@ -38,23 +38,37 @@ def demote_user(user_id):
     except Exception as e:
         # Log the error if necessary
         print(f"Error demoting user {user_id}: {e}")
+
         return False
 
 
 def hide_user(user_id):
-    # try:
-    #     cursor = conn.execute("", (user_id,))
-    #     conn.commit()  # Commit the transaction
-    #     cursor.close()
+    try:
+        cursor = conn.execute("INSERT OR IGNORE INTO hidden_users (user_id) VALUES (?)", (user_id,))
+        conn.commit()
+        cursor.close()
         
-    #     # True if updated
-    #     return cursor.rowcount == 1
-    # except Exception as e:
-    #     # Log the error if necessary
-    #     print(f"Error hiding user {user_id}: {e}")
-    #     return False
-    pass
+        # True if updated
+        return cursor.rowcount == 1
+    except Exception as e:
+        # Log the error if necessary
+        print(f"Error promoting user {user_id}: {e}")
 
+        return False
+    
+def show_user(user_id):
+    try:
+        cursor = conn.execute("DELETE from hidden_users where user_id = ?", (user_id,))
+        conn.commit()
+        cursor.close()
+        
+        # True if updated
+        return cursor.rowcount == 1
+    except Exception as e:
+        # Log the error if necessary
+        print(f"Error promoting user {user_id}: {e}")
+
+        return False
 
 # Lookup functions
 def get_email_from_link(link_type, code):
@@ -164,11 +178,22 @@ def get_challenge_solves(challenge_id):
 
 
 def get_scoreboard():
-    cursor = conn.execute('SELECT U.id, U.name, U.university_id, A.name, IFNULL(SUM(C.points), 0) AS total_points,  '
-                          'MAX(S.solved_time) AS latest_solve_time '
-                          'FROM universities A, users U LEFT JOIN solves S ON U.id = S.user_id '
-                          'LEFT JOIN challenges C ON S.challenge_id = C.id WHERE A.id = U.university_id'
-                          ' GROUP BY U.id ORDER BY total_points DESC, latest_solve_time ASC;')
+    cursor = conn.execute('''
+        SELECT 
+            U.id, 
+            U.name, 
+            U.university_id, 
+            A.name, 
+            IFNULL(SUM(C.points), 0) AS total_points,
+            MAX(S.solved_time) AS latest_solve_time
+        FROM universities A, users U 
+        LEFT JOIN solves S ON U.id = S.user_id
+        LEFT JOIN challenges C ON S.challenge_id = C.id 
+        WHERE A.id = U.university_id
+        AND U.id NOT IN (SELECT user_id FROM hidden_users)
+        GROUP BY U.id 
+        ORDER BY total_points DESC, latest_solve_time ASC;
+    ''')
     results = [user for user in cursor.fetchall()]
     cursor.close()
 
@@ -185,11 +210,16 @@ def get_users():
             CASE 
                 WHEN AD.user_id IS NOT NULL THEN 1 
                 ELSE 0 
-            END AS is_admin
+            END AS is_admin,
+            CASE 
+                WHEN H.user_id IS NOT NULL THEN 1 
+                ELSE 0 
+            END AS is_hidden
         FROM 
             universities A 
             JOIN users U ON A.id = U.university_id
             LEFT JOIN admins AD ON U.id = AD.user_id
+            LEFT JOIN hidden_users H ON U.id = H.user_id
     ''')
     
     results = [{
@@ -197,7 +227,8 @@ def get_users():
         'name': user[1],
         'university_id': user[2],
         'university_name': user[3],
-        'is_admin': bool(user[4])  # Convert 1 or 0 to True or False
+        'is_admin': bool(user[4]),
+        'is_hidden': bool(user[5])
     } for user in cursor.fetchall()]
     
     cursor.close()
