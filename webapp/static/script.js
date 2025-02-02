@@ -1,4 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    /*
+     * Code specific to the admin page
+     */
+    if(window.location.pathname == '/admin'){
+        
+        document.getElementById("user-search").addEventListener("keyup", filterUsers);
+        
+    
+        function filterUsers() {
+            let input = document.getElementById("user-search").value.toLowerCase();
+            let rows = document.querySelectorAll(".user-row");
+    
+            rows.forEach(row => {
+                let username = row.querySelector(".username a").textContent.toLowerCase();
+                row.style.display = username.includes(input) ? "" : "none";
+            });
+        }
+    }
+
+
     /*
      * Code specific to the scoreboard page
      */

@@ -64,20 +64,5 @@
     </table>
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("user-search").addEventListener("keyup", filterUsers);
-    });
-
-    function filterUsers() {
-        let input = document.getElementById("user-search").value.toLowerCase();
-        let rows = document.querySelectorAll(".user-row");
-
-        rows.forEach(row => {
-            let username = row.querySelector(".username a").textContent.toLowerCase();
-            row.style.display = username.includes(input) ? "" : "none";
-        });
-    }
-</script>
 
 {% endblock %}
