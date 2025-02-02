@@ -58,18 +58,28 @@ def validate_user_id(user_id):
         flash("Invalid user ID. Please try again.", "danger")
         return None  # Return None if the conversion fails
 
-@admin_bp.route('/admin/hide_user/<user_id>', methods=['POST'])
+@admin_bp.route('/admin/toggle_user_visibility/<user_id>/<action>', methods=['POST'])
 @login_required
 @admin_required
-def admin_hide_user(user_id):
-    """Hide a user from the scoreboard."""
+def admin_toggle_user_visibility(user_id, action):
+    """Toggle user visibility in the scoreboard."""
     user_id = validate_user_id(user_id)
     if user_id is None:
         return redirect(url_for('admin'))
 
-    db.hide_user(user_id)  # Implement your hide functionality here
-    flash(f"User {user_id} hidden from scoreboard.", "success")
+    if action == 'hide':
+        db.hide_user(user_id)
+        message = f"User {user_id} hidden from scoreboard."
+    elif action == 'show':
+        db.show_user(user_id)
+        message = f"User {user_id} is now on the scoreboard."
+    else:
+        flash("Invalid action specified.", "error")
+        return redirect(url_for('admin'))
+
+    flash(message, "success")
     return redirect(url_for('admin'))
+
 
 @admin_bp.route('/admin/demote_user/<user_id>', methods=['POST'])
 @login_required

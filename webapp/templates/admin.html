@@ -48,8 +48,8 @@
                 <td class="university-id" university="{{ user.university_id }}">{{ user.university_name }}</td>
                 <td class="score">{{ user.points }}</td>
                 <td class="actions">
-                    <form method="POST" action="{{ url_for('admin.admin_hide_user', user_id=user.user_id) }}" class="d-inline">
-                        <button type="submit" class="btn btn-primary btn-sm">Hide</button>
+                    <form method="POST" action="{{ url_for('admin.admin_toggle_user_visibility', user_id=user.user_id, action='show' if user.is_hidden else 'hide') }}" class="d-inline">
+                        <button type="submit" class="btn btn-primary btn-sm">{{ 'Show' if user.is_hidden else 'Hide' }}</button>
                     </form>
                     <form method="POST" action="{{ url_for('admin.admin_demote_user', user_id=user.user_id) }}" class="d-inline">
                         <button type="submit" class="btn btn-danger btn-sm {% if user.is_admin == 0 %}btn-secondary disabled{% endif %}">Demote</button>
