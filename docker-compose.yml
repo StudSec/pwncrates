@@ -64,6 +64,7 @@ services:
       - ./data/ssl/key.pem:/root/ssl/key.pem:ro
       - ./data/ssl/cert.pem:/root/ssl/cert.pem:ro
     ports:
+      - "80:80"
       - "443:443"
     depends_on:
       - pwncrates
