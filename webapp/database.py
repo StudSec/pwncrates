@@ -464,6 +464,7 @@ def initialize_database():
 
 
 def update_database():
+    app.logger.info("running update function")
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='pwncrates'")
     result = cursor.fetchone()
@@ -473,10 +474,13 @@ def update_database():
         cursor.execute("SELECT version FROM pwncrates")
         database_version = str(cursor.fetchone()[0])
 
+    app.logger.info(f"Database version: {database_version}")
+
     files = [x for x in os.listdir("database/") if x.startswith("migration") and
              str(x.split("-")[1]) == database_version]
 
     while len(files) != 0:
+        app.logger.info(f"Running update script {files[0]}")
         with open(f"database/{files[0]}") as f:
             conn.executescript(f.read())
         conn.commit()
