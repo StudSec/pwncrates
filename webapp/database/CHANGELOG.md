@@ -6,3 +6,4 @@
 
 #### 1.1 -> 1.2
 - Added the `admins` table containing only one field which is the user_id referencing the `users` table. 
+- Added the `hidden_users` table containing only one field which is the user_id referencing the `users` table.

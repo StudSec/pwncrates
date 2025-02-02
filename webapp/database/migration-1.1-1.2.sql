@@ -10,5 +10,10 @@ CREATE TABLE admins (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE hidden_users (
+    user_id INTEGER PRIMARY KEY,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 -- need to remove this, just for testing purpose
 INSERT into admins values(2);
