@@ -4,7 +4,7 @@ This folder contains all files directly related to the pwncrates.
 When developing, use the following docker-compose command, this will start the application in debug mode
 without nginx.
 ```commandline
-docker-compose --profile debug up
+docker compose --profile debug up
 ```
 
 NOTE: This is an insecure configuration by design, do not expose it to external networks, by default it only

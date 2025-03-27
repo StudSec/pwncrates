@@ -7,11 +7,11 @@ A CTF framework with a focus on education.
 
 ```commandline
 ./install.sh
-docker-compose up
+docker compose up
 ```
 _Note: some docker-compose versions require the profile to be explicitly set, in this case run:_
 ```commandline
-docker-compose --profile "" up
+docker compose --profile "" up
 ```
 
 #### The longer (manual) version:
@@ -30,7 +30,7 @@ a `.git-credentials` file in `data/`. See the data paragraph for more informatio
 
 Then run pwncrates using
 ```commandline
-docker-compose up
+docker compose up
 ```
 This will start pwncrates on `http://localhost/`
 
@@ -88,9 +88,9 @@ called `backup.sql` to be in the same folder as the script.
 For development, you likely want to rapidly redeploy the docker
 instance. For that you may use the following three commands.
 ```commandline
-docker-compose down
-docker-compose build
-docker-compose --profile debug up
+docker compose down
+docker compose build
+docker compose --profile debug up
 ```
 
 You might also want to directly interact with the docker container for
