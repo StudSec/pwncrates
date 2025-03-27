@@ -6,12 +6,6 @@ Global variables are variables used by the base template, or its includes.
 from pwncrates import app
 from flask import url_for
 from flask_login import current_user
-import json
-
-
-# Read and eval config file
-with open("config.json", "r") as f:
-    config = json.loads(f.read())
 
 
 @app.after_request
@@ -23,11 +17,11 @@ def add_security_headers(resp):
     chart_url = "https://cdn.jsdelivr.net/npm/chart.js"
     graph_url = "https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"
     resp.headers['Content-Security-Policy'] = ("default-src 'none'; "
-                                               f"script-src {config['hostname'] + '/static/script.js'} "
+                                               f"script-src {app.config['pwncrates']['HOSTNAME'] + '/static/script.js'} "
                                                f"{bootstrap_js_url} "
                                                f"{chart_url} "
                                                f"{graph_url}; "
-                                               f"style-src {config['hostname'] + '/static/style.css'} "
+                                               f"style-src {app.config['pwncrates']['HOSTNAME'] + '/static/style.css'} "
                                                f"{bootstrap_css_url}; "
                                                "base-uri 'self'; "
                                                "img-src * data:; "

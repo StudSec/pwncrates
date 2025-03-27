@@ -1,5 +1,5 @@
 """"
-This file contains all functionality surrounding the git
+This file contains all functionality surrounding Git
 """
 import os.path
 
@@ -7,17 +7,12 @@ from pwncrates.helpers import *
 import pwncrates.database as db
 from pwncrates import app
 import threading
-import json
 import time
 import re
 import os
 
-# Read and eval config file
-with open("config.json", "r") as f:
-    config = json.loads(f.read())
-
-if "git_branch" in config.keys() and config["git_branch"]:
-    git_branch = config["git_branch"]
+if "GIT_BRANCH" in app.config["pwncrates"].keys() and app.config["pwncrates"]["GIT_BRANCH"]:
+    git_branch = app.config["pwncrates"]["GIT_BRANCH"]
 else:
     git_branch = "main"
 

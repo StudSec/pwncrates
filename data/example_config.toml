@@ -14,17 +14,17 @@ SMTP_USER = ""
 SMTP_PASS = ""
 
 [oauth]
-oauth_client_id = ""
-oauth_client_secret = ""
-oauth_redirect_uri = ""
+OAUTH_CLIENT_ID = ""
+OAUTH_CLIENT_SECRET = ""
+OAUTH_REDIRECT_URI = ""
 
 [pwncrates]
-hostname = "127.0.0.1"
-secret_key = "6f13e7b2f530d1a24e328c51c373cfc679aa3f4c45096fb6"
-webhook_url = ""
-git_branch = ""
+HOSTNAME = "127.0.0.1"
+SECRET_KEY = "6f13e7b2f530d1a24e328c51c373cfc679aa3f4c45096fb6"
+WEBHOOK_URL = ""
+GIT_BRANCH = ""
 
 [instancer]
-instancer_url = ""
-instancer_username = ""
-instancer_password = ""
+INSTANCER_URL = ""
+INSTANCER_USERNAME = ""
+INSTANCER_PASSWORD = ""

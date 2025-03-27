@@ -1,6 +1,6 @@
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask
-import json
+import tomllib
 import logging
 import os
 
@@ -8,16 +8,10 @@ import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
-with open("config.json") as f:
-    config = json.load(f)
-
-
 app = Flask(__name__)
-app.secret_key = config["secret_key"]
-app.config["INSTANCER_URL"] = config.get("instancer_url", "")
+app.config.from_file("config.toml", load=tomllib.load, text=False)
+app.secret_key = app.config["pwncrates"]["SECRET_KEY"]
 app.config['SESSION_COOKIE_SECURE'] = True
-app.config['START_TIME'] = int(config.get("start_time", 0))
-app.config['END_TIME'] = int(config.get("end_time", 0))
 # We have to put this at lax instead of secure to support Discord OAuth
 # Should we drop support for the "state" parameter in the OAuth flow this can go back on strict
 # However, as it stands we set the state parameter, navigate to Discord and navigate back to check if the

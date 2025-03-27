@@ -11,7 +11,7 @@ services:
       - ./data/.git-credentials:/root/.git-credentials:ro
       - ./pwncrates/templates/:/pwncrates/templates:ro
       - ./pwncrates/static/:/pwncrates/static
-      - ./data/config.json:/pwncrates/config.json:ro
+      - ./data/config.toml:/pwncrates/config.toml
     profiles:
       - ''  # Default if not profile is specified.
 
@@ -29,7 +29,7 @@ services:
       - ./data/.git-credentials:/root/.git-credentials:ro
       - ./pwncrates/templates/:/pwncrates/templates:ro
       - ./pwncrates/static/:/pwncrates/static
-      - ./data/config.json:/pwncrates/config.json:ro
+      - ./data/config.toml:/pwncrates/config.toml
     profiles:
       - 'debug' # Can be specified with --profile debug
     ports:
@@ -50,7 +50,7 @@ services:
       - ./data/.git-credentials:/root/.git-credentials:ro
       - ./pwncrates/templates/:/pwncrates/templates:ro
       - ./pwncrates/static/:/pwncrates/static
-      - ./data/config.json:/pwncrates/config.json:ro
+      - ./data/config.toml:/pwncrates/config.toml
       - ./tests/:/tests
     profiles:
       - 'test' # Can be specified with --profile test

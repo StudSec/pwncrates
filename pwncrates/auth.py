@@ -4,7 +4,6 @@ This file contains all routes and code relevant to authentication.
 This includes authentication to the API endpoint, this allows us to easily modify authentication settings site-wide.
 """
 import os
-import sys
 import time
 
 from flask_login import LoginManager, login_user, login_required, logout_user
@@ -15,7 +14,6 @@ import pwncrates.database as db
 from pwncrates import app
 import requests
 from . import mail
-import json
 import re
 from functools import wraps
 
@@ -27,13 +25,9 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
-# Read and eval config file
-with open("config.json", "r") as f:
-    config = json.loads(f.read())
+REGISTRATION_ENABLED = app.config['runtime'].get("registration_enabled", True)
 
-REGISTRATION_ENABLED = config.get("registration_enabled", True)
-
-CHALLENGES_PROTECTED = bool(config.get("challenges_behind_login", False))
+CHALLENGES_PROTECTED = bool(app.config['runtime'].get("challenges_behind_login", False))
 # Challenges can optionally only be available for authenticated users
 def challenge_protector(f):
     @wraps(f)
@@ -78,10 +72,10 @@ def login():
         except KeyError:
             pass
         flash('Invalid credentials')
-        return render_template('login.html', discord_oauth_enabled=len(config["oauth_client_secret"]))
+        return render_template('login.html', discord_oauth_enabled=len(app.config["oauth"]["OAUTH_CLIENT_SECRET"]))
 
     else:
-        return render_template('login.html', discord_oauth_enabled=len(config["oauth_client_secret"]))
+        return render_template('login.html', discord_oauth_enabled=len(app.config["oauth"]["OAUTH_CLIENT_SECRET"]))
 
 
 # Register page
@@ -103,7 +97,7 @@ def register():
                 return render_template('register.html')
 
             # If no email server is set, we don't require a confirmation email.
-            if config["SMTP_HOST"]:
+            if app.config["mailer"]["SMTP_HOST"]:
                 code = os.urandom(16).hex()
                 db.insert_link(email, "confirmation", code)
                 db.update_or_create_user(None, {
@@ -112,7 +106,7 @@ def register():
                     "email": email
                 })
 
-                if mail.confirm_email(email, f"https://{config['hostname']}{url_for('confirm_email')}?code={code}"):
+                if mail.confirm_email(email, f"https://{app.config['pwncrates']['HOSTNAME']}{url_for('confirm_email')}?code={code}"):
                     flash('Failed to send confirmation email')
                     return render_template('register.html')
                 message = "Registered, confirmation email sent."
@@ -164,7 +158,7 @@ def password_reset():
                 code = os.urandom(16).hex()
                 db.insert_link(email, "reset", code)
 
-                mail.forgot_password(email, f"https://{config['hostname']}{url_for('password_reset')}?code={code}")
+                mail.forgot_password(email, f"https://{app.config['pwncrates']['HOSTNAME']}{url_for('password_reset')}?code={code}")
 
                 flash("Reset link sent")
                 return redirect(url_for('login'))
@@ -203,11 +197,11 @@ def logout():
 
 @app.route('/discord/oauth')
 def discord_oauth():
-    if not config["oauth_client_secret"]:
+    if not app.config["oauth"]["OAUTH_CLIENT_SECRET"]:
         return redirect(url_for(login))
     base_url = "https://discord.com/oauth2/authorize"
-    client_id = config["oauth_client_id"]
-    redirect_uri = parse.quote_plus(config["oauth_redirect_uri"])
+    client_id = app.config["oauth"]["OAUTH_CLIENT_ID"]
+    redirect_uri = parse.quote_plus(app.config["oauth"]["OAUTH_REDIRECT_URI"])
     scope = "identify%20email"
     session["discord_state"] = os.urandom(16).hex()
     return redirect(f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope={scope}&"
@@ -230,11 +224,11 @@ def discord_oauth_callback():
         return redirect(url_for("login"))
 
     payload = {
-        "client_id": config["oauth_client_id"],
-        "client_secret": config["oauth_client_secret"],
+        "client_id": app.config["oauth"]["OAUTH_CLIENT_ID"],
+        "client_secret": app.config["oauth"]["OAUTH_CLIENT_SECRET"],
         "grant_type": "authorization_code",
         "code": code,
-        "redirect_uri": config["oauth_redirect_uri"],
+        "redirect_uri": app.config["oauth"]["OAUTH_REDIRECT_URI"],
         "scope": "identify%20email"
     }
 

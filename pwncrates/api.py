@@ -3,8 +3,6 @@ This file contains all API routes.
 
 An API route is used either by external applications (for example the StudBot), or client side javascript.
 """
-import sys
-
 from flask_login import login_required, current_user
 from requests.auth import HTTPBasicAuth
 import pwncrates.database as db
@@ -16,11 +14,6 @@ from base64 import b16encode
 from pwncrates.time_window import ctf_has_started
 import requests
 import json
-# General API file
-
-# Read and eval config file
-with open("config.json", "r") as f:
-    config = json.loads(f.read())
 
 
 @app.route('/api/challenges/categories')
@@ -71,9 +64,9 @@ def api_start_challenge(challenge_id):
     if docker_name is None:
         return {"error": "challenge has no service"}
     
-    instancer_url = app.config["INSTANCER_URL"]
-    instancer_username = config.get("instancer_username", "")
-    instancer_password = config.get("instancer_password", "")
+    instancer_url = app.config["instancer"]["INSTANCER_URL"]
+    instancer_username = app.config["instancer"].get("INSTANCER_USERNAME", "")
+    instancer_password = app.config["instancer"].get("INSTANCER_PASSWORD", "")
     if instancer_url == "":
         return {"error": "instancer_url not defined"}
 
@@ -93,10 +86,10 @@ def api_stop_challenge(challenge_id):
     docker_name = db.get_docker_service_name(challenge_id)
     if docker_name is None:
         return {"error": "challenge has no service"}
-    
-    instancer_url = app.config["INSTANCER_URL"]
-    instancer_username = config.get("instancer_username", "")
-    instancer_password = config.get("instancer_password", "")
+
+    instancer_url = app.config["instancer"]["INSTANCER_URL"]
+    instancer_username = app.config["instancer"].get("INSTANCER_USERNAME", "")
+    instancer_password = app.config["instancer"].get("INSTANCER_PASSWORD", "")
     if instancer_url == "":
         return {"error": "instancer_url not defined"}
 
@@ -115,10 +108,10 @@ def api_status_challenge(challenge_id):
     docker_name = db.get_docker_service_name(challenge_id)
     if docker_name is None:
         return {"error": "challenge has no service"}
-    
-    instancer_url = app.config["INSTANCER_URL"]
-    instancer_username = config.get("instancer_username", "")
-    instancer_password = config.get("instancer_password", "")
+
+    instancer_url = app.config["instancer"]["INSTANCER_URL"]
+    instancer_username = app.config["instancer"].get("INSTANCER_USERNAME", "")
+    instancer_password = app.config["instancer"].get("INSTANCER_PASSWORD", "")
     if instancer_url == "":
         return {"error": "instancer_url not defined"}
 
@@ -148,8 +141,9 @@ def api_submit_challenge(challenge_id):
             # https://discord.com/developers/docs/resources/channel#message-object-message-flags
             "flags": 1 << 2 | 1 << 12,
         }
-        if config["webhook_url"].startswith("https://") or config["webhook_url"].startswith("http://"):
-            requests.post(config["webhook_url"], json=data)
+        if (app.config["pwncrates"]["WEBHOOK_URL"].startswith("https://") or
+                app.config["pwncrates"]["WEBHOOK_URL"]["webhook_url"].startswith("http://")):
+            requests.post(app.config["pwncrates"]["WEBHOOK_URL"]["webhook_url"], json=data)
 
         return Response(json.dumps({"status": status}),
                         mimetype="application/json")

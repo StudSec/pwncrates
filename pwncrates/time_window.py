@@ -1,14 +1,11 @@
 from time import time
-from json import load
+from pwncrates import app
 from functools import wraps
 from flask import redirect, url_for
 
-with open("config.json") as f:
-    config = load(f)
-
-START_TIME = int(config.get("start_time", 0))
-END_TIME = int(config.get("end_time", 0))
-TIMEZONE = int(config.get("utc_offset", 2))
+START_TIME = int(app.config["runtime"].get("start_time", 0))
+END_TIME = int(app.config["runtime"].get("end_time", 0))
+TIMEZONE = int(app.config["runtime"].get("utc_offset", 2))
 
 TIME_WINDOW_DISABLED = START_TIME == 0 and END_TIME == 0
 
