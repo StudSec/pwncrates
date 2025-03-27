@@ -27,7 +27,11 @@
                 {% for user_id, name, university_id, university_name, points, _ in users %}
                 <tr>
                     <td class="rank">{{loop.index}}</td>
+                    {% if current_user.id|int == user_id|int %}
+                    <td class="team-name"><a href="{{url_for('profile')}}">{{name | truncate(30)}}</a></td>
+                    {% else %}
                     <td class="team-name"><a href="{{url_for('public_profile', user_id=user_id)}}">{{name | truncate(30)}}</a></td>
+                    {% endif %}
                     <td class="university-id" university="{{university_id}}">{{university_name}}</td>
                     <td class="score">{{points}}</td>
                 </tr>
