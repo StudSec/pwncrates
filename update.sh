@@ -16,6 +16,6 @@ git checkout release
 git pull origin release
 
 # Execute the deployment command
-docker-compose down --remove-orphans
-docker-compose --profile "" build
-docker-compose --profile "" up -d
+docker compose down --remove-orphans
+docker compose --profile "" build
+docker compose --profile "" up -d
