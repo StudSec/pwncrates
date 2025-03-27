@@ -3,9 +3,9 @@ This file contains all functionality surrounding the git
 """
 import os.path
 
-from webapp.helpers import *
-import webapp.database as db
-from webapp import app
+from pwncrates.helpers import *
+import pwncrates.database as db
+from pwncrates import app
 import threading
 import json
 import time

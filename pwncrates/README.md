@@ -1,5 +1,5 @@
 # Webapp
-This folder contains all files directly related to the webapp.
+This folder contains all files directly related to the pwncrates.
 
 When developing, use the following docker-compose command, this will start the application in debug mode
 without nginx.
@@ -14,7 +14,7 @@ From here you can access the application at http://127.0.0.1/ as normal.
 
 ## Development
 #### Flask
-The webapp is written in Flask, to add new routes you can define a new function
+The pwncrates is written in Flask, to add new routes you can define a new function
 to `views.py` as follows:
 ```python
 @app.route('/')
@@ -25,8 +25,9 @@ def home():
 If you'd like to group several new routes together you can create a new file
 which contains the following import (note: the file must be in the same directory
 as `main.py`)
+
 ```python
-from webapp import app
+from pwncrates import app
 
 # Same function defenition as above
 ```
@@ -34,7 +35,7 @@ from webapp import app
 Don't forget to add the file to the import statement in `__init__.py`
 
 #### Jinja2
-The webapp uses Jinja2 for templating, this allows us to easily extend a
+The pwncrates uses Jinja2 for templating, this allows us to easily extend a
 webpage. For example, we can have a `base.html` which we can then use to
 make `home.html`, `scoreboard.html`, etc. For more information see:
 
@@ -59,7 +60,7 @@ def inject_globals():
 
 
 #### Docker
-The webapp runs within docker, as part of this all files within this directory
+The pwncrates runs within docker, as part of this all files within this directory
 are added within the container. If you'd like to avoid that (for security
 optimizations or whatever) you can add the file path to `.dockerignore`.
 

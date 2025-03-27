@@ -1,35 +1,35 @@
 services:
   pwncrates:
-    build: ./webapp/
+    build: ./pwncrates/
     environment:
       - FLASK_APP=main
     volumes:
-      - ./data/pages:/webapp/pages:ro
-      - ./data/writeups:/webapp/writeups
-      - ./data/db:/webapp/db
+      - ./data/pages:/pwncrates/pages:ro
+      - ./data/writeups:/pwncrates/writeups
+      - ./data/db:/pwncrates/db
       - ./data/challenges/:/tmp/challenges:ro
       - ./data/.git-credentials:/root/.git-credentials:ro
-      - ./webapp/templates/:/webapp/templates:ro
-      - ./webapp/static/:/webapp/static
-      - ./data/config.json:/webapp/config.json:ro
+      - ./pwncrates/templates/:/pwncrates/templates:ro
+      - ./pwncrates/static/:/pwncrates/static
+      - ./data/config.json:/pwncrates/config.json:ro
     profiles:
       - ''  # Default if not profile is specified.
 
   pwncrates-dev:
     build:
-      context: ./webapp/
+      context: ./pwncrates/
       dockerfile: Dockerfile.dev
     environment:
       - FLASK_APP=main
     volumes:
-      - ./data/pages:/webapp/pages:ro
-      - ./data/writeups:/webapp/writeups
-      - ./data/db:/webapp/db
+      - ./data/pages:/pwncrates/pages:ro
+      - ./data/writeups:/pwncrates/writeups
+      - ./data/db:/pwncrates/db
       - ./data/challenges/:/tmp/challenges:ro
       - ./data/.git-credentials:/root/.git-credentials:ro
-      - ./webapp/templates/:/webapp/templates:ro
-      - ./webapp/static/:/webapp/static
-      - ./data/config.json:/webapp/config.json:ro
+      - ./pwncrates/templates/:/pwncrates/templates:ro
+      - ./pwncrates/static/:/pwncrates/static
+      - ./data/config.json:/pwncrates/config.json:ro
     profiles:
       - 'debug' # Can be specified with --profile debug
     ports:
@@ -37,20 +37,20 @@ services:
 
   pwncrates-test:
     build:
-      context: ./webapp/
+      context: ./pwncrates/
       dockerfile: Dockerfile.test
     environment:
       - FLASK_APP=main
     volumes:
-      - ./data/pages:/webapp/pages:ro
-      - ./data/writeups:/webapp/writeups
+      - ./data/pages:/pwncrates/pages:ro
+      - ./data/writeups:/pwncrates/writeups
 # We don't use an existing database for the tests
-#      - ./data/db:/webapp/db
+#      - ./data/db:/pwncrates/db
       - ./data/challenges/:/tmp/challenges:ro
       - ./data/.git-credentials:/root/.git-credentials:ro
-      - ./webapp/templates/:/webapp/templates:ro
-      - ./webapp/static/:/webapp/static
-      - ./data/config.json:/webapp/config.json:ro
+      - ./pwncrates/templates/:/pwncrates/templates:ro
+      - ./pwncrates/static/:/pwncrates/static
+      - ./data/config.json:/pwncrates/config.json:ro
       - ./tests/:/tests
     profiles:
       - 'test' # Can be specified with --profile test

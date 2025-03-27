@@ -7,13 +7,13 @@ import sys
 
 from flask_login import login_required, current_user
 from requests.auth import HTTPBasicAuth
-import webapp.database as db
-from webapp import app
-from webapp.auth import challenge_protector
+import pwncrates.database as db
+from pwncrates import app
+from pwncrates.auth import challenge_protector
 from flask import request
 from flask import Response
 from base64 import b16encode
-from webapp.time_window import ctf_has_started
+from pwncrates.time_window import ctf_has_started
 import requests
 import json
 # General API file

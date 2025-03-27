@@ -4,8 +4,8 @@ This file serves as the primary interface between the database and the rest of t
 Sticking to this convention allows us to easily modify or switch the database without performing shotgun surgery.
 """
 from datetime import datetime
-from webapp.helpers import *
-from webapp import app
+from pwncrates.helpers import *
+from pwncrates import app
 import cmarkgfm
 import sqlite3
 import time
@@ -554,8 +554,8 @@ def remove_link(link_type, code):
         return ""
 
 
-os.system("mkdir /webapp/db")
-os.system("touch /webapp/db/pwncrates.db")
+os.system("mkdir /pwncrates/db")
+os.system("touch /pwncrates/db/pwncrates.db")
 
 if app.debug:
     app.logger.warning("App is running in debug mode, SQLite3 thread checks turned off")

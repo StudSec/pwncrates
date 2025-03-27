@@ -17,12 +17,12 @@ from flask import (
 )
 from flask_login import login_required, current_user
 
-import webapp.database as db
-from webapp import app
-from webapp.auth import challenge_protector
-from webapp.helpers import render_markdown
-from webapp.models import User
-from webapp.time_window import ctf_is_now, ctf_has_started, START_TIME, TIMEZONE
+import pwncrates.database as db
+from pwncrates import app
+from pwncrates.auth import challenge_protector
+from pwncrates.helpers import render_markdown
+from pwncrates.models import User
+from pwncrates.time_window import ctf_is_now, ctf_has_started, START_TIME, TIMEZONE
 
 # Create Blueprint
 admin_bp = Blueprint('admin', __name__)

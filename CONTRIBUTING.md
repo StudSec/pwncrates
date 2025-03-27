@@ -5,7 +5,7 @@ https://www.youtube.com/watch?v=8lGpZkjnkt4
 
 #### Development
 A good starting point for development can be found in `/README.md`, under the development subsection. 
-`/webapp/README.md` contains more detailed information about developing the webapp.
+`/pwncrates/README.md` contains more detailed information about developing the pwncrates.
 
 When developing, try to maintain a clean code style and limit the commits to one per 'feature', try to avoid a single
 commit that implements 2 new features, fixes three bugs and refactors half the code base. This can make it hard to keep

@@ -2,13 +2,13 @@
 *.db
 data/challenges/
 data/.git-credentials
-webapp/static/handouts/*.zip
+pwncrates/static/handouts/*.zip
 data/ssl/*.pem
 data/writeups/*
 data/config.json
 backup.sql
 
-webapp/static/banners/*.png
+pwncrates/static/banners/*.png
 
 Challenges-Examples/
 

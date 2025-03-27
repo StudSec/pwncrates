@@ -3,15 +3,15 @@ This file handles all non-API and non-auth routes
 """
 import os
 
-from webapp import app
+from pwncrates import app
 from flask import render_template, request, redirect, url_for
 from flask_login import current_user, login_required
-import webapp.database as db
-from webapp.helpers import render_markdown
-from webapp.models import User
-from webapp.time_window import ctf_is_now, ctf_has_started, START_TIME, TIMEZONE
+import pwncrates.database as db
+from pwncrates.helpers import render_markdown
+from pwncrates.models import User
+from pwncrates.time_window import ctf_is_now, ctf_has_started, START_TIME, TIMEZONE
 from datetime import datetime, timezone, timedelta
-from webapp.auth import challenge_protector
+from pwncrates.auth import challenge_protector
 import random
 
 

@@ -1,6 +1,6 @@
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from webapp import app
+from pwncrates import app
 import smtplib
 import json
 

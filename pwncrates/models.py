@@ -5,7 +5,7 @@ import sys
 
 from flask_login import UserMixin
 
-import webapp.database as db
+import pwncrates.database as db
 
 
 class User(UserMixin):

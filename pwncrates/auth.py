@@ -10,9 +10,9 @@ import time
 from flask_login import LoginManager, login_user, login_required, logout_user
 from flask import g, request, render_template, redirect, url_for, flash, session
 from flask_login import current_user
-from webapp.models import User
-import webapp.database as db
-from webapp import app
+from pwncrates.models import User
+import pwncrates.database as db
+from pwncrates import app
 import requests
 from . import mail
 import json

@@ -3,7 +3,7 @@ This file handles the "global" variables for the Jinja2 templates.
 
 Global variables are variables used by the base template, or its includes.
 """
-from webapp import app
+from pwncrates import app
 from flask import url_for
 from flask_login import current_user
 import json

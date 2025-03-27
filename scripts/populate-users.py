@@ -25,7 +25,7 @@ def register_user(user_name, password, email):
     return
 
 
-with open('../webapp/database/init.sql', 'r') as f:
+with open('../pwncrates/database/init.sql', 'r') as f:
     sql_code = f.read()
 
 conn = sqlite3.connect('../data/db/pwncrates.db')

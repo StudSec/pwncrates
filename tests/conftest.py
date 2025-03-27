@@ -3,10 +3,10 @@ Pytest setup as described in https://flask.palletsprojects.com/en/3.0.x/testing/
 """
 import os
 # Ensure tests are run against a clean database
-os.system('mv /webapp/db/pwncrates.db /tmp/pwncrates.db')
+os.system('mv /pwncrates/db/pwncrates.db /tmp/pwncrates.db')
 
 # Bit ugly, we don't have an 'app factory'. Instead, creating only a single Flask application. So instead we pretend.
-from webapp import app as create_app
+from pwncrates import app as create_app
 import pytest
 
 
