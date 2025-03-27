@@ -5,8 +5,11 @@ data/.git-credentials
 pwncrates/static/handouts/*.zip
 data/ssl/*.pem
 data/writeups/*
-data/config.json
+data/config.toml
 backup.sql
+
+# No longer user, but still ignored for legacy reasons
+data/config.json
 
 pwncrates/static/banners/*.png
 

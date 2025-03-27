@@ -1,0 +1,30 @@
+# Settings that can be changed at runtime, these are stored in the database
+[runtime]
+registration_enabled = ""
+start_time = 0
+end_time = 0
+utc_offset = 2
+challenges_behind_login = 0
+
+# Static settings, a restart is required to change these settings
+[mailer]
+SMTP_HOST = ""
+SMTP_PORT = 587
+SMTP_USER = ""
+SMTP_PASS = ""
+
+[oauth]
+oauth_client_id = ""
+oauth_client_secret = ""
+oauth_redirect_uri = ""
+
+[pwncrates]
+hostname = "127.0.0.1"
+secret_key = "6f13e7b2f530d1a24e328c51c373cfc679aa3f4c45096fb6"
+webhook_url = ""
+git_branch = ""
+
+[instancer]
+instancer_url = ""
+instancer_username = ""
+instancer_password = ""
