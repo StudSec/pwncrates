@@ -36,33 +36,43 @@ This will start pwncrates on `http://localhost/`
 
 `update.sh` is also included, which is a simple way to check for remote changes and redeploy if needed.
 
-If you want to have email and oauth functionality you need to create and configure a file in `data/config.json`.
+If you want to have email and oauth functionality you need to create and configure a file in `data/config.toml`.
 The file needs to be structured as follows:
-```json
-{
-    "hostname": "",
-    "oauth_client_id": "",
-    "oauth_client_secret": "",
-    "oauth_redirect_uri": "",
-    "SMTP_HOST": "",
-    "SMTP_PORT": 587,
-    "SMTP_USER": "",
-    "SMTP_PASS": "",
-    "webhook_url": "",
-    "secret_key": "...",
-    "registration_enabled": 1,
-    "instancer_url": "...",
-    "instancer_username": "...",
-    "instancer_password": "...",
-    "start_time": 0,
-    "end_time": 0,
-    "utc_offset": 2,
-    "challenges_behind_login": 0
-}
+```toml
+# Settings that can be changed at runtime, these are stored in the database
+[runtime]
+registration_enabled = ""
+start_time = 0
+end_time = 0
+utc_offset = 2
+challenges_behind_login = 0
+
+# Static settings, a restart is required to change these settings
+[mailer]
+SMTP_HOST = ""
+SMTP_PORT = 587
+SMTP_USER = ""
+SMTP_PASS = ""
+
+[oauth]
+OAUTH_CLIENT_ID = ""
+OAUTH_CLIENT_SECRET = ""
+OAUTH_REDIRECT_URI = ""
+
+[pwncrates]
+HOSTNAME = "127.0.0.1"
+SECRET_KEY = ""
+WEBHOOK_URL = ""
+GIT_BRANCH = ""
+
+[instancer]
+INSTANCER_URL = ""
+INSTANCER_USERNAME = ""
+INSTANCER_PASSWORD = ""
 ```
 
-The file will need to exist with the above structure regardless. Currently, there is no support to disabled oauth & email
-verification. However, the file will accept empty/ dummy values (but will of course not work).
+All fields must be present regardless of usage, you can disable aspects such as oauth or the instancer by providing
+an empty value.
 
 The `hostname` field should contain the servers ip address/dns name, it is used to generate links for password 
 resets/account verifications and, importantly, the CSP. If the frontend is not working this is likely the issue.
@@ -108,7 +118,7 @@ pages/contributing.md
 pages/rules.md
 writeups/
 .git-credentials
-config.json
+config.toml
 ```
 
 The .git-credentials file should contain git credentials. The format of
@@ -121,54 +131,4 @@ https://git-scm.com/docs/git-credential-store
 
 #### Challenges
 Challenges should contain a git repository named `Challenges` which contains
-the CTF challenges. This repository should contain the following, see https://github.com/StudSec/Challenges-Examples for
-an example.
-```commandline
-.
-| - challenge_category/
-|   | - challenge_name
-|   |   | - README.md
-|   |   \ - Handout/
-|   |       \ - File
-|   | - other_challenge
-|   |        \ - README.md
-|   | - Banner.png
-|   \ - README.md
-\ - README.md    
-```
-The README's are broken down as follows
-```md
-## Master README
-This contains links to all challenges, it acts as an index to the repository.
-
-## Category README
-This contains a description of the category, in addition to all the subcategories (and their descriptions)
-
-## Challenge README
-This contains the challenge description and a table containing connection info, flag, point count, etc
-```
-The Handout is optional, if present all files within the folder will be zipped and this zip will be provided as
-a challenge handout.
-
-The Banner.png contains the banner for each category, if this is not present a fallback image provider will be used.
-
-The challenge README's are structured as follows:
-```md
-## Challenge Name (for example fuzzy lobster)
-This part contains an unofficial description. It won't be displayed to the players.
-
-## Description
-Example description
-
-## Challenge information
-| Difficulty            | Easy                    |
-|-----------------------|-------------------------|
-| points                | 25                      |
-| subcategory           | Intro                   |
-| flag                  | CTF{Example_Flag}       |
-| url                   | challs.example.com:7100 |
-| case_insensitive      | True                    |
-```
-
-In this the final two table entries are optional, when present `case_insensitive` will verify flags
-without regarding the casing (Eg `Hi == hi`). 
+the CTF challenges. For more details see https://github.com/StudSec/Challenges-Examples 
