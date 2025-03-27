@@ -9,7 +9,11 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
 app = Flask(__name__)
-app.config.from_file("config.toml", load=tomllib.load, text=False)
+with open("config.toml", "rb") as f:
+    config_dict = tomllib.load(f)
+    for key in config_dict:
+        app.config[key] = config_dict[key]
+
 app.secret_key = app.config["pwncrates"]["SECRET_KEY"]
 app.config['SESSION_COOKIE_SECURE'] = True
 # We have to put this at lax instead of secure to support Discord OAuth
