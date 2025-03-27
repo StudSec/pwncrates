@@ -235,8 +235,6 @@ def get_users():
     return results
 
 
-
-
 def get_universities():
     cursor = conn.execute('SELECT id, name FROM universities')
     results = [university_id for university_id in cursor.fetchall()]
@@ -273,7 +271,6 @@ def get_categories():
 
     return ret
 
-
 def get_writeups(challenge_id):
     cursor = conn.execute('SELECT U.name, U.id FROM writeups AS W, users AS U '
                           'WHERE W.challenge_id = ? AND W.user_id = U.id;', (challenge_id,))
@@ -309,19 +306,6 @@ def get_challenge_id(challenge_name):
     return challenge_id
 
 
-def get_writeup_file(challenge_id, user_id):
-    cursor = conn.execute('SELECT file_name FROM writeups WHERE challenge_id = ? AND user_id = ?;',
-                          (challenge_id, user_id))
-
-    ret = cursor.fetchone()
-    cursor.close()
-
-    if ret and len(ret) != 0:
-        return ret[0]
-    else:
-        return None
-
-
 def is_user_admin(user_id):
     cursor = conn.execute(
         'SELECT user_id FROM admins WHERE user_id = ? LIMIT 1', (user_id,))
@@ -334,78 +318,44 @@ def is_user_admin(user_id):
     return True  # User is an admin
 
 # User functions
-def get_user(user_id=None, email=None):
+def get_user(user_id=None, email=None, discord_id=None):
+    if not any([user_id, email, discord_id]):
+        return ""
+
+    query = (
+        "SELECT U.id, U.email, U.name, U.university_id, A.name, U.discord_id, U.password "
+        "FROM users U LEFT JOIN universities A ON U.university_id = A.id "
+    )
+
+    params = []
     if user_id:
-        cursor = conn.execute(
-            'SELECT U.email, U.name, U.university_id, A.name, U.discord_id, U.password '
-            'FROM users U LEFT JOIN universities A ON U.university_id = A.id '
-            'WHERE U.id = ? LIMIT 1;', (user_id,))
-        results = [
-            {
-                "id": user_id,
-                "email": user_info[0],
-                "username": user_info[1],
-                "university_id": user_info[2],
-                "university_name": user_info[3],
-                "discord_id": user_info[4],
-                "password": user_info[5],
-                "admin": is_user_admin(user_id)
-            } for user_info in cursor.fetchall()
-        ]
-        cursor.close()
-
-        if len(results) == 0:
-            return ""
-
-        return results[0]
+        query += "WHERE U.id = ? "
+        params.append(user_id)
     if email:
-        cursor = conn.execute(
-            'SELECT U.id, U.name, U.university_id, A.name, U.discord_id, U.password '
-            'FROM users U LEFT JOIN universities A ON U.university_id = A.id '
-            'WHERE U.email = ? LIMIT 1;', (email,))
-        results = [
-            {
-                "id": user_info[0],
-                "email": email,
-                "username": user_info[1],
-                "university_id": user_info[2],
-                "university_name": user_info[3],
-                "discord_id": user_info[4],
-                "password": user_info[5],
-                "admin": is_user_admin(user_id)
-            } for user_info in cursor.fetchall()
-        ]
-        cursor.close()
-
-        if len(results) == 0:
-            return ""
-
-        return results[0]
-    return ""
-
-
-
-def get_user_information(user_id):
-    cursor = conn.execute(
-        'SELECT U.name FROM universities U, users A WHERE A.id = ? AND A.university_id = U.id LIMIT 1', (user_id,))
-    results = [user_id[0] for user_id in cursor.fetchall()]
+        query += "WHERE U.email = ? "
+        params.append(email)
+    if discord_id:
+        query += "WHERE U.discord_id = ?"
+        params.append(discord_id)
+    query += "LIMIT 1;"
+    
+    cursor = conn.execute(query, params)
+    user_info = cursor.fetchone()
     cursor.close()
 
-    if len(results) == 0:
-        return ""
+    if not user_info:
+        return {}
 
-    return results[0]
-
-
-def get_email_from_discord_id(discord_id):
-    cursor = conn.execute('SELECT email FROM users WHERE discord_id = ? LIMIT 1', (discord_id,))
-    results = [user_info for user_info in cursor.fetchall()]
-    cursor.close()
-
-    if len(results) == 0:
-        return ""
-
-    return results[0]
+    return {
+        "id": user_info[0],
+        "email": user_info[1],
+        "username": user_info[2],
+        "university_id": user_info[3],
+        "university_name": user_info[4],
+        "discord_id": user_info[5],
+        "password": user_info[6],
+        "admin": is_user_admin(user_info[0])
+    }
 
 
 def get_docker_service_name(challenge_id):
@@ -418,16 +368,31 @@ def get_docker_service_name(challenge_id):
 
 
 # Actions
-def register_user(user_name, password, email):
-    cursor = conn.execute('INSERT INTO users (name, password, email) VALUES (?, ?, ?)',
-                          (user_name, password, email))
-    conn.commit()
-    cursor.close()
-    return
+def update_or_create_user(user_id, user_data=None):
+    params = []
 
+    if not user_id and all([
+        user_data.get("username", None),
+        user_data.get("password", None),
+        user_data.get("email", None)
+    ]):
+        cursor = conn.execute('INSERT INTO users (name, password, email) VALUES (?, ?, ?)',
+                              (user_data["username"], user_data["password"], user_data["email"]))
+        conn.commit()
+        cursor.close()
+        user_id = get_user(email=user_data["email"])["id"]
 
-def change_user_password(email, password):
-    cursor = conn.execute('UPDATE users SET password = ? WHERE email = ?', (password, email))
+    elif user_data.get("password", None):
+        params.append(("password = ? ", user_data["password"]))
+
+    if user_data.get("discord_id", None):
+        params.append(("discord_id = ? ", user_data["discord_id"]))
+
+    if user_data.get("university_id", None):
+        params.append(("university_id = ? ", user_data["university_id"]))
+
+    cursor = conn.execute("UPDATE users SET " + ",".join([str(x[0]) for x in params]) + "WHERE id = ?",
+                          [x[1] for x in params] + [user_id])
     conn.commit()
     cursor.close()
     return
@@ -472,18 +437,6 @@ def submit_flag(challenge_id, flag, user_id):
     cursor.close()
 
     return ret
-
-
-def update_discord_id(discord_id, email):
-    conn.execute("UPDATE users SET discord_id = ? WHERE email = ?", (discord_id, email))
-    conn.commit()
-    return
-
-
-def update_user_university(user_id, university_id):
-    conn.execute("UPDATE users SET university_id = ? WHERE id = ?", (university_id, user_id))
-    conn.commit()
-    return
 
 
 def initialize_database():

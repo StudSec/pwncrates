@@ -164,7 +164,7 @@ def api_update_profile():
         university_id = int(request.form["university"])
         if len([university for university in db.get_universities() if university[0] == university_id]) == 0:
             return Response(json.dumps({"Error": "Invalid university id"}), mimetype="application/json")
-        db.update_user_university(current_user.id, request.form["university"])
+        db.update_or_create_user(current_user.id, {"university_id": request.form["university"]})
         return Response(json.dumps({"Status": "OK"}), mimetype="application/json")
     except KeyError:
         return Response(json.dumps({"Error": "Missing parameters"}), mimetype="application/json")

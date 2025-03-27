@@ -34,7 +34,7 @@ with open("config.json", "r") as f:
 REGISTRATION_ENABLED = config.get("registration_enabled", True)
 
 CHALLENGES_PROTECTED = bool(config.get("challenges_behind_login", False))
-# Challenges can optionally only be available for logged in users
+# Challenges can optionally only be available for authenticated users
 def challenge_protector(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -106,19 +106,29 @@ def register():
             if config["SMTP_HOST"]:
                 code = os.urandom(16).hex()
                 db.insert_link(email, "confirmation", code)
-                db.register_user(username, bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii'), email)
+                db.update_or_create_user(None, {
+                    "username": username,
+                    "password": bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii'),
+                    "email": email
+                })
 
                 if mail.confirm_email(email, f"https://{config['hostname']}{url_for('confirm_email')}?code={code}"):
                     flash('Failed to send confirmation email')
                     return render_template('register.html')
+                message = "Registered, confirmation email sent."
             else:
-                flash('Registered')
-                db.register_user(username, bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii'), email)
-                return redirect(url_for('login'))
+                message = "Registered"
+
+            db.update_or_create_user(None, {
+                "username": username,
+                "password": bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii'),
+                "email": email
+            })
+
         except KeyError:
             return "Missing parameters"
 
-        flash('Registered, confirmation email sent.')
+        flash(message)
         return redirect(url_for('login'))
     else:
         if not REGISTRATION_ENABLED:
@@ -144,7 +154,9 @@ def password_reset():
                     return render_template("forgot_password.html", option="password", error="Passwords don't match")
 
                 password = request.form["new_password"]
-                db.change_user_password(email, bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii'))
+                db.update_or_create_user(db.get_user(email=email)["id"], {
+                    "password": bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii')
+                })
                 flash('Password changed')
                 return redirect(url_for("login"))
             else:
@@ -247,31 +259,31 @@ def discord_oauth_callback():
         return "invalid code"
 
     discord_id = user_data.get("id")
-    email = user_data.get("email")
+    discord_email = user_data.get("email")
     name = user_data.get("username")
 
-    existing_email = db.get_email_from_discord_id(discord_id)
-    stored_info = db.get_user(email=email)
+    existing_email = db.get_user(discord_id=discord_id).get("email", "")
+    stored_info = db.get_user(email=discord_email)
 
+    # Register new user
     if not stored_info and not existing_email and not current_user.is_authenticated:
         if not REGISTRATION_ENABLED:
             flash('Registration is disabled.')
             return redirect(url_for('login'))
-        db.register_user(name, "", email)
-        db.update_discord_id(discord_id, email)
+        db.update_or_create_user(None, {
+            "username": name,
+            "password": "",
+            "email": discord_email,
+            "discord_id": discord_id
+        })
 
-    elif not existing_email and current_user.is_authenticated:
-        stored_info = db.get_user(user_id=current_user.id)
-
-        if stored_info["discord_id"] != discord_id:
-            db.update_discord_id(discord_id, existing_email)
+    # Link Discord to existing user
+    elif not stored_info["discord_id"] and current_user.is_authenticated:
+        db.update_or_create_user(current_user.id, {"discord_id": discord_id})
 
         return redirect(url_for('profile'))
 
-    elif stored_info["discord_id"] != discord_id:
-        db.update_discord_id(discord_id, email)
-
-    stored_info = db.get_user(email=email)
+    stored_info = db.get_user(discord_id=discord_id)
     user = User(stored_info["id"], stored_info["username"])
     login_user(user)
     time.sleep(0.5)  # Prevent a race condition, where the page loads but the user is not processed yet
