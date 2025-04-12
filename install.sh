@@ -1,27 +1,7 @@
 #!/bin/bash
+cp data/example_config.toml data/config.toml
 
-echo '{'                             >> data/config.json
-echo '  "hostname": "127.0.0.1",'    >> data/config.json
-echo '  "oauth_client_id": "",'      >> data/config.json
-echo '  "oauth_client_secret": "",'  >> data/config.json
-echo '  "git_branch": "",'           >> data/config.json
-echo '  "oauth_redirect_uri": "",'   >> data/config.json
-echo '  "SMTP_HOST": "",'            >> data/config.json
-echo '  "SMTP_PORT": 587,'           >> data/config.json
-echo '  "SMTP_USER": "",'            >> data/config.json
-echo '  "SMTP_PASS": "",'            >> data/config.json
-echo '  "webhook_url": "",'          >> data/config.json
-echo '  "secret_key": "'$(openssl rand -hex 24)'",' >> data/config.json
-echo '  "registration_enabled": 1,', >> data/config.json
-echo '  "instancer_url": ""',        >> data/config.json
-echo '  "instancer_username": ""',   >> data/config.json
-echo '  "instancer_password": ""',   >> data/config.json
-echo '  "instancer_url": ""',        >> data/config.json
-echo '  "start_time": 0',            >> data/config.json
-echo '  "end_time": 0',              >> data/config.json
-echo '  "utc_offset": 2',            >> data/config.json
-echo '  "challenges_behind_login":0' >> data/config.json
-echo '}'                             >> data/config.json
+sed -i "s|SECRET_KEY = \"\"|SECRET_KEY = \"$(openssl rand -hex 24)\"|" data/config.toml
 
 read -p "Populate with test data? (y/n): " response
 
@@ -34,13 +14,12 @@ if [[ $response == "y" ]]; then
   mv key.pem data/ssl/
   mv cert.pem data/ssl/
   git clone https://github.com/StudSec/Challenges-Examples.git
-  mkdir data/challenges/
+  #mkdir data/challenges/
   mv Challenges-Examples data/challenges/Challenges
   echo "Test data populated!"
 else
   echo "Make sure to put your data in the following directories:"
   echo "- data/ssl              -> ssl certificates (cert.pem & key.pem)"
   echo "- data/challenges       -> challenges git repository"
-  echo "- data/config.json      -> pwncrates configuration"
   echo "- data/.git-credentials -> git credentials to update challenge repository (if its private)"
 fi
