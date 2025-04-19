@@ -478,45 +478,70 @@ def update_database():
 
 
 def update_or_create_challenge(path, folder=get_challenge_path()):
+   
     # Get information
-    category, name, _ = path.split("/", 2)
-
+    category, name = path.split("/", 2)
+    
     # Specify path to start in git directory
-    challenge_data = parse_markdown_challenge(folder + path)
-
-    if challenge_data == {}:
-        return
-
+    challenges_list = parse_toml_challenge(folder + "/" + path + "/challenge.toml")
+    
+    if not challenges_list:
+        return None
+    
     difficulties = {
         "easy": 1,
         "medium": 2,
         "hard": 3
     }
-
-    difficulty = difficulties[challenge_data["difficulty"].lower()]
+    
+    # Track the first challenge ID to return
+    first_challenge_id = None
     cursor = conn.cursor()
-
-    cursor.execute('INSERT OR IGNORE INTO challenges '
-                   '(name, description, points, category, difficulty, subcategory, flag, flag_case_insensitive, url, docker_name) '
-                   'values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
-                   , (name, challenge_data["description"], challenge_data["points"], category,
-                      difficulty, challenge_data["subcategory"], challenge_data["flag"],
-                      bool(challenge_data["case_insensitive"]), challenge_data["url"], challenge_data["docker_name"]
-                      ))
-
-    cursor.execute('UPDATE challenges SET description = ?, points = ?, category = ?, difficulty = ?, '
-                   'subcategory = ?, flag = ?, flag_case_insensitive = ?, url = ?, docker_name = ? WHERE name = ?',
-                   (challenge_data["description"], challenge_data["points"], category, difficulty,
-                    challenge_data["subcategory"], challenge_data["flag"], bool(challenge_data["case_insensitive"]),
-                    challenge_data["url"], challenge_data["docker_name"], name))
-
-    conn.commit()
-
-    cursor.execute('SELECT id FROM challenges WHERE name = ?', (name,))
-    challenge_id = cursor.fetchone()[0]
-
+    
+    for challenge_data in challenges_list:
+        try:
+            # Use the name from TOML if provided, otherwise use the directory name
+            challenge_name = challenge_data.get("name", name)
+            
+            # Convert the difficulty string to the numeric value
+            difficulty = difficulties[challenge_data["difficulty"].lower()]
+            
+            cursor.execute('INSERT OR IGNORE INTO challenges '
+                       '(name, description, points, category, difficulty, subcategory, flag, flag_case_insensitive, url, docker_name) '
+                       'values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
+                       , (challenge_name, challenge_data["description"], challenge_data["points"], category,
+                          difficulty, challenge_data["subcategory"], challenge_data["flag"],
+                          bool(challenge_data["case_insensitive"]), challenge_data["url"], challenge_data["docker_name"]
+                          ))
+            
+            cursor.execute('UPDATE challenges SET description = ?, points = ?, category = ?, difficulty = ?, '
+                       'subcategory = ?, flag = ?, flag_case_insensitive = ?, url = ?, docker_name = ? WHERE name = ?',
+                       (challenge_data["description"], challenge_data["points"], category, difficulty,
+                        challenge_data["subcategory"], challenge_data["flag"], bool(challenge_data["case_insensitive"]),
+                        challenge_data["url"], challenge_data["docker_name"], challenge_name))
+            
+            conn.commit()
+            
+            cursor.execute('SELECT id FROM challenges WHERE name = ?', (challenge_name,))
+            challenge_id = cursor.fetchone()[0]
+            
+            # Store the first challenge ID to return
+            if first_challenge_id is None:
+                first_challenge_id = challenge_id
+                
+            print(f"Successfully processed challenge: {challenge_name}")
+            
+        except KeyError as e:
+            print(f"Missing required field in challenge: {e}")
+            continue
+        except Exception as e:
+            print(f"Error processing challenge: {e}")
+            import traceback
+            traceback.print_exc()
+            continue
+    
     cursor.close()
-    return challenge_id
+    return first_challenge_id
 
 
 def update_or_create_category(path, folder=get_challenge_path()):

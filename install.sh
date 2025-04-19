@@ -14,7 +14,7 @@ if [[ $response == "y" ]]; then
   mv key.pem data/ssl/
   mv cert.pem data/ssl/
   git clone https://github.com/StudSec/Challenges-Examples.git
-  mkdir data/challenges/
+  #mkdir data/challenges/
   mv Challenges-Examples data/challenges/Challenges
   echo "Test data populated!"
 else

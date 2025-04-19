@@ -123,9 +123,10 @@ def init_git():
         matches = re.findall(r"]\((.*?)\)", f.read())
         for challenge in matches:
             if challenge.endswith("README.md"):
-                challenge = challenge.replace("%20", " ").replace("./", "")
+                challenge = challenge.replace("%20", " ").replace("./", "").split(" ")[0]
+                
                 # We have to account for url encoding, fortunately the only case for this is the space character
-                challenge_id = db.update_or_create_challenge(challenge)
+                challenge_id = db.update_or_create_challenge(challenge, folder=challenge_path)
 
                 if os.path.exists(f"./{challenge_path}/" + challenge[:-9] + "Handout"):
                     create_challenge_handouts(challenge)
