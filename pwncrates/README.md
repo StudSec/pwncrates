@@ -61,7 +61,7 @@ def inject_globals():
 
 #### Docker
 The pwncrates runs within docker, as part of this all files within this directory
-are added within the container. If you'd like to avoid that (for security
+are added within the container. If you'd like to avoid that (for security,
 optimizations or whatever) you can add the file path to `.dockerignore`.
 
 #### Git
