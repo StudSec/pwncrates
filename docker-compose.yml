@@ -50,7 +50,7 @@ services:
       - ./data/.git-credentials:/root/.git-credentials:ro
       - ./pwncrates/templates/:/pwncrates/templates:ro
       - ./pwncrates/static/:/pwncrates/static
-      - ./data/config.toml:/pwncrates/config.toml
+      - ./tests/pwncrates_test_config.toml:/pwncrates/config.toml
       - ./tests/:/tests
     profiles:
       - 'test' # Can be specified with --profile test

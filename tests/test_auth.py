@@ -8,18 +8,21 @@ Testing for the login flow, asserts:
 NOTE: Does not test
 - Discord OAuth flow
 - Registration email confirmation
+- If registration is enabled
 """
 import pytest
 
 
 def test_register_200(client):
-    response = client.get("/register")
-    assert response.status == '200 OK'
+    with client:
+        response = client.get("/register")
+        assert response.status == '200 OK'
 
 
 def test_login_200(client):
-    response = client.get("/register")
-    assert response.status == '200 OK'
+    with client:
+        response = client.get("/login")
+        assert response.status == '200 OK'
 
 
 @pytest.mark.parametrize("test_input,expected_response_data,expected_redirect",

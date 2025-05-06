@@ -4,7 +4,7 @@ MAY result in complete loss of any pre-existing database*
 
 To run the tests simply run:
 ```bash
- docker-compose --profile test up --build --remove-orphans
+docker-compose --profile test up --build --remove-orphans
 ```
 
 #### Adding tests
