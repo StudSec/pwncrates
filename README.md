@@ -1,10 +1,3 @@
-TODO:
-- Update database to use UUID's
-- make populate-users generate an admin user
-- Make room for multiple challenge repo's
-- Update instancer to use uuid
-- Add captcha for register
-
 # pwncrates
 A CTF framework with a focus on education.
 
