@@ -1,6 +1,6 @@
 # Settings that can be changed at runtime, these are stored in the database
 [runtime]
-registration_enabled = ""
+registration_enabled = true
 start_time = 0
 end_time = 0
 utc_offset = 2
