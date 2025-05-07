@@ -5,6 +5,7 @@ start_time = 0
 end_time = 0
 utc_offset = 2
 challenges_behind_login = 0
+challenge_path = "challenges/Challenges-Examples"
 
 # Static settings, a restart is required to change these settings
 [mailer]

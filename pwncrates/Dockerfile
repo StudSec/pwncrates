@@ -15,4 +15,4 @@ RUN pip install -r requirements.txt
 COPY . .
 
 WORKDIR /
-ENTRYPOINT gunicorn --workers 4 'pwncrates:app' --chdir pwncrates -b 0.0.0.0 --log-level info
+ENTRYPOINT ["gunicorn", "--workers", "4", "'pwncrates:app'", "--chdir", "/pwncrates", "-b", "0.0.0.0", "--log-level", "info"]

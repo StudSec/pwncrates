@@ -3,13 +3,13 @@
 
 {% block content %}
     <div class="row">
-    {% for category, description in categories.items() %}
+    {% for id, (category_name, description) in categories.items() %}
         <div class="challenge-card">
-        <a href="{{ url_for('challenges') + '/' + category }}" class="card card-block stretched-link text-decoration-none h-100">
+        <a href="{{ url_for('challenges') + '/' + id }}" class="card card-block stretched-link text-decoration-none h-100">
             <div class="card h-100">
-              <img src="{{ url_for('static', filename='banners/' + category + '.png') }}" class="card-img-top">
+              <img src="{{ url_for('static', filename='banners/' + id + '.png') }}" class="card-img-top">
               <div class="card-body">
-                <h5 class="card-title text-center mb-0">{{ category }}</h5>
+                <h5 class="card-title text-center mb-0">{{ category_name }}</h5>
                 <p class="card-text">
                     {{ description | safe }}
                 </p>

@@ -1,8 +1,6 @@
 """
 This file contains objects used within the application
 """
-import sys
-
 from flask_login import UserMixin
 
 import pwncrates.database as db

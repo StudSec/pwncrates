@@ -96,8 +96,8 @@ def challenges(category=None):
 
 
 # Writeups page, contains an overview of all available writeups if no specific one is specified.
-@app.route('/writeups/<int:challenge_id>')
-@app.route('/writeups/<int:challenge_id>/<writeup_id>')
+@app.route('/writeups/<challenge_id>')
+@app.route('/writeups/<challenge_id>/<writeup_id>')
 @login_required
 def writeups(challenge_id, writeup_id=None):
     if challenge_id not in [solve[0] for solve in db.get_user_solves(current_user.id)]:
@@ -178,7 +178,7 @@ def upload_writeups(challenge_id):
         return 'No file uploaded!'
 
 
-@app.route('/solves/<int:challenge_id>')
+@app.route('/solves/<challenge_id>')
 @ctf_has_started
 @challenge_protector
 def solves(challenge_id):

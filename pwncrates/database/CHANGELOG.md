@@ -1,7 +1,7 @@
 ## Change log
 Running changelog of the database schema. There are no strict guidelines for the naming scheme but try to adhere
 to the following:
-- x.0 for major changes
+- x.0 for major (breaking) changes
 - 0.x for minor changes
 
 Database migrations are performed sequentially in a linked fashion, each migration has the following name:
@@ -21,6 +21,7 @@ scripts will not be run.
 - Added the `admins` table containing only one field which is the user_id referencing the `users` table. 
 - Added the `hidden_users` table containing only one field which is the user_id referencing the `users` table.
 
-#### 1.2 -> 2.0
-- Switched from ID's to UUID's
-- Split flags and connection strings into separate tables
+#### 1.2 -> 1.3
+- Added uuids
+- Split flag and connection strings into separate tables
+- NOTE: should ID's be swapped out for uuids we need to make sure backwards compatibility is adhered to

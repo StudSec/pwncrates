@@ -91,7 +91,6 @@ def get_link_from_email(email, link_type):
 
     return results
 
-
 def get_challenges(category, difficulty="hard"):
     difficulties = {
         "easy": 1,
@@ -101,20 +100,21 @@ def get_challenges(category, difficulty="hard"):
     # Translate the difficulty to int
     difficulty = difficulties[difficulty.lower()]
 
-    cursor = conn.execute('SELECT B.description, A.id, A.name, A.description, A.points, A.subcategory, A.url, '
+    cursor = conn.execute('SELECT B.description, A.uuid, A.name, A.description, A.points, B.name, C.url, '
                           '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id) AS solve_count, '
-                          'A.docker_name, A.difficulty '
+                          'A.difficulty '
                           'FROM challenges A '
-                          'LEFT JOIN categories B ON A.subcategory = B.name AND B.parent = A.category '
+                          'LEFT JOIN categories B ON A.category = B.uuid AND B.parent_id NOT NULL '
+                          'LEFT JOIN challenge_urls C ON C.challenge_id = A.id '
                           'WHERE A.category = ? AND A.difficulty <= ? '
                           'ORDER BY A.points ASC',
                           (category, difficulty))
 
     results = {}
 
-    for (category_description, user_id, name, description, points, subcategory, url, solves, docker_name,
-         difficulty) in cursor.fetchall():
-        handout_file = get_handout_name(category, name)
+    for (category_description, challenge_uuid, name, description, points, subcategory, url, solves, difficulty) \
+            in cursor.fetchall():
+        handout_file = get_handout_name(challenge_uuid)
 
         if not subcategory:
             subcategory = ""
@@ -123,7 +123,7 @@ def get_challenges(category, difficulty="hard"):
             category_description = ""
 
         challenge_info = (
-            user_id, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves, docker_name,
+            challenge_uuid, name, cmarkgfm.github_flavored_markdown_to_html(description), points, url, solves,
             handout_file if os.path.exists("static/handouts/" + handout_file) else "",
             list(difficulties.keys())[difficulty - 1]
         )
@@ -141,9 +141,8 @@ def get_challenges(category, difficulty="hard"):
 
     return ret
 
-
 def get_user_solves(user_id):
-    cursor = conn.execute('SELECT S.challenge_id, C.name, S.solved_time, C.points FROM solves S, Challenges C WHERE '
+    cursor = conn.execute('SELECT C.uuid, C.name, S.solved_time, C.points FROM solves S, Challenges C WHERE '
                           'S.user_id = ? AND C.id = S.challenge_id ORDER BY S.solved_time DESC;', (user_id,))
     results = [(solve_data[0], solve_data[1], datetime.utcfromtimestamp(solve_data[2]).strftime('%Y-%m-%d %H:%M:%S'),
                 solve_data[3])
@@ -167,9 +166,10 @@ def get_user_scores(user_id):
     return results
 
 
+# Take the time where the user solved the last flag
 def get_challenge_solves(challenge_id):
-    cursor = conn.execute('SELECT U.name, S.solved_time FROM solves S, users U  '
-                          'WHERE S.challenge_id = ? AND S.user_id = U.id ORDER BY S.solved_time DESC;', (challenge_id,))
+    cursor = conn.execute('SELECT U.name, S.solved_time FROM solves S, users U, challenges C  '
+                          'WHERE S.challenge_id = C.id AND C.uuid = ? AND S.user_id = U.id ORDER BY S.solved_time DESC;', (challenge_id,))
     results = [(solve[0], datetime.utcfromtimestamp(solve[1]).strftime('%Y-%m-%d %H:%M:%S'))
                for solve in cursor.fetchall()]
     cursor.close()
@@ -254,22 +254,20 @@ def get_scoreboard_universities():
 def get_categories():
     ret = {}
 
-    cursor = conn.execute('SELECT DISTINCT category FROM challenges;')
-    results = [category[0] for category in cursor.fetchall()]
+    cursor = conn.execute('SELECT DISTINCT uuid, name, description FROM categories WHERE parent_id IS NULL;')
+    results = [category for category in cursor.fetchall()]
     cursor.close()
 
     cursor = conn.cursor()
     for category in results:
-        cursor.execute('SELECT description FROM categories WHERE name = ? AND parent = ? LIMIT 1;',
-                       (category, category))
-        description = cursor.fetchone()
-        if description:
-            ret[category] = cmarkgfm.github_flavored_markdown_to_html(description[0])
+        if category[2]:
+            ret[str(category[0])] = (category[1], cmarkgfm.github_flavored_markdown_to_html(category[2]))
         else:
-            ret[category] = ""
+            ret[str(category[0])] = (category[1], "")
     cursor.close()
 
     return ret
+
 
 def get_writeups(challenge_id):
     cursor = conn.execute('SELECT U.name, U.id FROM writeups AS W, users AS U '
@@ -291,7 +289,7 @@ def get_writeup_file(challenge_id, writeup_id):
 
 def get_challenge_name(challenge_id):
     cursor = conn.execute('SELECT name FROM challenges '
-                          'WHERE id = ?;', (challenge_id,))
+                          'WHERE uuid = ?;', (challenge_id,))
     results = cursor.fetchone()[0]
     cursor.close()
 
@@ -316,6 +314,7 @@ def is_user_admin(user_id):
         return False  # User is not an admin
 
     return True  # User is an admin
+
 
 # User functions
 def get_user(user_id=None, email=None, discord_id=None):
@@ -358,6 +357,7 @@ def get_user(user_id=None, email=None, discord_id=None):
     }
 
 
+# NOTE: this is now broken, needs to be refactored
 def get_docker_service_name(challenge_id):
     cursor = conn.execute('SELECT docker_name FROM challenges WHERE id=? LIMIT 1', (challenge_id,))
     result = cursor.fetchone()
@@ -391,10 +391,11 @@ def update_or_create_user(user_id, user_data=None):
     if user_data.get("university_id", None):
         params.append(("university_id = ? ", user_data["university_id"]))
 
-    cursor = conn.execute("UPDATE users SET " + ",".join([str(x[0]) for x in params]) + "WHERE id = ?",
-                          [x[1] for x in params] + [user_id])
-    conn.commit()
-    cursor.close()
+    if params:
+        cursor = conn.execute("UPDATE users SET " + ",".join([str(x[0]) for x in params]) + "WHERE id = ?",
+                              [x[1] for x in params] + [user_id])
+        conn.commit()
+        cursor.close()
     return
 
 
@@ -416,10 +417,16 @@ def remove_writeup(challenge_id, user_id):
     return
 
 
-def submit_flag(challenge_id, flag, user_id):
-    cursor = conn.execute('SELECT DISTINCT flag FROM challenges WHERE id = ? AND ((flag = ?) OR '
-                          '(flag_case_insensitive = 1 AND lower(flag) = ?)) ;',
-                          (challenge_id, flag, flag.lower()))
+def submit_flag(challenge_uuid, flag, user_id):
+    challenge_id = conn.execute('SELECT id FROM challenges WHERE uuid = ?', (challenge_uuid,)).fetchone()
+
+    if not challenge_id:
+        return "Challenge not found"
+
+    challenge_id = challenge_id[0]
+
+    cursor = conn.execute('SELECT flag FROM challenge_flags WHERE challenge_id = ? AND flag = ?;',
+                          (challenge_id, flag))
 
     if cursor.fetchone():
         cursor = conn.execute('SELECT id FROM solves WHERE challenge_id = ? AND user_id = ?;',
@@ -450,110 +457,124 @@ def initialize_database():
 def update_database():
     app.logger.info("running update function")
     cursor = conn.cursor()
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='pwncrates'")
-    result = cursor.fetchone()
-    if not result:
-        database_version = "0.0"
-    else:
-        cursor.execute("SELECT version FROM pwncrates")
-        database_version = str(cursor.fetchone()[0])
 
-    app.logger.info(f"Database version: {database_version}")
+    try:
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='pwncrates'")
+        result = cursor.fetchone()
+        if not result:
+            database_version = "0.0"
+        else:
+            cursor.execute("SELECT version FROM pwncrates")
+            database_version = str(cursor.fetchone()[0])
 
-    files = [x for x in os.listdir("database/") if x.startswith("migration") and
-             str(x.split("-")[1]) == database_version]
+        app.logger.info(f"Database version: {database_version}")
 
-    while len(files) != 0:
-        app.logger.info(f"Running update script {files[0]}")
-        with open(f"database/{files[0]}") as f:
-            conn.executescript(f.read())
-        conn.commit()
-        cursor.execute("SELECT version FROM pwncrates")
-        database_version = str(cursor.fetchone()[0])
-        assert (database_version == str(files[0].split("-")[2].split(".sql")[0]))
-        files = [x for x in os.listdir("database/") if
-                 x.startswith("migration") and str(x.split("-")[1]) == database_version]
+        files = [x for x in os.listdir("database/") if x.startswith("migration") and
+                 str(x.split("-")[1]) == database_version]
 
-    cursor.close()
+        while len(files) != 0:
+            app.logger.info(f"Running update script {files[0]}")
+
+            with open(f"database/{files[0]}") as f:
+                script = f.read()
+
+            try:
+                conn.execute("BEGIN")
+                for stmt in script.split(';'):
+                    stmt = stmt.strip()
+                    if stmt:
+                        try:
+                            cursor.execute(stmt)
+                        except sqlite3.OperationalError as e:
+                            app.logger.error(f"SQLite error: {e} while executing:\n{stmt}")
+                            raise  # Re-raise to trigger rollback
+
+                cursor.execute("SELECT version FROM pwncrates")
+                database_version = str(cursor.fetchone()[0])
+                expected_version = str(files[0].split("-")[2].split(".sql")[0])
+                assert database_version == expected_version
+
+                conn.commit()
+            except Exception as e:
+                conn.rollback()
+                app.logger.error(f"Migration failed for {files[0]}: {e}")
+                raise
+
+            files = [x for x in os.listdir("database/") if
+                     x.startswith("migration") and str(x.split("-")[1]) == database_version]
+
+    finally:
+        cursor.close()
 
 
-def update_or_create_challenge(path, folder=get_challenge_path()):
-   
-    # Get information
-    category, name = path.split("/", 2)
-    
-    # Specify path to start in git directory
-    challenges_list = parse_toml_challenge(folder + "/" + path + "/challenge.toml")
-    
-    if not challenges_list:
-        return None
-    
+def update_or_create_challenge(challenge, legacy=False):
     difficulties = {
         "easy": 1,
         "medium": 2,
         "hard": 3
     }
-    
-    # Track the first challenge ID to return
-    first_challenge_id = None
+
     cursor = conn.cursor()
-    
-    for challenge_data in challenges_list:
-        try:
-            # Use the name from TOML if provided, otherwise use the directory name
-            challenge_name = challenge_data.get("name", name)
-            
-            # Convert the difficulty string to the numeric value
-            difficulty = difficulties[challenge_data["difficulty"].lower()]
-            
-            cursor.execute('INSERT OR IGNORE INTO challenges '
-                       '(name, description, points, category, difficulty, subcategory, flag, flag_case_insensitive, url, docker_name) '
-                       'values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'
-                       , (challenge_name, challenge_data["description"], challenge_data["points"], category,
-                          difficulty, challenge_data["subcategory"], challenge_data["flag"],
-                          bool(challenge_data["case_insensitive"]), challenge_data["url"], challenge_data["docker_name"]
-                          ))
-            
-            cursor.execute('UPDATE challenges SET description = ?, points = ?, category = ?, difficulty = ?, '
-                       'subcategory = ?, flag = ?, flag_case_insensitive = ?, url = ?, docker_name = ? WHERE name = ?',
-                       (challenge_data["description"], challenge_data["points"], category, difficulty,
-                        challenge_data["subcategory"], challenge_data["flag"], bool(challenge_data["case_insensitive"]),
-                        challenge_data["url"], challenge_data["docker_name"], challenge_name))
-            
-            conn.commit()
-            
-            cursor.execute('SELECT id FROM challenges WHERE name = ?', (challenge_name,))
-            challenge_id = cursor.fetchone()[0]
-            
-            # Store the first challenge ID to return
-            if first_challenge_id is None:
-                first_challenge_id = challenge_id
-                
-            print(f"Successfully processed challenge: {challenge_name}")
-            
-        except KeyError as e:
-            print(f"Missing required field in challenge: {e}")
-            continue
-        except Exception as e:
-            print(f"Error processing challenge: {e}")
-            import traceback
-            traceback.print_exc()
-            continue
-    
+
+    # Check if a challenge exists with the same name but with an incorrect uuid, if so set it
+    if legacy:
+        # See if there is a challenge without uuid and same name
+        cursor.execute('SELECT id FROM challenges WHERE uuid IS NULL and name = ?', (challenge.name,))
+        challenge_id = cursor.fetchone()
+        if challenge_id:
+            cursor.execute('UPDATE challenges SET uuid = ? WHERE id = ?', (challenge.uuid, challenge_id))
+
+    try:
+        # Convert the difficulty string to the numeric value, this allows us to filter.
+        difficulty = difficulties[challenge.difficulty.lower()]
+
+        if len(challenge.flag.keys()) > 1:
+            app.logger.warning(f"Challenge {challenge.name} has more than 1 flag, this is currently unsupported!")
+        flag = list(challenge.flag.keys())[0]
+        points = challenge.flag[flag]
+
+        cursor.execute('INSERT OR IGNORE INTO challenges '
+                   '(uuid, name, description, category, difficulty, points) '
+                   'values (?, ?, ?, ?, ?, ?);'
+                   , (challenge.uuid, challenge.name, challenge.description, challenge.category, difficulty, points)
+                )
+
+        cursor.execute('UPDATE challenges SET name = ?, description = ?, category = ?, difficulty = ?, points = ? '
+                   'WHERE uuid = ?',
+                   (challenge.name, challenge.description, challenge.category, difficulty, points, challenge.uuid)
+                )
+
+        cursor.execute('SELECT id FROM challenges WHERE uuid = ?', (challenge.uuid,))
+        challenge_id = cursor.fetchone()[0]
+
+
+        cursor.execute('DELETE FROM challenge_urls WHERE challenge_id = ?', (challenge_id,))
+        for url in challenge.url:
+            cursor.execute('INSERT or IGNORE INTO challenge_urls (challenge_id, url) VALUES (?, ?)',
+                           (challenge_id, url))
+
+        cursor.execute('DELETE FROM challenge_flags WHERE challenge_id = ?', (challenge_id,))
+        cursor.execute('INSERT or IGNORE into challenge_flags (flag, challenge_id) VALUES (?, ?)', (flag, challenge_id))
+
+        conn.commit()
+        app.logger.info(f"Successfully processed challenge: {challenge.name}")
+
+    except AttributeError as e:
+        app.logger.error(f"Missing required field in challenge {challenge.name}: {e}")
+    except Exception as e:
+        app.logger.error(f"Error processing challenge {challenge.name}: {e}")
+        import traceback
+        traceback.print_exc()
+
     cursor.close()
-    return first_challenge_id
 
 
-def update_or_create_category(path, folder=get_challenge_path()):
-    categories, parent = parse_markdown_category(folder + path)
-
+def update_or_create_category(category):
     cursor = conn.cursor()
-    for category in categories:
-        cursor.execute('INSERT OR IGNORE INTO categories (name, description, parent) values (?, ?, ?);',
-                       (category, categories[category], parent))
-        cursor.execute('UPDATE categories SET description = ? WHERE name = ? AND parent = ?',
-                       (categories[category], category, parent))
-
+    cursor.execute('INSERT OR IGNORE INTO categories (uuid, name, description, parent_id) values (?, ?, ?, ?);',
+                   (category.uuid, category.name, category.description, category.parent))
+    cursor.execute('UPDATE categories SET name = ?, description = ?, parent_id = ? WHERE uuid = ?',
+                   (category.name, category.description, category.parent, category.uuid))
     conn.commit()
     cursor.close()
 
@@ -579,7 +600,7 @@ def remove_link(link_type, code):
         return ""
 
 
-os.system("mkdir /pwncrates/db")
+os.system("mkdir /pwncrates/db 2>/dev/null")
 os.system("touch /pwncrates/db/pwncrates.db")
 
 if app.debug:
@@ -588,12 +609,13 @@ if app.debug:
 else:
     # This *should* not cause any conflict, each worker has its own connection. The only conflict is when the git thread
     # attempts changes. Which happens in a separate thread.
-    conn = sqlite3.connect('./db/pwncrates.db', check_same_thread=False)
+    conn = sqlite3.connect('./db/pwncrates.db', check_same_thread=True)
 
 try:
     if os.path.getsize("./db/pwncrates.db") == 0:
         initialize_database()
-    update_database()
 except sqlite3.OperationalError:
     # Here we assume a different worker beat us to it, though we should find a better solution.
     pass
+
+update_database()

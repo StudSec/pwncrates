@@ -17,7 +17,7 @@
 <div class="challenge-category accordion accordion-flush show-all">
     <h4>{{ name }}</h4>
     <p>{{ subcategory_description | safe }}</p>
-    {% for challenge_id, name, description, points, url, challenge_solves, docker_name, handout, difficulty in challenges %}
+    {% for challenge_id, name, description, points, url, challenge_solves, handout, difficulty in challenges %}
       <div class="accordion-item border challenge {{difficulty}}" id="{{ challenge_id }}">
         <div class="accordion-header">
           <button class="accordion-button collapsed {% if challenge_id in solves %}solved{% endif %}" data-bs-toggle="collapse" data-bs-target="#{{challenge_id}}-info" aria-controls="{{challenge_id}}-info">

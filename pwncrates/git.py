@@ -6,9 +6,9 @@ import os.path
 from pwncrates.helpers import *
 import pwncrates.database as db
 from pwncrates import app
+from pwncrates.challenges import ChallengeSet
 import threading
 import time
-import re
 import os
 
 if "GIT_BRANCH" in app.config["pwncrates"].keys() and app.config["pwncrates"]["GIT_BRANCH"]:
@@ -56,46 +56,39 @@ def git_files_changed():
 
 def update_challenges_from_git():
     challenge_path = get_challenge_path()
+
+    if not challenge_path:
+        return
+
     changed_files = git_files_changed()
     git_update()
 
-    changed_files = list(filter(lambda path: ".md" in path or "Handout" in path, [item for item in changed_files]))
+    changed_files = list(filter(lambda path: ".md" in path or "Handout" in path or ".toml" in path, [item for item in changed_files]))
 
-    # We need to keep track of challenges we've already updated for handouts. A single change might update
-    # multiple files, doing this allows us to batch them. Only handout changes are batched.
-    updated_challenges = []
-    for file in changed_files:
-        try:
-            if "README.md" == file.split("/")[1]:
-                db.update_or_create_category(file)
-            if "README.md" == file.split("/")[2]:
-                db.update_or_create_challenge(file)
+    if not changed_files:
+        return
 
-                # Could be the challenge wasn't yet imported, update handout if it doesn't already exist
-                if os.path.exists(f"./{challenge_path}" + file[:-9] + "Handouts") and \
-                        not os.path.exists(
-                            f"static/handouts/{get_handout_name(file.split('/')[0], file.split('/')[1])}"):
-                    updated_challenges.append(file)
-                    create_challenge_handouts(file)
+    app.logger.info("Updating challenges...")
+    challenge_set = ChallengeSet(challenge_path)
 
-            if "Handout" == file.split("/")[2] and file not in updated_challenges:
-                updated_challenges.append(file)
-                create_challenge_handouts(file)
-            if "Writeup.md" == file.split("/")[2]:
-                challenge_id = db.get_challenge_id(file.split("/")[1])
-                subprocess.run(['mkdir', f'writeups/{challenge_id}'], stderr=subprocess.DEVNULL)
-                subprocess.run(['cp', f"./{challenge_path}/" + file, f'writeups/{challenge_id}/Author.md'])
-            if "Banner.png" == file.split("/")[1]:
-                subprocess.run(['cp', f"./{challenge_path}/{file}", f"./static/banners/{file.split('/')[0]}.png"])
-        except IndexError:
-            pass
-        except FileNotFoundError as error:
-            app.logger.error(f"Error parsing {file}:")
-            app.logger.error(error, exc_info=True)
+    for uuid in challenge_set.categories:
+        category = challenge_set.categories[uuid]
+        db.update_or_create_category(category)
+        if category.banner:
+            subprocess.run(
+                ['cp', category.path + category.banner, f"./static/banners/{category.banner.split('/')[0]}.png"])
+
+    for uuid in challenge_set.challenges:
+        db.update_or_create_challenge(challenge_set.challenges[uuid])
+        create_challenge_handouts(challenge_set.challenges[uuid])
 
 
 def git_update():
     challenge_path = get_challenge_path()
+
+    if not challenge_path:
+        return
+
     # Rebase on origin, the reason we do this is to avoid conflicts when (accidentally) writing files
     subprocess.run(['git', 'checkout', f'{git_branch}'], cwd=challenge_path, stdout=subprocess.DEVNULL,
                    stderr=subprocess.DEVNULL)
@@ -110,40 +103,29 @@ def init_git():
     # Copy challenge directory from Read Only volume to local
     subprocess.run(['cp', '-r', f'/tmp/challenges/', '.'], stderr=subprocess.DEVNULL)
     challenge_path = get_challenge_path()
-    subprocess.run(['git', '--no-pager', 'config', 'credential.helper', 'store'], cwd=challenge_path,
-                   stdout=subprocess.DEVNULL)
+
+    if not challenge_path:
+        return
 
     if not acquire_challenge_lock():
         return
 
     git_update()
 
+    # Create challenge set
     app.logger.info("Importing challenges...")
-    with open(f"./{challenge_path}/README.md") as f:
-        matches = re.findall(r"]\((.*?)\)", f.read())
-        for challenge in matches:
-            if challenge.endswith("README.md"):
-                challenge = challenge.replace("%20", " ").replace("./", "").split(" ")[0]
-                
-                # We have to account for url encoding, fortunately the only case for this is the space character
-                challenge_id = db.update_or_create_challenge(challenge, folder=challenge_path)
+    challenge_set = ChallengeSet(challenge_path)
 
-                if os.path.exists(f"./{challenge_path}/" + challenge[:-9] + "Handout"):
-                    create_challenge_handouts(challenge)
-                if os.path.exists(f"./{challenge_path}/" + challenge[:-9] + "Writeup.md"):
-                    subprocess.run(['mkdir', f'writeups/{challenge_id}'], stderr=subprocess.DEVNULL)
-                    subprocess.run(['cp', f"./{challenge_path}/" + challenge[:-9] + "Writeup.md",
-                                    f'writeups/{challenge_id}/Author.md'])
-            else:
-                app.logger.warning(f"Invalid challenge: {challenge}")
+    for uuid in challenge_set.categories:
+        category = challenge_set.categories[uuid]
+        db.update_or_create_category(category)
+        if category.banner:
+            subprocess.run(['cp', category.path + category.banner, f"./static/banners/{category.banner.split('/')[0]}.png"])
 
-    app.logger.info("Importing categories...")
-    for category in [x for x in os.listdir(f"./{challenge_path}/")
-                     if os.path.isdir(f"./{challenge_path}/{x}")]:
-        if os.path.exists(f"./{challenge_path}/{category}/README.md"):
-            db.update_or_create_category(f"./{challenge_path}/{category}/README.md", folder="")
-        if os.path.exists(f"./{challenge_path}/{category}/Banner.png"):
-            subprocess.run(['cp', f"./{challenge_path}/{category}/Banner.png", f"./static/banners/{category}.png"])
+    for uuid in challenge_set.challenges:
+        db.update_or_create_challenge(challenge_set.challenges[uuid], legacy=True)
+        create_challenge_handouts(challenge_set.challenges[uuid])
+
 
 
 def update_git_loop():
