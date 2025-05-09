@@ -6,12 +6,18 @@ from flask import redirect, url_for
 START_TIME = int(app.config["runtime"].get("start_time", 0))
 END_TIME = int(app.config["runtime"].get("end_time", 0))
 TIMEZONE = int(app.config["runtime"].get("utc_offset", 2))
+FREEZE_TIME = int(app.config["runtime"].get("scoreboard_freeze", 0)) * 60
 
 TIME_WINDOW_DISABLED = START_TIME == 0 and END_TIME == 0
 
 def ctf_is_now():
     now = int(time())
-    return TIME_WINDOW_DISABLED or (now >= START_TIME and now < END_TIME)
+    return TIME_WINDOW_DISABLED or (START_TIME <= now < END_TIME)
+
+def get_scoreboard_freeze_time():
+    if not FREEZE_TIME or not END_TIME:
+        return 0
+    return END_TIME - FREEZE_TIME
 
 def ctf_has_started(f):
     @wraps(f)

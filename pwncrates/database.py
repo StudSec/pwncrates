@@ -3,8 +3,9 @@ This file serves as the primary interface between the database and the rest of t
 
 Sticking to this convention allows us to easily modify or switch the database without performing shotgun surgery.
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from pwncrates.helpers import *
+from pwncrates.time_window import get_scoreboard_freeze_time
 from pwncrates import app
 import cmarkgfm
 import sqlite3
@@ -99,16 +100,29 @@ def get_challenges(category, difficulty="hard"):
     }
     # Translate the difficulty to int
     difficulty = difficulties[difficulty.lower()]
+    freeze_time = get_scoreboard_freeze_time()
 
-    cursor = conn.execute('SELECT B.description, A.uuid, A.name, A.description, A.points, B.name, C.url, '
-                          '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id) AS solve_count, '
-                          'A.difficulty '
-                          'FROM challenges A '
-                          'LEFT JOIN categories B ON A.category = B.uuid AND B.parent_id NOT NULL '
-                          'LEFT JOIN challenge_urls C ON C.challenge_id = A.id '
-                          'WHERE A.category = ? AND A.difficulty <= ? '
-                          'ORDER BY A.points ASC',
-                          (category, difficulty))
+    if freeze_time:
+        solve_count_subquery = (
+            '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id AND S.solved_time < ?)'
+        )
+        params = [category, difficulty, freeze_time]
+    else:
+        solve_count_subquery = '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id)'
+        params = [category, difficulty]
+
+    query = f'''
+            SELECT B.description, A.uuid, A.name, A.description, A.points, B.name, C.url,
+                   {solve_count_subquery} AS solve_count,
+                   A.difficulty
+            FROM challenges A
+            LEFT JOIN categories B ON A.category = B.uuid AND B.parent_id NOT NULL
+            LEFT JOIN challenge_urls C ON C.challenge_id = A.id
+            WHERE A.category = ? AND A.difficulty <= ?
+            ORDER BY A.points ASC
+        '''
+
+    cursor = conn.execute(query, params)
 
     results = {}
 
@@ -141,44 +155,98 @@ def get_challenges(category, difficulty="hard"):
 
     return ret
 
+
 def get_user_solves(user_id):
-    cursor = conn.execute('SELECT C.uuid, C.name, S.solved_time, C.points FROM solves S, Challenges C WHERE '
-                          'S.user_id = ? AND C.id = S.challenge_id ORDER BY S.solved_time DESC;', (user_id,))
-    results = [(solve_data[0], solve_data[1], datetime.utcfromtimestamp(solve_data[2]).strftime('%Y-%m-%d %H:%M:%S'),
-                solve_data[3])
-               for solve_data in cursor.fetchall()]
+    freeze_time = get_scoreboard_freeze_time()
+    query = (
+        'SELECT C.uuid, C.name, S.solved_time, C.points '
+        'FROM solves S, Challenges C '
+        'WHERE S.user_id = ? AND C.id = S.challenge_id'
+    )
+    params = [user_id]
+
+    if freeze_time:
+        query += ' AND S.solved_time < ?'
+        params.append(freeze_time)
+
+    query += ' ORDER BY S.solved_time DESC;'
+    cursor = conn.execute(query, params)
+
+    results = [
+        (
+            uuid,
+            name,
+            datetime.fromtimestamp(solved_time, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
+            points
+        )
+        for uuid, name, solved_time, points in cursor.fetchall()
+    ]
+
     cursor.close()
     return results
+
 
 
 def get_user_scores(user_id):
-    cursor = conn.execute('SELECT S.challenge_id, C.name, S.solved_time, C.points FROM solves S, Challenges C WHERE '
-                          'S.user_id = ? AND C.id = S.challenge_id ORDER BY S.solved_time DESC;', (user_id,))
+    freeze_time = get_scoreboard_freeze_time()
+    query = (
+        'SELECT S.solved_time, C.points FROM solves S, Challenges C '
+        'WHERE S.user_id = ? AND C.id = S.challenge_id'
+    )
+    params = [user_id]
+
+    if freeze_time:
+        query += ' AND S.solved_time < ?'
+        params.append(freeze_time)
+
+    query += ' ORDER BY S.solved_time DESC;'
+
+    cursor = conn.execute(query, params)
+    solves = cursor.fetchall()
+    cursor.close()
+
     score = 0
     results = []
-    solves = cursor.fetchall()
-    solves.reverse()
-    for solve_data in solves:
-        # Chart js for some god forsaken reason is using miliseconds for their timestamp
-        score += int(solve_data[3])
-        results.append([solve_data[2] * 1000, score])
-    cursor.close()
+    for solved_time, points in reversed(solves):
+        score += int(points)
+        results.append([solved_time * 1000, score])  # Chart.js expects milliseconds
+
     return results
 
 
-# Take the time where the user solved the last flag
 def get_challenge_solves(challenge_id):
-    cursor = conn.execute('SELECT U.name, S.solved_time FROM solves S, users U, challenges C  '
-                          'WHERE S.challenge_id = C.id AND C.uuid = ? AND S.user_id = U.id ORDER BY S.solved_time DESC;', (challenge_id,))
-    results = [(solve[0], datetime.utcfromtimestamp(solve[1]).strftime('%Y-%m-%d %H:%M:%S'))
-               for solve in cursor.fetchall()]
+    freeze_time = get_scoreboard_freeze_time()
+    query = (
+        'SELECT U.name, S.solved_time FROM solves S, users U, challenges C '
+        'WHERE S.challenge_id = C.id AND C.uuid = ? AND S.user_id = U.id'
+    )
+    params = [challenge_id]
+
+    if freeze_time:
+        query += ' AND S.solved_time < ?'
+        params.append(freeze_time)
+
+    query += ' ORDER BY S.solved_time DESC;'
+
+    cursor = conn.execute(query, params)
+    results = [
+        (username, datetime.fromtimestamp(solved_time, tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S'))
+        for username, solved_time in cursor.fetchall()
+    ]
     cursor.close()
 
     return results
+
 
 
 def get_scoreboard():
-    cursor = conn.execute('''
+    freeze_time = get_scoreboard_freeze_time()
+
+    # Conditional filter for freeze time in LEFT JOIN
+    time_condition = "AND S.solved_time < ?" if freeze_time else ""
+    params = (freeze_time,) if freeze_time else ()
+
+    query = f'''
         SELECT 
             U.id, 
             U.name, 
@@ -187,17 +255,20 @@ def get_scoreboard():
             IFNULL(SUM(C.points), 0) AS total_points,
             MAX(S.solved_time) AS latest_solve_time
         FROM universities A, users U 
-        LEFT JOIN solves S ON U.id = S.user_id
+        LEFT JOIN solves S ON U.id = S.user_id {time_condition}
         LEFT JOIN challenges C ON S.challenge_id = C.id 
         WHERE A.id = U.university_id
         AND U.id NOT IN (SELECT user_id FROM hidden_users)
         GROUP BY U.id 
         ORDER BY total_points DESC, latest_solve_time ASC;
-    ''')
+    '''
+
+    cursor = conn.execute(query, params)
     results = [user for user in cursor.fetchall()]
     cursor.close()
 
     return results
+
 
 
 def get_users():

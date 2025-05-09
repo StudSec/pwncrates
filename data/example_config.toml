@@ -1,11 +1,12 @@
 # Settings that can be changed at runtime, these are stored in the database
 [runtime]
-registration_enabled = true
-start_time = 0
-end_time = 0
-utc_offset = 2
-challenges_behind_login = 0
-challenge_path = "challenges/Challenges-Examples"
+registration_enabled = true                         # Is registration enabled true/false
+start_time = 0                                      # CTF start time (unix timestamp)
+end_time = 0                                        # CTF end time (unix timestamp)
+utc_offset = 2                                      # Timezone offset, UTC + X
+scoreboard_freeze = 60                              # Time before CTF end where scoreboard freezes (in minutes)
+challenges_behind_login = 0                         # Is authentication required to access challenges
+challenge_path = "challenges/Challenges-Examples"   # Path to challenge repository (data/ + path)
 
 # Static settings, a restart is required to change these settings
 [mailer]
