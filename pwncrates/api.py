@@ -16,6 +16,11 @@ import requests
 import json
 
 
+INSTANCER_URL = app.config["instancer"]["INSTANCER_URL"]
+INSTANCER_USERNAME = app.config["instancer"].get("INSTANCER_USERNAME", "")
+INSTANCER_PASSWORD = app.config["instancer"].get("INSTANCER_PASSWORD", "")
+
+
 @app.route('/api/challenges/categories')
 @ctf_has_started
 @challenge_protector
@@ -64,14 +69,11 @@ def api_start_challenge(challenge_id):
     if docker_name is None:
         return {"error": "challenge has no service"}
     
-    instancer_url = app.config["instancer"]["INSTANCER_URL"]
-    instancer_username = app.config["instancer"].get("INSTANCER_USERNAME", "")
-    instancer_password = app.config["instancer"].get("INSTANCER_PASSWORD", "")
-    if instancer_url == "":
+    if INSTANCER_URL == "":
         return {"error": "instancer_url not defined"}
 
     user = b16encode(db.get_user(user_id=current_user.id)['username'].encode()).decode().lower()
-    response = requests.get(f"{instancer_url}/start/{user}/{docker_name}", auth=HTTPBasicAuth(instancer_username, instancer_password))
+    response = requests.get(f"{INSTANCER_URL}/start/{user}/{docker_name}", auth=HTTPBasicAuth(INSTANCER_USERNAME, INSTANCER_PASSWORD))
     return response.text
 
 
@@ -87,19 +89,17 @@ def api_stop_challenge(challenge_id):
     if docker_name is None:
         return {"error": "challenge has no service"}
 
-    instancer_url = app.config["instancer"]["INSTANCER_URL"]
-    instancer_username = app.config["instancer"].get("INSTANCER_USERNAME", "")
-    instancer_password = app.config["instancer"].get("INSTANCER_PASSWORD", "")
-    if instancer_url == "":
+    if INSTANCER_URL == "":
         return {"error": "instancer_url not defined"}
 
     user = b16encode(db.get_user(user_id=current_user.id)['username'].encode()).decode().lower()
-    response = requests.get(f"{instancer_url}/stop/{user}/{docker_name}", auth=HTTPBasicAuth(instancer_username, instancer_password))
+    response = requests.get(f"{INSTANCER_URL}/stop/{user}/{docker_name}", auth=HTTPBasicAuth(INSTANCER_USERNAME, INSTANCER_PASSWORD))
     return response.text
 
 @app.route('/api/challenge/status/<challenge_id>', methods=["POST"])
 @ctf_has_started
 @login_required
+# TODO: refactor to UUID
 def api_status_challenge(challenge_id):
     challenge_id = str(challenge_id)
     if not challenge_id.isnumeric():
@@ -109,14 +109,11 @@ def api_status_challenge(challenge_id):
     if docker_name is None:
         return {"error": "challenge has no service"}
 
-    instancer_url = app.config["instancer"]["INSTANCER_URL"]
-    instancer_username = app.config["instancer"].get("INSTANCER_USERNAME", "")
-    instancer_password = app.config["instancer"].get("INSTANCER_PASSWORD", "")
-    if instancer_url == "":
+    if INSTANCER_URL == "":
         return {"error": "instancer_url not defined"}
 
     user = b16encode(db.get_user(user_id=current_user.id)['username'].encode()).decode().lower()
-    response = requests.get(f"{instancer_url}/status/{user}/{docker_name}", auth=HTTPBasicAuth(instancer_username, instancer_password))
+    response = requests.get(f"{INSTANCER_URL}/status/{user}/{docker_name}", auth=HTTPBasicAuth(INSTANCER_USERNAME, INSTANCER_PASSWORD))
     return response.text
 
 
