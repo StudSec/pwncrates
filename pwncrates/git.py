@@ -76,7 +76,7 @@ def update_challenges_from_git():
         db.update_or_create_category(category)
         if category.banner:
             subprocess.run(
-                ['cp', category.path + category.banner, f"./static/banners/{category.banner.split('/')[0]}.png"])
+                ['cp', category.path + category.banner, f"./static/banners/{uuid}.png"])
 
     for uuid in challenge_set.challenges:
         db.update_or_create_challenge(challenge_set.challenges[uuid])
@@ -120,7 +120,7 @@ def init_git():
         category = challenge_set.categories[uuid]
         db.update_or_create_category(category)
         if category.banner:
-            subprocess.run(['cp', category.path + category.banner, f"./static/banners/{category.banner.split('/')[0]}.png"])
+            subprocess.run(['cp', category.path + category.banner, f"./static/banners/{uuid}.png"])
 
     for uuid in challenge_set.challenges:
         db.update_or_create_challenge(challenge_set.challenges[uuid], legacy=True)

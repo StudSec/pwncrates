@@ -6,7 +6,7 @@ import re
 
 class Challenge:
     def __init__(self, path, uuid):
-        self.path = path
+        self.path = path + "/"
         config = toml.load(path + "/challenge.toml")
         self.name = config[uuid]["name"]
         self.uuid = uuid
@@ -44,7 +44,7 @@ class Challenge:
 
 class Category:
     def __init__(self, path):
-        self.path = path
+        self.path = path + "/"
         config = toml.load(path + "/category.toml")
         self.challenges = []
         self.subcategories = []
