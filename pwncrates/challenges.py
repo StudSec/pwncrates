@@ -11,7 +11,10 @@ class Challenge:
         self.uuid = uuid
         self.difficulty = config[uuid]["difficulty"]
         self.flag = config[uuid]["flag"]
-        self.url = config[uuid]["url"]
+        if "url" in config[uuid]:
+            self.url = config[uuid]["url"]
+        else:
+            self.url = [""]
         self.dynamic_flags = config.get("dynamic_flags", False)
         self.handouts = []
         self.category = None

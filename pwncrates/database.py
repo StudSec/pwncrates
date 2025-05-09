@@ -621,8 +621,9 @@ def update_or_create_challenge(challenge, legacy=False):
 
         cursor.execute('DELETE FROM challenge_urls WHERE challenge_id = ?', (challenge_id,))
         for url in challenge.url:
-            cursor.execute('INSERT or IGNORE INTO challenge_urls (challenge_id, url) VALUES (?, ?)',
-                           (challenge_id, url))
+            if url:
+                cursor.execute('INSERT or IGNORE INTO challenge_urls (challenge_id, url) VALUES (?, ?)',
+                               (challenge_id, url))
 
         cursor.execute('DELETE FROM challenge_flags WHERE challenge_id = ?', (challenge_id,))
         cursor.execute('INSERT or IGNORE into challenge_flags (flag, challenge_id) VALUES (?, ?)', (flag, challenge_id))

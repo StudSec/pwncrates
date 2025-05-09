@@ -15,7 +15,7 @@ from pwncrates.time_window import ctf_has_started
 import requests
 import json
 
-
+# TODO: switch to API key
 INSTANCER_URL = app.config["instancer"]["INSTANCER_URL"]
 INSTANCER_USERNAME = app.config["instancer"].get("INSTANCER_USERNAME", "")
 INSTANCER_PASSWORD = app.config["instancer"].get("INSTANCER_PASSWORD", "")
