@@ -34,7 +34,7 @@
                 <p>
                     {{description | safe}}
                 </p>
-                {% if url != "Null" and app.config["instancer"]["INSTANCER_URL"] == "" %}
+                {% if url != "None" and app.config["instancer"]["INSTANCER_URL"] == "" %}
                 <div class="code-block"><p>
                     {{ url }}
                 </p></div>
