@@ -34,18 +34,12 @@
                 <p>
                     {{description | safe}}
                 </p>
-                {% if url != "Null" and docker_name == "" %}
+                {% if url != "Null" and app.config["instancer"]["INSTANCER_URL"] == "" %}
                 <div class="code-block"><p>
                     {{ url }}
                 </p></div>
                 <br>
-                {% endif %}
-
-                {% if handout != "" %}
-                <a href="{{ url_for('static', filename='handouts/' + handout) }}">Download files</a>
-                {% endif %}
-
-                {% if docker_name != "" %}
+                {% elif url != "Null" and app.config["instancer"]["INSTANCER_URL"] != "" %}
                 <br>
                 <button type="button" class="btn btn-success" id="start_service_{{challenge_id}}">Start</button>
                 <button type="button" class="btn btn-danger" id="stop_service_{{challenge_id}}" disabled>Stop</button>
@@ -54,6 +48,10 @@
                     retrieving status...
                 </p></div>
                 <br>
+                {% endif %}
+
+                {% if handout != "" %}
+                <a href="{{ url_for('static', filename='handouts/' + handout) }}">Download files</a>
                 {% endif %}
 
                 {% if current_user.is_authenticated %}

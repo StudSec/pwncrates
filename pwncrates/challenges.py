@@ -1,6 +1,7 @@
 from pwncrates import app
 import toml
 import os
+import re
 
 
 class Challenge:
@@ -27,7 +28,6 @@ class Challenge:
             with open(self.path + "/Description.md") as f:
                 self.description += f.read()
 
-        self.port = None
         if os.path.exists(self.path + "/Source/run.sh") or os.path.exists(self.path + "/Source/destroy.sh"):
             self.hosted = True
         else:
@@ -39,8 +39,7 @@ class Challenge:
                 self.handouts.append(relative_path)
 
     def allocate_port(self, generator):
-        if self.hosted:
-            self.port = str(next(generator))
+        self.url = [re.sub(r"{{PORT}}", lambda match: str(next(generator)), url) for url in self.url]
 
 
 class Category:
@@ -66,12 +65,8 @@ class ChallengeSet:
         allocate_port = allocate_port_generator()
         allocated_ports = {}
         for uuid in sorted(self.challenges.keys()):
-            if self.challenges[uuid].path in allocated_ports.keys():
-                self.challenges[uuid].port = allocated_ports[self.challenges[uuid].path]
-            else:
+            if self.challenges[uuid].path not in allocated_ports.keys():
                 self.challenges[uuid].allocate_port(allocate_port)
-                if self.challenges[uuid].port:
-                    allocated_ports[self.challenges[uuid].path] = self.challenges[uuid].port
 
     def __init__(self, path: str):
         self.challenges = {}

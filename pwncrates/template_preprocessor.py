@@ -42,4 +42,4 @@ def inject_globals():
     if current_user.is_authenticated and current_user.is_admin:
         routes["Admin"] = url_for("admin")
 
-    return dict(name="StudSec", routes=routes)
+    return dict(name="StudSec", routes=routes, app=app)
