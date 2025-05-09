@@ -9,7 +9,7 @@ import sys
 
 
 def get_challenge_path():
-    return app.config["runtime"].get("challenge_path", 2)
+    return app.config["runtime"].get("challenge_path", "")
 
 
 def render_markdown(file_name, title=""):
