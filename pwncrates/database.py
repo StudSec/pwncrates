@@ -128,6 +128,7 @@ def get_challenges(category, difficulty="hard"):
 
     for (category_description, challenge_uuid, name, description, points, subcategory, url, solves, difficulty) \
             in cursor.fetchall():
+
         handout_file = get_handout_name(challenge_uuid)
 
         if not subcategory:
@@ -681,7 +682,7 @@ if app.debug:
 else:
     # This *should* not cause any conflict, each worker has its own connection. The only conflict is when the git thread
     # attempts changes. Which happens in a separate thread.
-    conn = sqlite3.connect('./db/pwncrates.db', check_same_thread=True)
+    conn = sqlite3.connect('./db/pwncrates.db', check_same_thread=False)
 
 try:
     if os.path.getsize("./db/pwncrates.db") == 0:
