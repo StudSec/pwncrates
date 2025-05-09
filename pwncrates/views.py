@@ -91,7 +91,7 @@ def challenges(category=None):
     else:
         solved_challenges = []
 
-    return render_template("challenges_category.html", category=category,
+    return render_template("challenges_category.html", category_name=db.get_categories()[category][0],
                            subcategories=db.get_challenges(category), solves=solved_challenges)
 
 
