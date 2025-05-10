@@ -34,12 +34,12 @@
                 <p>
                     {{description | safe}}
                 </p>
-                {% if url != "None" and app.config["instancer"]["INSTANCER_URL"] == "" %}
+                {% if url is not none and app.config["instancer"]["INSTANCER_URL"] == "" %}
                 <div class="code-block"><p>
                     {{ url }}
                 </p></div>
                 <br>
-                {% elif url != "Null" and app.config["instancer"]["INSTANCER_URL"] != "" %}
+                {% elif url is not none and app.config["instancer"]["INSTANCER_URL"] != "" %}
                 <br>
                 <button type="button" class="btn btn-success" id="start_service_{{challenge_id}}">Start</button>
                 <button type="button" class="btn btn-danger" id="stop_service_{{challenge_id}}" disabled>Stop</button>

@@ -328,10 +328,8 @@ async function refreshService(id) {
     startButton.setAttribute("disabled", "disabled");
     stopButton.removeAttribute("disabled");
 
-    var challengeUrl = json["port"].split(":")
-    var newUrl = url.replaceAll("{IP}", challengeUrl[0]);
-    var newUrl = newUrl.replaceAll("{PORT}", challengeUrl[1]);
-    display.innerHTML = newUrl;
+    var challengeUrl = json["url"]
+    display.innerHTML = challengeUrl;
   } else {
     stopButton.setAttribute("disabled", "disabled");
     startButton.removeAttribute("disabled");
