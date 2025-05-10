@@ -104,7 +104,7 @@ def get_challenges(category, difficulty="hard"):
 
     if freeze_time:
         solve_count_subquery = '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id AND S.solved_time < ?)'
-        params = [category, difficulty, freeze_time]
+        params = [freeze_time, category, difficulty]
     else:
         solve_count_subquery = '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id)'
         params = [category, difficulty]
