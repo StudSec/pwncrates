@@ -103,9 +103,7 @@ def get_challenges(category, difficulty="hard"):
     freeze_time = get_scoreboard_freeze_time()
 
     if freeze_time:
-        solve_count_subquery = (
-            '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id AND S.solved_time < ?)'
-        )
+        solve_count_subquery = '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id AND S.solved_time < ?)'
         params = [category, difficulty, freeze_time]
     else:
         solve_count_subquery = '(SELECT COUNT(*) FROM solves S WHERE S.challenge_id = A.id)'
