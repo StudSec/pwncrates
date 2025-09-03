@@ -1,6 +1,7 @@
 services:
   pwncrates:
     build: ./webapp/
+    image: pwncrates:latest
     environment:
       - FLASK_APP=main
     volumes:

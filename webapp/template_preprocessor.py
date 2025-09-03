@@ -25,11 +25,14 @@ def add_security_headers(resp):
                                                f"script-src {config['hostname'] + '/static/script.js'} "
                                                f"{bootstrap_js_url} "
                                                f"{chart_url} "
+                                               f"https://www.google.com/recaptcha/ "
+                                               f"https://www.gstatic.com/recaptcha/ "
                                                f"{graph_url}; "
                                                f"style-src {config['hostname'] + '/static/style.css'} "
                                                f"{bootstrap_css_url}; "
                                                "base-uri 'self'; "
                                                "img-src * data:; "
+                                               "frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/; "
                                                "connect-src 'self';")
     return resp
 

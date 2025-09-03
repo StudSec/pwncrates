@@ -48,7 +48,6 @@ def challenge_protector(f):
 def load_user(user_id):
     return User.get(user_id)
 
-
 # Login page
 @app.route('/login', methods=["GET", "POST"])
 def login():
@@ -89,6 +88,16 @@ def login():
 def register():
     if request.method == "POST" and REGISTRATION_ENABLED:
         try:
+            recaptcha_response = request.form.get('g-recaptcha-response')
+            r = requests.post('https://www.google.com/recaptcha/api/siteverify', data={
+                'secret': config["RECAPTCHA_SECRET_KEY"],
+                'response': recaptcha_response
+            })
+            if not r.json().get('success'):
+                flash("reCAPTCHA failed. Please try again.")
+                return render_template('register.html', site_key=config["RECAPTCHA_SITE_KEY"])
+
+
             # We check that the parameters are set before performing any actions
             username = request.form["username"]
             password = request.form["password"]
@@ -96,11 +105,11 @@ def register():
 
             if db.get_user(email=email):
                 flash("Email already taken")
-                return render_template('register.html')
+                return render_template('register.html', site_key=config["RECAPTCHA_SITE_KEY"])
 
             if not re.match(r'^[\w\.+-]+@[\w\.-]+\.\w+$', email):
                 flash('Invalid email')
-                return render_template('register.html')
+                return render_template('register.html', site_key=config["RECAPTCHA_SITE_KEY"])
 
             # If no email server is set, we don't require a confirmation email.
             if config["SMTP_HOST"]:
@@ -110,7 +119,7 @@ def register():
 
                 if mail.confirm_email(email, f"https://{config['hostname']}{url_for('confirm_email')}?code={code}"):
                     flash('Failed to send confirmation email')
-                    return render_template('register.html')
+                    return render_template('register.html', site_key=config["RECAPTCHA_SITE_KEY"])
             else:
                 flash('Registered')
                 db.register_user(username, bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('ascii'), email)
@@ -124,7 +133,7 @@ def register():
         if not REGISTRATION_ENABLED:
             flash("Registration is disabled.")
             return redirect(url_for('login'))
-        return render_template('register.html')
+        return render_template('register.html', site_key=config["RECAPTCHA_SITE_KEY"])
 
 
 @app.route('/password-reset', methods=["GET", "POST"])
