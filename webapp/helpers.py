@@ -33,6 +33,12 @@ def parse_markdown_challenge(path):
     with open(path, "r") as f:
         lines = f.readlines()
 
+    line = lines[0]
+    if line.startswith("#"):
+        ret["title"] = line[2:].strip()
+    elif line.startswith("##"):
+        ret["title"] = line[3:].strip()
+        
     try:
         ret["description"] = ''.join(isolate_markdown_category(lines, "## Description\n"))
         challenge_information = isolate_markdown_category(lines, "## Challenge information\n")
