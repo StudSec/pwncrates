@@ -70,7 +70,7 @@ def public_profile(user_id):
     except IndexError:
         rank, score = 0, 0
 
-    return render_template("profile.html", current_user=user, solves=db.get_user_solves(user.id),
+    return render_template("profile.html", current_user=current_user, user=user, solves=db.get_user_solves(user.id),
                            rank=(rank, score), self_profile=self_profile, universities=universities)
 
 
